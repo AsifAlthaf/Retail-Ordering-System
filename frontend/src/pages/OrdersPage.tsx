@@ -164,13 +164,6 @@ export default function OrdersPage() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2 }}>
-        <Typography variant="h5" fontWeight={700} sx={{ flexGrow: 1 }}>Orders</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => { resetForm(); setCreateDialog(true); }}>
-          New Order
-        </Button>
-      </Box>
-
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}><CircularProgress /></Box>
       ) : (
