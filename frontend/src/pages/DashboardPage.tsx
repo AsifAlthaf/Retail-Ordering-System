@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Card, CardContent, CircularProgress, Typography,
+  Box, Button, Card, CardContent, CircularProgress, Typography,
   Divider, Chip, Paper, Stack, LinearProgress,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
@@ -9,6 +9,7 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { Link, useNavigate } from 'react-router-dom';
 import { getOrders } from '../api/orders';
 import { getCoupons } from '../api/coupons';
 import { getProducts } from '../api/products';
@@ -91,6 +92,29 @@ function StatCard({ label, value, icon, color, sub }: StatCardProps) {
             {icon}
           </Box>
         </Box>
+      </CardContent>
+    </Card>
+  );
+}
+
+function ActionCard({ title, description, actionLabel, to }: { title: string; description: string; actionLabel: string; to: string }) {
+  return (
+    <Card
+      elevation={0}
+      sx={{
+        borderRadius: 4,
+        border: '1px solid rgba(148, 163, 184, 0.18)',
+        background: 'rgba(255,255,255,0.92)',
+        transition: 'transform 0.2s, box-shadow 0.2s',
+        '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 16px 32px rgba(15, 23, 42, 0.08)' },
+      }}
+    >
+      <CardContent>
+        <Typography variant="subtitle1" fontWeight={800} mb={1.5}>{title}</Typography>
+        <Typography variant="body2" color="text.secondary" mb={2}>{description}</Typography>
+        <Button component={Link} to={to} variant="contained" size="small">
+          {actionLabel}
+        </Button>
       </CardContent>
     </Card>
   );
