@@ -6,7 +6,9 @@ import com.ordering.retail.DTOs.SignupRequestDTO;
 import com.ordering.retail.Entity.User;
 import com.ordering.retail.Enum.Role;
 import com.ordering.retail.Repository.UserRepository;
+import com.ordering.retail.Security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,6 +17,12 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
     /**
      * Login user with email and password
      */
@@ -22,8 +30,7 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
-        // Simple password comparison (in production use BCrypt)
-        if (!user.getPasswordHash().equals(request.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Invalid email or password");
         }
 
@@ -43,8 +50,7 @@ public class AuthService {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        // In production, hash the password using BCrypt
-        user.setPasswordHash(request.getPassword());
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
         user.setLoyaltyPoints(0);
 
@@ -60,7 +66,8 @@ public class AuthService {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getRole().toString()
+                user.getRole().toString(),
+                jwtUtil.generateToken(user)
         );
     }
 }

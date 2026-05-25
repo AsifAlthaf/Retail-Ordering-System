@@ -5,15 +5,17 @@ public class AuthResponseDTO {
     private String name;
     private String email;
     private String role;
+    private String token;
 
     public AuthResponseDTO() {
     }
 
-    public AuthResponseDTO(Long id, String name, String email, String role) {
+    public AuthResponseDTO(Long id, String name, String email, String role, String token) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.role = role;
+        this.token = token;
     }
 
     public Long getId() {
@@ -46,5 +48,13 @@ public class AuthResponseDTO {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

@@ -6,6 +6,7 @@ export interface AuthUser {
   email: string;
   role: UserRole;
   name: string;
+  token?: string;
 }
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
