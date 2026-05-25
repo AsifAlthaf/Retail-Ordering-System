@@ -2,24 +2,18 @@ package com.ordering.retail.Config;
 
 import java.util.List;
 
-import com.ordering.retail.Entity.Product;
-import com.ordering.retail.Entity.Inventory;
-import com.ordering.retail.Entity.User;
-import com.ordering.retail.Enum.Role;
-import com.ordering.retail.Repository.InventoryRepository;
-import com.ordering.retail.Repository.ProductRepository;
-import com.ordering.retail.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.ordering.retail.Entity.Inventory;
+import com.ordering.retail.Entity.Product;
+import com.ordering.retail.Repository.InventoryRepository;
+import com.ordering.retail.Repository.ProductRepository;
 
 @Configuration
 public class DataInitializer {
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -27,24 +21,10 @@ public class DataInitializer {
     @Autowired
     private InventoryRepository inventoryRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Bean
     public CommandLineRunner initializeData() {
         return args -> {
-            // Initialize demo users if they don't exist
-            if (userRepository.count() == 0) {
-                User admin = new User("Admin User", "admin@retailos.com", passwordEncoder.encode("Admin@1234"), "9876543210", "123 Admin St", Role.ADMIN);
-                User user1 = new User("John Doe", "john@retailos.com", passwordEncoder.encode("User@1234"), "9876543211", "456 User Ave", Role.USER);
-                User user2 = new User("Jane Smith", "jane@retailos.com", passwordEncoder.encode("User@1234"), "9876543212", "789 Smith Rd", Role.USER);
-                
-                userRepository.save(admin);
-                userRepository.save(user1);
-                userRepository.save(user2);
-            }
-
-            // Initialize demo products if they don't exist
+            // Seed base product catalog only when empty.
             if (productRepository.count() == 0) {
                 List<Product> seededProducts = List.of(
                         new Product("Premium Wireless Headphones", 2999.0),

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box, Button, Chip, CircularProgress, Dialog, DialogActions,
   DialogContent, DialogTitle, FormControl, IconButton, InputLabel,
@@ -12,6 +12,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from 'react-toastify';
 import { getCoupons, createCoupon, updateCoupon, setCouponActive, deleteCoupon } from '../api/coupons';
 import type { CouponRequest, CouponResponse, DiscountType } from '../types';
+
+function toErrorMessage(error: any, fallback: string) {
+  return error?.response?.data?.message || error?.message || fallback;
+}
 
 const emptyForm = (): CouponRequest => ({
   code: '',
@@ -35,8 +39,8 @@ export default function CouponsPage() {
       setLoading(true);
       const data = await getCoupons();
       setCoupons(data);
-    } catch {
-      toast.error('Failed to load coupons');
+    } catch (error) {
+      toast.error(toErrorMessage(error, 'Failed to load coupons'));
     } finally {
       setLoading(false);
     }
@@ -61,19 +65,27 @@ export default function CouponsPage() {
   const handleSave = async () => {
     if (!form.code.trim()) { toast.warning('Code is required'); return; }
     if (form.value <= 0) { toast.warning('Value must be positive'); return; }
+    if (form.type === 'PERCENTAGE' && form.value > 100) { toast.warning('Percentage coupon cannot exceed 100'); return; }
+    if (!form.expiryDate) { toast.warning('Expiry date is required'); return; }
+
+    const normalized: CouponRequest = {
+      ...form,
+      code: form.code.trim().toUpperCase(),
+    };
+
     try {
       setSaving(true);
       if (editCoupon) {
-        await updateCoupon(editCoupon.id, form);
+        await updateCoupon(editCoupon.id, normalized);
         toast.success('Coupon updated!');
       } else {
-        await createCoupon(form);
+        await createCoupon(normalized);
         toast.success('Coupon created!');
       }
       setDialog(false);
       load();
-    } catch {
-      toast.error('Failed to save coupon');
+    } catch (error) {
+      toast.error(toErrorMessage(error, 'Failed to save coupon'));
     } finally {
       setSaving(false);
     }
@@ -84,8 +96,8 @@ export default function CouponsPage() {
       await setCouponActive(c.id, !c.active);
       toast.success(`Coupon ${!c.active ? 'activated' : 'deactivated'}`);
       load();
-    } catch {
-      toast.error('Failed to toggle coupon');
+    } catch (error) {
+      toast.error(toErrorMessage(error, 'Failed to toggle coupon'));
     }
   };
 
@@ -95,15 +107,15 @@ export default function CouponsPage() {
       await deleteCoupon(id);
       toast.success('Coupon deleted');
       load();
-    } catch {
-      toast.error('Failed to delete coupon');
+    } catch (error) {
+      toast.error(toErrorMessage(error, 'Failed to delete coupon'));
     }
   };
 
   return (
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2 }}>
-        <Typography variant="h5" fontWeight={700} sx={{ flexGrow: 1 }}>Coupons</Typography>
+        <Typography variant="h5" sx={{ fontWeight: 700, flexGrow: 1 }}>Coupons</Typography>
         <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>
           New Coupon
         </Button>
@@ -182,14 +194,14 @@ export default function CouponsPage() {
           <TextField label={form.type === 'PERCENTAGE' ? 'Value (%)' : 'Value (₹)'}
             type="number" value={form.value}
             onChange={e => setForm(f => ({ ...f, value: parseFloat(e.target.value) || 0 }))}
-            fullWidth inputProps={{ min: 0, step: 0.01 }} />
+            fullWidth />
           <TextField label="Expiry Date" type="date" value={form.expiryDate}
             onChange={e => setForm(f => ({ ...f, expiryDate: e.target.value }))}
-            fullWidth InputLabelProps={{ shrink: true }} />
+            fullWidth />
           <TextField label="Usage Limit (leave blank for unlimited)"
             type="number" value={form.usageLimit ?? ''}
             onChange={e => setForm(f => ({ ...f, usageLimit: e.target.value ? parseInt(e.target.value) : undefined }))}
-            fullWidth inputProps={{ min: 1 }} />
+            fullWidth />
           <FormControlLabel
             control={<Switch checked={form.active ?? true} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} />}
             label="Active"

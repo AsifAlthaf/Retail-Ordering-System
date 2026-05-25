@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box, Button, Dialog, DialogActions, DialogContent, DialogTitle,
   IconButton, Paper, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, TextField, Tooltip, Typography, Chip,
-  CircularProgress, InputAdornment,
+  CircularProgress,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InventoryIcon from '@mui/icons-material/Inventory';
-import SearchIcon from '@mui/icons-material/Search';
 import { toast } from 'react-toastify';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../api/products';
 import { upsertInventory, getInventory } from '../api/inventory';
@@ -125,7 +124,7 @@ export default function ProductsPage() {
   return (
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2, flexWrap: 'wrap' }}>
-        <Typography variant="h5" fontWeight={700} sx={{ flexGrow: 1 }}>
+        <Typography variant="h5" sx={{ fontWeight: 700, flexGrow: 1 }}>
           Products
         </Typography>
         <TextField
@@ -133,7 +132,6 @@ export default function ProductsPage() {
           placeholder="Search products…"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> }}
           sx={{ minWidth: 220 }}
         />
         <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>
@@ -202,7 +200,6 @@ export default function ProductsPage() {
             value={prodForm.price}
             onChange={e => setProdForm(f => ({ ...f, price: parseFloat(e.target.value) || 0 }))}
             fullWidth required
-            inputProps={{ min: 0, step: 0.01 }}
           />
         </DialogContent>
         <DialogActions>
@@ -218,7 +215,7 @@ export default function ProductsPage() {
         <DialogTitle>
           Inventory — <em>{invProduct?.name}</em>
           {currentInv && (
-            <Typography variant="caption" display="block" color="text.secondary">
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
               Current stock: {currentInv.quantity} units
             </Typography>
           )}
@@ -229,14 +226,14 @@ export default function ProductsPage() {
             type="number"
             value={invForm.quantity}
             onChange={e => setInvForm(f => ({ ...f, quantity: parseInt(e.target.value) || 0 }))}
-            fullWidth inputProps={{ min: 0 }}
+            fullWidth
           />
           <TextField
             label="Low Stock Threshold"
             type="number"
             value={invForm.lowStockThreshold}
             onChange={e => setInvForm(f => ({ ...f, lowStockThreshold: parseInt(e.target.value) || 0 }))}
-            fullWidth inputProps={{ min: 0 }}
+            fullWidth
           />
         </DialogContent>
         <DialogActions>

@@ -1,5 +1,9 @@
 package com.ordering.retail.Service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.ordering.retail.DTOs.AuthResponseDTO;
 import com.ordering.retail.DTOs.LoginRequestDTO;
 import com.ordering.retail.DTOs.SignupRequestDTO;
@@ -7,9 +11,6 @@ import com.ordering.retail.Entity.User;
 import com.ordering.retail.Enum.Role;
 import com.ordering.retail.Repository.UserRepository;
 import com.ordering.retail.Security.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
@@ -51,6 +52,8 @@ public class AuthService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setPhone(request.getPhone());
+        user.setAddress(buildFullAddress(request));
         user.setRole(Role.USER);
         user.setLoyaltyPoints(0);
 
@@ -69,5 +72,13 @@ public class AuthService {
                 user.getRole().toString(),
                 jwtUtil.generateToken(user)
         );
+    }
+
+    private String buildFullAddress(SignupRequestDTO request) {
+        return String.join(", ",
+                request.getAddress().trim(),
+                request.getCity().trim(),
+                request.getState().trim(),
+                request.getPostalCode().trim());
     }
 }

@@ -10,6 +10,11 @@ export interface SignupRequest {
   name: string;
   email: string;
   password: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  postalCode: string;
 }
 
 export interface AuthResponse {
@@ -36,14 +41,12 @@ export const loginUser = async (email: string, password: string): Promise<AuthUs
   };
 };
 
-export const signupUser = async (name: string, email: string, password: string): Promise<AuthUser> => {
+export const signupUser = async (payload: SignupRequest): Promise<AuthUser> => {
   const response = await api.post<AuthResponse>('/api/auth/signup', {
-    name,
-    email,
-    password,
+    ...payload,
   });
 
-  const { id, email: responseEmail, role, token } = response.data;
+  const { id, email: responseEmail, name, role, token } = response.data;
   return {
     id,
     email: responseEmail,

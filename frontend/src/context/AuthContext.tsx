@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import type { AuthUser } from '../types';
 import { loginUser, signupUser } from '../api/auth';
+import type { SignupRequest } from '../api/auth';
 
 const SESSION_KEY = 'retail_auth_user';
 
@@ -8,7 +9,7 @@ const SESSION_KEY = 'retail_auth_user';
 interface AuthContextValue {
   user: AuthUser | null;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (payload: SignupRequest) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -36,8 +37,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(authUser);
   }, []);
 
-  const signup = useCallback(async (name: string, email: string, password: string) => {
-    const authUser = await signupUser(name, email, password);
+  const signup = useCallback(async (payload: SignupRequest) => {
+    const authUser = await signupUser(payload);
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(authUser));
     setUser(authUser);
   }, []);

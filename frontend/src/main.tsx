@@ -7,31 +7,32 @@ const theme = createTheme({
   palette: {
     mode: 'light',
     primary: { main: '#000000' },
-    secondary: { main: '#555555' },
-    background: { default: '#f9f9f9', paper: '#ffffff' },
-    text: { primary: '#000000', secondary: '#666666' },
-    success: { main: '#333333' },
-    divider: '#e0e0e0',
+    secondary: { main: '#222222' },
+    background: { default: '#ffffff', paper: '#ffffff' },
+    text: { primary: '#000000', secondary: '#444444' },
+    success: { main: '#000000' },
+    divider: '#d6d6d6',
   },
   typography: {
-    fontFamily: '"Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
-    h5: { fontWeight: 700, letterSpacing: '-0.02em' },
-    h6: { fontWeight: 700, letterSpacing: '-0.02em' },
+    fontFamily: '"Inter", "Segoe UI", sans-serif',
+    h4: { fontWeight: 900, letterSpacing: '-0.02em' },
+    h5: { fontWeight: 800, letterSpacing: '-0.02em' },
+    h6: { fontWeight: 800, letterSpacing: '-0.02em' },
   },
-  shape: { borderRadius: 12 },
+  shape: { borderRadius: 0 },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
           textTransform: 'none',
-          fontWeight: 600,
-          borderRadius: 999,
+          fontWeight: 700,
+          borderRadius: 0,
           boxShadow: 'none',
         },
         contained: {
           backgroundColor: '#000000',
           color: '#ffffff',
-          '&:hover': { backgroundColor: '#1a1a1a' },
+          '&:hover': { backgroundColor: '#1f1f1f' },
         },
       },
     },
@@ -42,14 +43,15 @@ const theme = createTheme({
     },
     MuiChip: {
       styleOverrides: {
-        root: { borderRadius: 999 },
+        root: { borderRadius: 0 },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          '& fieldset': { borderColor: '#d0d0d0' },
-          '&:hover fieldset': { borderColor: '#a0a0a0' },
+          '& fieldset': { borderColor: '#ababab' },
+          '&:hover fieldset': { borderColor: '#777777' },
+          '&.Mui-focused fieldset': { borderColor: '#000000' },
         },
       },
     },

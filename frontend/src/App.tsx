@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import {
   Box, CssBaseline, Toolbar, Typography, AppBar,
@@ -45,7 +45,7 @@ function TopAppBar() {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexGrow: 1 }}>
           <Avatar sx={{ bgcolor: 'secondary.main', width: 36, height: 36, fontWeight: 800 }}>R</Avatar>
           <Box>
-            <Typography variant="h6" fontWeight={800} letterSpacing={0.8} sx={{ lineHeight: 1.1 }}>RetailOS</Typography>
+            <Typography variant="h6" sx={{ lineHeight: 1.1, fontWeight: 800, letterSpacing: 0.8 }}>RetailOS</Typography>
             <Typography variant="caption" sx={{ opacity: 0.75 }}>Ordering platform</Typography>
           </Box>
         </Box>
@@ -90,7 +90,7 @@ function AppLayout() {
 
       {user?.role === 'ADMIN' && (
         <Box sx={{ px: { xs: 2, md: 4 }, pb: 2 }}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems="center">
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ alignItems: 'center' }}>
             <Button component={Link} to="/" variant="contained" color="primary" sx={{ minWidth: 112 }}>
               Dashboard
             </Button>

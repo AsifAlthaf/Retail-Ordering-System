@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -31,7 +30,6 @@ export default function OrderNotificationPage() {
   const state = (location.state ?? {}) as NotificationState;
   const order = state.order;
   const outcome = state.outcome ?? order?.status;
-  const isConfirmed = outcome === 'CONFIRMED';
   const isCancelled = outcome === 'CANCELLED';
 
   return (
@@ -47,10 +45,10 @@ export default function OrderNotificationPage() {
               : 'linear-gradient(135deg, #065f46 0%, #10b981 100%)',
           }}
         >
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
             {isCancelled ? <CancelIcon sx={{ fontSize: 44 }} /> : <CheckCircleIcon sx={{ fontSize: 44 }} />}
             <Box>
-              <Typography variant="h4" fontWeight={800} lineHeight={1.1}>
+              <Typography variant="h4" sx={{ fontWeight: 800, lineHeight: 1.1 }}>
                 {isCancelled ? 'Order Cancelled' : 'Order Confirmed'}
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.75 }}>
@@ -66,14 +64,14 @@ export default function OrderNotificationPage() {
           {!order ? (
             <Box sx={{ textAlign: 'center', py: 4 }}>
               <ShoppingBagIcon sx={{ fontSize: 48, color: 'text.secondary', opacity: 0.4 }} />
-              <Typography variant="h6" fontWeight={700} mt={1}>No order details available</Typography>
-              <Typography variant="body2" color="text.secondary" mt={0.5}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mt: 1 }}>No order details available</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                 Open this page from the orders screen after confirming or cancelling an order.
               </Typography>
             </Box>
           ) : (
             <Stack spacing={2.5}>
-              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
                 <Chip label={`Order #${order.id}`} color="primary" />
                 <Chip label={order.status} color={isCancelled ? 'error' : 'success'} />
                 <Chip label={formatCurrency(order.totalAmount)} variant="outlined" />
@@ -85,7 +83,7 @@ export default function OrderNotificationPage() {
                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                   Delivery Address
                 </Typography>
-                <Typography variant="body1" fontWeight={600}>
+                <Typography variant="body1" sx={{ fontWeight: 600 }}>
                   {order.deliveryAddress}
                 </Typography>
               </Box>
@@ -99,19 +97,19 @@ export default function OrderNotificationPage() {
                     <Stack spacing={1.5}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                         <Typography variant="body2" color="text.secondary">Placed at</Typography>
-                        <Typography variant="body2" fontWeight={600}>{new Date(order.placedAt).toLocaleString()}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{new Date(order.placedAt).toLocaleString()}</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                         <Typography variant="body2" color="text.secondary">Coupon</Typography>
-                        <Typography variant="body2" fontWeight={600}>{order.couponCode ?? 'None'}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{order.couponCode ?? 'None'}</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                         <Typography variant="body2" color="text.secondary">Discount</Typography>
-                        <Typography variant="body2" fontWeight={600}>{formatCurrency(order.discount)}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatCurrency(order.discount)}</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                         <Typography variant="body2" color="text.secondary">Total</Typography>
-                        <Typography variant="body2" fontWeight={800}>{formatCurrency(order.totalAmount)}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 800 }}>{formatCurrency(order.totalAmount)}</Typography>
                       </Box>
                     </Stack>
                   </CardContent>
@@ -128,14 +126,14 @@ export default function OrderNotificationPage() {
                       <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                           <Box>
-                            <Typography variant="body2" fontWeight={700}>
+                            <Typography variant="body2" sx={{ fontWeight: 700 }}>
                               Product #{item.productId}
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
                               Quantity: {item.quantity}
                             </Typography>
                           </Box>
-                          <Typography variant="body2" fontWeight={700}>
+                          <Typography variant="body2" sx={{ fontWeight: 700 }}>
                             {formatCurrency(item.priceAtTime * item.quantity)}
                           </Typography>
                         </Box>

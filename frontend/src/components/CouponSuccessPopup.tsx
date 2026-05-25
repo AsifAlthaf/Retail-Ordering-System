@@ -1,26 +1,31 @@
-import React from 'react';
 import {
+  Button,
   Dialog,
   DialogContent,
   Stack,
   Typography,
-  Box,
-  Button,
-  Grow,
 } from '@mui/material';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CelebrationIcon from '@mui/icons-material/Celebration';
 
 interface CouponSuccessPopupProps {
   open: boolean;
+  title: string;
   couponCode: string;
-  discountAmount: number;
+  description: string;
+  highlightLabel: string;
+  highlightValue: string;
+  ctaLabel?: string;
   onClose: () => void;
 }
 
 export default function CouponSuccessPopup({
   open,
+  title,
   couponCode,
-  discountAmount,
+  description,
+  highlightLabel,
+  highlightValue,
+  ctaLabel = 'Continue',
   onClose,
 }: CouponSuccessPopupProps) {
   return (
@@ -29,72 +34,32 @@ export default function CouponSuccessPopup({
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 3,
-          border: '1px solid #e0e0e0',
+      sx={{
+        '& .MuiPaper-root': {
+          borderRadius: 4,
+          border: '1px solid #dbe3ef',
+          boxShadow: '0 22px 40px rgba(15, 23, 42, 0.16)',
         },
       }}
-      TransitionComponent={Grow}
     >
-      <DialogContent sx={{ p: 4, textAlign: 'center' }}>
-        <Stack spacing={2} alignItems="center">
-          <Box
-            sx={{
-              width: 72,
-              height: 72,
-              borderRadius: '50%',
-              bgcolor: '#f0f0f0',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <CheckCircleOutlineIcon
-              sx={{
-                fontSize: 48,
-                color: '#000000',
-              }}
-            />
-          </Box>
-
-          <Typography variant="h5" fontWeight={700} color="#000000">
-            Coupon Applied!
+      <DialogContent sx={{ p: 4 }}>
+        <Stack spacing={2} sx={{ alignItems: 'center', textAlign: 'center' }}>
+          <CelebrationIcon sx={{ fontSize: 48, color: '#1d4ed8' }} />
+          <Typography variant="h5" sx={{ fontWeight: 900 }}>{title}</Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 380 }}>
+            {description}
           </Typography>
-
-          <Typography variant="body2" color="#666666" sx={{ maxWidth: 300 }}>
-            Your coupon{' '}
-            <Typography component="span" fontWeight={700}>
-              {couponCode}
-            </Typography>{' '}
-            has been successfully applied.
+          <Typography variant="h6" sx={{ fontWeight: 900, letterSpacing: 0.4 }}>
+            {couponCode}
           </Typography>
-
-          <Box
-            sx={{
-              mt: 2,
-              p: 2,
-              bgcolor: '#f9f9f9',
-              borderRadius: 2,
-              border: '1px solid #e0e0e0',
-              width: '100%',
-            }}
-          >
-            <Typography variant="caption" color="#666666" display="block" mb={0.5}>
-              Discount Awarded
-            </Typography>
-            <Typography variant="h6" fontWeight={700} color="#000000">
-              ₹{discountAmount.toLocaleString('en-IN')}
-            </Typography>
-          </Box>
-
-          <Button
-            variant="contained"
-            onClick={onClose}
-            fullWidth
-            sx={{ mt: 2 }}
-          >
-            Continue Shopping
+          <Typography variant="body2" color="text.secondary">
+            {highlightLabel}
+          </Typography>
+          <Typography variant="h6" color="primary.main" sx={{ fontWeight: 800 }}>
+            {highlightValue}
+          </Typography>
+          <Button variant="contained" fullWidth onClick={onClose} sx={{ mt: 1.5 }}>
+            {ctaLabel}
           </Button>
         </Stack>
       </DialogContent>

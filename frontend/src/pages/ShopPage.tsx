@@ -1,37 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Avatar,
   Box,
   Button,
   Card,
   CardContent,
+  CardMedia,
   Chip,
   CircularProgress,
   Divider,
-  FormControl,
-  InputLabel,
-  LinearProgress,
-  MenuItem,
   Paper,
-  Select,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import ReplayIcon from '@mui/icons-material/Replay';
-import SearchIcon from '@mui/icons-material/Search';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import StorefrontIcon from '@mui/icons-material/Storefront';
+import SellIcon from '@mui/icons-material/Sell';
 import { toast } from 'react-toastify';
 
 import { useAuth } from '../context/AuthContext';
 import { createOrder, getOrdersByUser } from '../api/orders';
 import { getProducts } from '../api/products';
 import { getInventory } from '../api/inventory';
-import { getCouponByCode } from '../api/coupons';
+import { getCoupons, getCouponByCode } from '../api/coupons';
 import CouponSuccessPopup from '../components/CouponSuccessPopup';
 import type { CouponResponse, OrderResponse, Product } from '../types';
 
@@ -40,117 +33,144 @@ interface CartLine {
   quantity: number;
 }
 
-interface DriverProfile {
-  name: string;
-  bike: string;
-  distanceKm: number;
-  etaMinutes: number;
+interface DeliveryForm {
+  line1: string;
+  landmark: string;
+  city: string;
+  state: string;
+  postalCode: string;
 }
 
-const BRANDS = ['Northline', 'Field', 'Studio', 'Common', 'Atlas', 'Parcel'];
 const CART_STORAGE_PREFIX = 'retail_shop_cart_';
-const DRIVER_PROFILES: DriverProfile[] = [
-  { name: 'Ravi Kumar', bike: 'Honda Activa', distanceKm: 2.4, etaMinutes: 12 },
-  { name: 'Aman Singh', bike: 'TVS Jupiter', distanceKm: 3.1, etaMinutes: 15 },
-  { name: 'Imran Ali', bike: 'Hero Splendor', distanceKm: 1.8, etaMinutes: 9 },
-];
+const DELIVERY_STORAGE_PREFIX = 'retail_delivery_';
+const COUPON_SEEN_PREFIX = 'retail_seen_coupon_';
 
-function currency(value: number) {
-  return `₹${value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+function formatCurrency(value: number) {
+  return `INR ${value.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
 }
 
-function orderStatusLabel(status: OrderResponse['status']) {
+function toErrorMessage(error: any, fallback: string) {
+  return error?.response?.data?.message || error?.message || fallback;
+}
+
+function imageForProduct(productId: number) {
+  return `https://picsum.photos/seed/retail-product-${productId}/840/560`;
+}
+
+function normalizeStatus(status: string) {
   return status.replace('_', ' ');
-}
-
-function selectedDriver(orderId: number): DriverProfile {
-  return DRIVER_PROFILES[orderId % DRIVER_PROFILES.length];
-}
-
-function progressForStatus(status: OrderResponse['status']) {
-  switch (status) {
-    case 'PENDING': return 20;
-    case 'CONFIRMED': return 45;
-    case 'SHIPPED': return 70;
-    case 'DELIVERED': return 100;
-    case 'CANCELLED': return 0;
-    default: return 0;
-  }
 }
 
 export default function ShopPage() {
   const { user } = useAuth();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<OrderResponse[]>([]);
+  const [coupons, setCoupons] = useState<CouponResponse[]>([]);
   const [inventory, setInventory] = useState<Record<number, number | null>>({});
-  const [selectedBrand, setSelectedBrand] = useState<string>('All');
+
   const [search, setSearch] = useState('');
   const [cart, setCart] = useState<CartLine[]>([]);
-  const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [couponCode, setCouponCode] = useState('');
-  const [appliedCoupon, setAppliedCoupon] = useState<CouponResponse | null>(null);
-  const [couponApplying, setCouponApplying] = useState(false);
-  const [couponPopupOpen, setCouponPopupOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [placingOrder, setPlacingOrder] = useState(false);
 
-  const brandForProduct = (productId: number) => BRANDS[(productId - 1) % BRANDS.length];
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<CouponResponse | null>(null);
+  const [discountAmount, setDiscountAmount] = useState(0);
 
-  const productMap = Object.fromEntries(products.map(product => [product.id, product]));
-  const selectedOrder = orders.find(order => order.id === selectedOrderId) ?? orders[0] ?? null;
-  const cartSubtotal = cart.reduce((sum, line) => sum + ((productMap[line.productId]?.price ?? 0) * line.quantity), 0);
-  const couponDiscount = appliedCoupon
-    ? appliedCoupon.type === 'PERCENTAGE'
-      ? Math.round(cartSubtotal * (appliedCoupon.value / 100))
-      : Number(appliedCoupon.value)
-    : 0;
-  const orderTotal = Math.max(0, cartSubtotal - couponDiscount);
+  const [delivery, setDelivery] = useState<DeliveryForm>({
+    line1: '',
+    landmark: '',
+    city: '',
+    state: '',
+    postalCode: '',
+  });
 
-  useEffect(() => {
+  const [popup, setPopup] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    code: string;
+    label: string;
+    value: string;
+  }>({
+    open: false,
+    title: '',
+    description: '',
+    code: '',
+    label: '',
+    value: '',
+  });
+
+  const productMap = useMemo(() => Object.fromEntries(products.map((p) => [p.id, p])), [products]);
+
+  const filteredProducts = useMemo(
+    () => products.filter((p) => p.name.toLowerCase().includes(search.toLowerCase())),
+    [products, search]
+  );
+
+  const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart]);
+
+  const subtotal = useMemo(
+    () => cart.reduce((sum, line) => sum + (productMap[line.productId]?.price ?? 0) * line.quantity, 0),
+    [cart, productMap]
+  );
+
+  const payable = Math.max(subtotal - discountAmount, 0);
+
+  const selectedOrder = useMemo(
+    () => orders.find((order) => order.id === selectedOrderId) ?? orders[0] ?? null,
+    [orders, selectedOrderId]
+  );
+
+  const load = async () => {
     if (!user?.id) return;
 
-    let active = true;
-    setLoading(true);
+    try {
+      setLoading(true);
+      const [productList, orderList, couponList] = await Promise.all([
+        getProducts(),
+        getOrdersByUser(user.id),
+        getCoupons(),
+      ]);
 
-    Promise.all([getProducts(), getOrdersByUser(user.id)])
-      .then(async ([productList, orderList]) => {
-        if (!active) return;
-        setProducts(productList);
-        setOrders(orderList.sort((left, right) => right.id - left.id));
-        setSelectedOrderId(current => current ?? orderList[0]?.id ?? null);
+      setProducts(productList);
+      setOrders(orderList.sort((a, b) => b.id - a.id));
+      setCoupons(couponList);
+      setSelectedOrderId((existing) => existing ?? orderList[0]?.id ?? null);
 
-        const entries = await Promise.all(
-          productList.map(async product => {
-            try {
-              const currentInventory = await getInventory(product.id);
-              return [product.id, currentInventory.quantity] as const;
-            } catch {
-              return [product.id, null] as const;
-            }
-          })
-        );
+      const inventoryEntries = await Promise.all(
+        productList.map(async (product) => {
+          try {
+            const value = await getInventory(product.id);
+            return [product.id, value.quantity] as const;
+          } catch {
+            return [product.id, null] as const;
+          }
+        })
+      );
+      setInventory(Object.fromEntries(inventoryEntries));
+    } catch (error) {
+      toast.error(toErrorMessage(error, 'Failed to load shop data.'));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        if (active) {
-          setInventory(Object.fromEntries(entries));
-        }
-      })
-      .catch(() => toast.error('Failed to load shop data'))
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
+  useEffect(() => {
+    load();
   }, [user?.id]);
 
   useEffect(() => {
     if (!user?.id) return;
-
     try {
-      const stored = sessionStorage.getItem(`${CART_STORAGE_PREFIX}${user.id}`);
-      setCart(stored ? JSON.parse(stored) as CartLine[] : []);
+      const storedCart = sessionStorage.getItem(`${CART_STORAGE_PREFIX}${user.id}`);
+      const storedDelivery = sessionStorage.getItem(`${DELIVERY_STORAGE_PREFIX}${user.id}`);
+      setCart(storedCart ? (JSON.parse(storedCart) as CartLine[]) : []);
+      if (storedDelivery) {
+        setDelivery(JSON.parse(storedDelivery) as DeliveryForm);
+      }
     } catch {
       setCart([]);
     }
@@ -162,121 +182,222 @@ export default function ShopPage() {
   }, [cart, user?.id]);
 
   useEffect(() => {
-    if (selectedOrderId == null && orders.length > 0) {
-      setSelectedOrderId(orders[0].id);
-    }
-  }, [orders, selectedOrderId]);
+    if (!user?.id) return;
+    sessionStorage.setItem(`${DELIVERY_STORAGE_PREFIX}${user.id}`, JSON.stringify(delivery));
+  }, [delivery, user?.id]);
 
-  const filteredProducts = products.filter(product => {
-    const brand = brandForProduct(product.id);
-    const matchesBrand = selectedBrand === 'All' || brand === selectedBrand;
-    const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase());
-    return matchesBrand && matchesSearch;
-  });
+  useEffect(() => {
+    if (!user?.id || coupons.length === 0) return;
 
-  const cartCount = cart.reduce((sum, line) => sum + line.quantity, 0);
+    const newest = [...coupons]
+      .filter((coupon) => coupon.active)
+      .sort((a, b) => b.id - a.id)[0];
 
-  const addToCart = (product: Product, quantity = 1) => {
-    const stock = inventory[product.id];
-    if (stock != null && stock <= 0) {
-      toast.warning(`${product.name} is out of stock`);
-      return;
-    }
+    if (!newest) return;
 
-    setCart(current => {
-      const existing = current.find(line => line.productId === product.id);
-      if (existing) {
-        return current.map(line => line.productId === product.id
-          ? { ...line, quantity: line.quantity + quantity }
-          : line);
-      }
-      return [...current, { productId: product.id, quantity }];
+    const seenKey = `${COUPON_SEEN_PREFIX}${user.id}`;
+    const seenId = Number(sessionStorage.getItem(seenKey) ?? '0');
+    if (newest.id <= seenId) return;
+
+    sessionStorage.setItem(seenKey, String(newest.id));
+    const offer = newest.type === 'PERCENTAGE'
+      ? `${newest.value}% off`
+      : `Flat INR ${newest.value} off`;
+
+    setPopup({
+      open: true,
+      title: 'New Coupon Added',
+      description: 'A new coupon is live. Use it in checkout before expiry.',
+      code: newest.code,
+      label: 'Offer',
+      value: offer,
     });
+  }, [coupons, user?.id]);
 
-    toast.success(`${product.name} added to cart`);
+  const setDeliveryField = (key: keyof DeliveryForm, value: string) => {
+    setDelivery((current) => ({ ...current, [key]: value }));
   };
 
-  const updateCartQty = (productId: number, quantity: number) => {
-    if (quantity <= 0) {
-      setCart(current => current.filter(line => line.productId !== productId));
+  const addToCart = (productId: number) => {
+    const product = productMap[productId];
+    if (!product) return;
+
+    const stock = inventory[productId];
+    if (stock != null && stock <= 0) {
+      toast.warning(`${product.name} is out of stock.`);
       return;
     }
 
-    setCart(current => current.map(line => line.productId === productId ? { ...line, quantity } : line));
+    setCart((current) => {
+      const existing = current.find((line) => line.productId === productId);
+      if (existing) {
+        return current.map((line) =>
+          line.productId === productId ? { ...line, quantity: line.quantity + 1 } : line
+        );
+      }
+      return [...current, { productId, quantity: 1 }];
+    });
   };
 
-  const clearCart = () => setCart([]);
+  const updateCartQuantity = (productId: number, nextQuantity: number) => {
+    if (nextQuantity <= 0) {
+      setCart((current) => current.filter((item) => item.productId !== productId));
+      return;
+    }
+
+    setCart((current) =>
+      current.map((item) => (item.productId === productId ? { ...item, quantity: nextQuantity } : item))
+    );
+  };
+
+  const clearCart = () => {
+    setCart([]);
+    setAppliedCoupon(null);
+    setDiscountAmount(0);
+    setCouponInput('');
+  };
 
   const validateStock = (lines: CartLine[]) => {
-    const missing = lines.filter(line => {
+    const unavailable = lines.find((line) => {
       const stock = inventory[line.productId];
-      return stock == null || stock < line.quantity;
+      return stock != null && stock < line.quantity;
     });
 
-    if (missing.length > 0) {
-      const firstMissing = productMap[missing[0].productId]?.name ?? `Product #${missing[0].productId}`;
-      toast.warning(`${firstMissing} is missing/out of stock`);
+    if (unavailable) {
+      const productName = productMap[unavailable.productId]?.name ?? `Product #${unavailable.productId}`;
+      toast.error(`${productName} has insufficient stock.`);
       return false;
     }
 
     return true;
   };
 
+  const buildDeliveryAddress = () => {
+    const requiredFields = [delivery.line1, delivery.city, delivery.state, delivery.postalCode].map((v) => v.trim());
+    if (requiredFields.some((v) => !v)) {
+      return null;
+    }
+
+    if (!/^\d{6}$/.test(delivery.postalCode.trim())) {
+      return null;
+    }
+
+    return [delivery.line1.trim(), delivery.landmark.trim(), `${delivery.city.trim()}, ${delivery.state.trim()} ${delivery.postalCode.trim()}`]
+      .filter(Boolean)
+      .join(', ');
+  };
+
+  const computeDiscount = (coupon: CouponResponse, orderSubtotal: number) => {
+    if (coupon.type === 'PERCENTAGE') {
+      return (orderSubtotal * Number(coupon.value)) / 100;
+    }
+    return Math.min(orderSubtotal, Number(coupon.value));
+  };
+
+  const applyCoupon = async () => {
+    if (!couponInput.trim()) {
+      toast.warning('Enter a coupon code first.');
+      return;
+    }
+
+    if (subtotal <= 0) {
+      toast.warning('Add products to cart before applying coupon.');
+      return;
+    }
+
+    try {
+      const coupon = await getCouponByCode(couponInput.trim().toUpperCase());
+
+      if (!coupon.active) {
+        toast.error('Coupon is inactive.');
+        return;
+      }
+
+      const expiryDate = new Date(coupon.expiryDate);
+      const today = new Date();
+      if (expiryDate < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
+        toast.error('Coupon is expired.');
+        return;
+      }
+
+      if (coupon.usageLimit != null && coupon.usedCount >= coupon.usageLimit) {
+        toast.error('Coupon usage limit reached.');
+        return;
+      }
+
+      const discount = computeDiscount(coupon, subtotal);
+      setAppliedCoupon(coupon);
+      setDiscountAmount(discount);
+      setCouponInput(coupon.code);
+
+      setPopup({
+        open: true,
+        title: 'Coupon Applied Successfully',
+        description: 'Great choice. This offer will be used when you place the order.',
+        code: coupon.code,
+        label: 'Discount on this cart',
+        value: formatCurrency(discount),
+      });
+    } catch (error) {
+      toast.error(toErrorMessage(error, 'Invalid coupon code.'));
+    }
+  };
+
   const placeOrder = async () => {
     if (!user?.id) return;
+
     if (cart.length === 0) {
-      toast.warning('Add at least one item to the cart');
+      toast.warning('Your cart is empty. Add products to continue.');
       return;
     }
-    if (!deliveryAddress.trim()) {
-      toast.warning('Delivery address is required');
+
+    const deliveryAddress = buildDeliveryAddress();
+    if (!deliveryAddress) {
+      toast.warning('Complete delivery details with a valid 6-digit postal code.');
       return;
     }
-    if (!validateStock(cart)) return;
+
+    if (!validateStock(cart)) {
+      return;
+    }
 
     try {
       setPlacingOrder(true);
-      const placedOrder = await createOrder({
+      const created = await createOrder({
         userId: user.id,
-        deliveryAddress: deliveryAddress.trim(),
+        deliveryAddress,
         couponCode: appliedCoupon?.code,
         status: 'PENDING',
-        items: cart.map(line => {
-          const product = productMap[line.productId];
-          return {
-            productId: line.productId,
-            quantity: line.quantity,
-            priceAtTime: product?.price ?? 0,
-          };
-        }),
+        items: cart.map((line) => ({
+          productId: line.productId,
+          quantity: line.quantity,
+          priceAtTime: productMap[line.productId]?.price ?? 0,
+        })),
       });
 
-      setOrders(current => [placedOrder, ...current.filter(order => order.id !== placedOrder.id)]);
-      setSelectedOrderId(placedOrder.id);
-      setCart([]);
-      setDeliveryAddress('');
-      setCouponCode('');
-      setAppliedCoupon(null);
-      toast.success(`Order #${placedOrder.id} placed`);
-    } catch {
-      toast.error('Failed to place order');
+      setOrders((current) => [created, ...current.filter((item) => item.id !== created.id)]);
+      setSelectedOrderId(created.id);
+      clearCart();
+      toast.success(`Order #${created.id} placed successfully.`);
+    } catch (error) {
+      toast.error(toErrorMessage(error, 'Failed to place order.'));
     } finally {
       setPlacingOrder(false);
     }
   };
 
-  const reorder = (order: OrderResponse) => {
-    const lines = order.items.map(item => ({ productId: item.productId, quantity: item.quantity }));
-    if (!validateStock(lines)) return;
+  const orderAgain = (order: OrderResponse) => {
+    const lines = order.items.map((item) => ({ productId: item.productId, quantity: item.quantity }));
+    if (!validateStock(lines)) {
+      return;
+    }
+
     setCart(lines);
-    setDeliveryAddress(order.deliveryAddress);
-    toast.success('Order added to cart');
+    setAppliedCoupon(null);
+    setDiscountAmount(0);
+    setCouponInput('');
+    toast.success(`Order #${order.id} loaded in cart.`);
   };
-
-  const currentDriver = selectedOrder ? selectedDriver(selectedOrder.id) : DRIVER_PROFILES[0];
-  const progress = selectedOrder ? progressForStatus(selectedOrder.status) : 0;
-
-  const closeCouponPopup = () => setCouponPopupOpen(false);
 
   if (loading) {
     return (
@@ -287,194 +408,124 @@ export default function ShopPage() {
   }
 
   return (
-    <Box sx={{ maxWidth: 1440, mx: 'auto' }}>
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight={700} color="text.primary">
-          Shop
+    <Box sx={{ maxWidth: 1480, mx: 'auto' }}>
+      <Paper
+        elevation={0}
+        sx={{
+          p: { xs: 2.5, md: 4 },
+          borderRadius: 4,
+          mb: 3,
+          color: 'white',
+          background: 'linear-gradient(130deg, #111827 0%, #1e40af 58%, #0ea5e9 100%)',
+          boxShadow: '0 18px 34px rgba(30, 64, 175, 0.24)',
+        }}
+      >
+        <Typography variant="overline" sx={{ opacity: 0.85, letterSpacing: 2.1 }}>
+          SHOPPING EXPERIENCE
         </Typography>
-        <Typography variant="body2" color="text.secondary" mt={0.5}>
-          Browse products, add them to a cart, and place a cash on delivery order.
+        <Typography variant="h4" sx={{ mt: 0.5, fontWeight: 900 }}>
+          Discover products with real cart and tracked orders
         </Typography>
-      </Box>
+        <Typography sx={{ mt: 1.2, opacity: 0.92, maxWidth: 760 }}>
+          Add items with images, apply coupons, and place orders with structured delivery details.
+        </Typography>
+      </Paper>
 
-      <Grid container spacing={2.5} alignItems="stretch">
-        <Grid item xs={12} md={2.5}>
-          <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2.25, height: '100%' }}>
-            <Stack spacing={2}>
-              <Box>
-                <Typography variant="subtitle2" fontWeight={700} mb={1}>
-                  Brands
-                </Typography>
-                <Stack spacing={1}>
-                  {['All', ...BRANDS].map(brand => (
-                    <Button
-                      key={brand}
-                      variant={selectedBrand === brand ? 'contained' : 'text'}
-                      onClick={() => setSelectedBrand(brand)}
-                      sx={{ justifyContent: 'flex-start', px: 1.25 }}
-                    >
-                      {brand}
-                    </Button>
-                  ))}
-                </Stack>
-              </Box>
-
-              <Divider />
-
-              <Box>
-                <Typography variant="subtitle2" fontWeight={700} mb={1}>
-                  Quick filters
-                </Typography>
-                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  <Chip label={`${products.length} items`} size="small" variant="outlined" />
-                  <Chip label={`${cartCount} in cart`} size="small" variant="outlined" />
-                  <Chip label={`${orders.length} orders`} size="small" variant="outlined" />
-                </Stack>
-              </Box>
-            </Stack>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 2.2fr) minmax(320px, 1fr)' },
+          gap: 2.5,
+          alignItems: 'stretch',
+        }}
+      >
+        <Stack spacing={2.5}>
+          <Paper elevation={0} sx={{ p: 2.2, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
+            <TextField
+              fullWidth
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search products"
+            />
           </Paper>
-        </Grid>
 
-        <Grid item xs={12} md={6.5}>
-          <Stack spacing={2.5}>
-            <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2.25 }}>
-              <Stack spacing={1.5}>
-                <TextField
-                  value={search}
-                  onChange={event => setSearch(event.target.value)}
-                  placeholder="Search products"
-                  size="small"
-                  fullWidth
-                  InputProps={{
-                    startAdornment: <SearchIcon fontSize="small" style={{ marginRight: 8 }} />,
-                  }}
-                />
-                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  {['All', ...BRANDS].map(brand => (
-                    <Chip
-                      key={brand}
-                      label={brand}
-                      clickable
-                      variant={selectedBrand === brand ? 'filled' : 'outlined'}
-                      onClick={() => setSelectedBrand(brand)}
-                    />
-                  ))}
-                </Stack>
-              </Stack>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))', lg: 'repeat(3, minmax(0, 1fr))' },
+              gap: 2,
+            }}
+          >
+            {filteredProducts.map((product) => {
+              const stock = inventory[product.id];
+              const inCart = cart.find((item) => item.productId === product.id)?.quantity ?? 0;
+              const isOut = stock != null && stock <= 0;
+              return (
+                <Card key={product.id} sx={{ borderRadius: 3, border: '1px solid #dbe3ef', height: '100%' }}>
+                  <CardMedia component="img" height="165" image={imageForProduct(product.id)} alt={product.name} />
+                  <CardContent>
+                    <Stack spacing={1.25}>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
+                        {product.name}
+                      </Typography>
+                      <Typography variant="h6" sx={{ fontWeight: 900 }}>{formatCurrency(product.price)}</Typography>
+                      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Chip
+                          size="small"
+                          label={stock == null ? 'Stock pending' : `${stock} in stock`}
+                          color={isOut ? 'error' : 'default'}
+                          variant="outlined"
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                          In cart: {inCart}
+                        </Typography>
+                      </Stack>
+                      <Button
+                        variant="contained"
+                        disabled={isOut}
+                        onClick={() => addToCart(product.id)}
+                        startIcon={<ShoppingCartIcon />}
+                      >
+                        {inCart > 0 ? 'Add more' : 'Add to cart'}
+                      </Button>
+                    </Stack>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </Box>
+
+          {filteredProducts.length === 0 && (
+            <Paper elevation={0} sx={{ p: 4, textAlign: 'center', borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
+              <Typography color="text.secondary">No products found for this search.</Typography>
             </Paper>
+          )}
+        </Stack>
 
-            <Grid container spacing={2}>
-              {filteredProducts.length === 0 ? (
-                <Grid item xs={12}>
-                  <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 4, textAlign: 'center' }}>
-                    <Typography variant="body2" color="text.secondary">
-                      No products match your search.
-                    </Typography>
-                  </Paper>
-                </Grid>
-              ) : filteredProducts.map(product => {
-                const brand = brandForProduct(product.id);
-                const stock = inventory[product.id];
-                const isAvailable = stock == null || stock > 0;
-                const quantityInCart = cart.find(line => line.productId === product.id)?.quantity ?? 0;
-
-                return (
-                  <Grid item xs={12} sm={6} key={product.id}>
-                    <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, height: '100%' }}>
-                      <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, height: '100%' }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
-                          <Box>
-                            <Chip label={brand} size="small" variant="outlined" sx={{ mb: 1 }} />
-                            <Typography variant="subtitle1" fontWeight={700} lineHeight={1.2}>
-                              {product.name}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" mt={0.5}>
-                              Curated retail item
-                            </Typography>
-                          </Box>
-                          <Avatar variant="rounded" sx={{ bgcolor: 'grey.100', color: 'text.primary', width: 40, height: 40 }}>
-                            <StorefrontIcon fontSize="small" />
-                          </Avatar>
-                        </Box>
-
-                        <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
-                          <Typography variant="h6" fontWeight={700}>
-                            {currency(product.price)}
-                          </Typography>
-                          <Chip
-                            label={stock == null ? 'Stock not set' : stock > 0 ? `${stock} in stock` : 'Out of stock'}
-                            size="small"
-                            variant="outlined"
-                          />
-                        </Stack>
-
-                        <Box sx={{ mt: 'auto' }}>
-                          <Button
-                            fullWidth
-                            variant="contained"
-                            disabled={!isAvailable}
-                            onClick={() => addToCart(product)}
-                            startIcon={<ShoppingCartIcon />}
-                          >
-                            {quantityInCart > 0 ? `Add more (${quantityInCart})` : 'Add to cart'}
-                          </Button>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                );
-              })}
-            </Grid>
-
-            <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2.25 }}>
-              <Stack spacing={2}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
-                  <Box>
-                    <Typography variant="subtitle1" fontWeight={700}>
-                      Cart
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {cart.length === 0 ? 'Your cart is empty' : `${cartCount} items ready for checkout`}
-                    </Typography>
-                  </Box>
-                  <Typography variant="subtitle1" fontWeight={700}>
-                    {currency(cartSubtotal)}
-                  </Typography>
-                </Box>
-
+        <Stack spacing={2.5}>
+            <Paper elevation={0} sx={{ p: 2.25, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
+              <Stack spacing={1.3}>
+                <Typography variant="h6" sx={{ fontWeight: 900 }}>Cart Summary</Typography>
+                <Typography variant="body2" color="text.secondary">{cartCount} items selected</Typography>
                 <Divider />
 
                 {cart.length === 0 ? (
-                  <Paper variant="outlined" sx={{ borderRadius: 2, p: 1.5 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      Add a product to begin checkout.
-                    </Typography>
-                  </Paper>
+                  <Typography variant="body2" color="text.secondary">Your cart is empty. Add products to start checkout.</Typography>
                 ) : (
-                  <Stack spacing={1.5}>
-                    {cart.map(line => {
+                  <Stack spacing={1.2}>
+                    {cart.map((line) => {
                       const product = productMap[line.productId];
-                      const stock = inventory[line.productId];
+                      if (!product) return null;
                       return (
-                        <Box key={line.productId} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+                        <Box key={line.productId} sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
                           <Box sx={{ minWidth: 0 }}>
-                            <Typography variant="body2" fontWeight={600} noWrap>
-                              {product?.name ?? `Product #${line.productId}`}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {currency(product?.price ?? 0)} each · {stock == null ? 'Stock not tracked' : `${stock} available`}
-                            </Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 700 }} noWrap>{product.name}</Typography>
+                            <Typography variant="caption" color="text.secondary">{formatCurrency(product.price)} each</Typography>
                           </Box>
-                          <Stack direction="row" spacing={1} alignItems="center">
-                            <Button size="small" variant="outlined" onClick={() => updateCartQty(line.productId, line.quantity - 1)}>
-                              -
-                            </Button>
-                            <Typography variant="body2" fontWeight={700} sx={{ minWidth: 24, textAlign: 'center' }}>
-                              {line.quantity}
-                            </Typography>
-                            <Button size="small" variant="outlined" onClick={() => updateCartQty(line.productId, line.quantity + 1)}>
-                              +
-                            </Button>
+                          <Stack direction="row" spacing={0.6} sx={{ alignItems: 'center' }}>
+                            <Button size="small" variant="outlined" onClick={() => updateCartQuantity(line.productId, line.quantity - 1)}>-</Button>
+                            <Typography variant="body2" sx={{ fontWeight: 700 }}>{line.quantity}</Typography>
+                            <Button size="small" variant="outlined" onClick={() => updateCartQuantity(line.productId, line.quantity + 1)}>+</Button>
                           </Stack>
                         </Box>
                       );
@@ -484,154 +535,98 @@ export default function ShopPage() {
 
                 <Divider />
 
-                <Stack spacing={1.5}>
+                <Stack direction="row" spacing={1}>
                   <TextField
-                    label="Delivery address"
-                    value={deliveryAddress}
-                    onChange={event => setDeliveryAddress(event.target.value)}
-                    multiline
-                    minRows={2}
+                    size="small"
                     fullWidth
+                    label="Coupon code"
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                   />
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                    <TextField
-                      label="Coupon code"
-                      value={couponCode}
-                      onChange={event => {
-                        const value = event.target.value.toUpperCase();
-                        setCouponCode(value);
-                        if (appliedCoupon?.code !== value) {
-                          setAppliedCoupon(null);
-                        }
-                      }}
-                      fullWidth
-                      helperText={appliedCoupon ? `Coupon ${appliedCoupon.code} applied` : 'Enter a coupon code to apply'}
-                    />
-                    <Button
-                      variant="contained"
-                      disabled={!couponCode.trim() || couponApplying}
-                      onClick={async () => {
-                        if (!couponCode.trim()) {
-                          toast.warning('Please enter a coupon code');
-                          return;
-                        }
-                        try {
-                          setCouponApplying(true);
-                          const coupon = await getCouponByCode(couponCode.trim().toUpperCase());
-                          if (!coupon.active) {
-                            toast.error('This coupon is not active');
-                            setAppliedCoupon(null);
-                            return;
-                          }
-                          setAppliedCoupon(coupon);
-                          setCouponPopupOpen(true);
-                        } catch {
-                          toast.error('Invalid coupon code');
-                          setAppliedCoupon(null);
-                        } finally {
-                          setCouponApplying(false);
-                        }
-                      }}
-                    >
-                      Apply
-                    </Button>
-                  </Box>
-                  {appliedCoupon && (
-                    <Box sx={{ border: '1px solid', borderColor: 'success.main', bgcolor: 'success.50', borderRadius: 2, p: 1.5 }}>
-                      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-                        <Box>
-                          <Typography variant="body2" fontWeight={700}>
-                            Coupon {appliedCoupon.code} applied
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {appliedCoupon.type === 'PERCENTAGE'
-                              ? `${appliedCoupon.value}% off`
-                              : `₹${appliedCoupon.value} off`}
-                          </Typography>
-                        </Box>
-                        <Button size="small" onClick={() => { setAppliedCoupon(null); setCouponCode(''); }}>
-                          Remove
-                        </Button>
-                      </Stack>
-                    </Box>
-                  )}
-                  <Typography variant="caption" color="text.secondary">
-                    Payment method: Cash on delivery.
-                  </Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
-                    <Button variant="text" onClick={clearCart} disabled={cart.length === 0}>
-                      Clear cart
-                    </Button>
-                    <Box sx={{ textAlign: 'right' }}>
-                      {couponDiscount > 0 && (
-                        <Typography variant="body2" color="text.secondary">
-                          Discount: -{currency(couponDiscount)}
-                        </Typography>
-                      )}
-                      <Typography variant="subtitle1" fontWeight={700}>
-                        Order total: {currency(orderTotal)}
-                      </Typography>
-                    </Box>
-                    <Button variant="contained" onClick={placeOrder} disabled={placingOrder || cart.length === 0}>
-                      {placingOrder ? 'Placing order...' : 'Place order'}
-                    </Button>
-                  </Box>
+                  <Button variant="outlined" onClick={applyCoupon} startIcon={<SellIcon />}>
+                    Apply
+                  </Button>
+                </Stack>
+
+                {appliedCoupon && (
+                  <Chip
+                    color="success"
+                    variant="outlined"
+                    label={`${appliedCoupon.code} applied (${formatCurrency(discountAmount)} off)`}
+                  />
+                )}
+
+                <Divider />
+
+                <TextField label="Address line" value={delivery.line1} onChange={(e) => setDeliveryField('line1', e.target.value)} fullWidth />
+                <TextField label="Landmark (optional)" value={delivery.landmark} onChange={(e) => setDeliveryField('landmark', e.target.value)} fullWidth />
+                <Stack direction="row" spacing={1}>
+                  <TextField label="City" value={delivery.city} onChange={(e) => setDeliveryField('city', e.target.value)} fullWidth />
+                  <TextField label="State" value={delivery.state} onChange={(e) => setDeliveryField('state', e.target.value)} fullWidth />
+                </Stack>
+                <TextField
+                  label="Postal code"
+                  value={delivery.postalCode}
+                  onChange={(e) => setDeliveryField('postalCode', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  fullWidth
+                />
+
+                <Divider />
+
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" color="text.secondary">Subtotal</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{formatCurrency(subtotal)}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" color="text.secondary">Discount</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>- {formatCurrency(discountAmount)}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 900 }}>Payable</Typography>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 900 }}>{formatCurrency(payable)}</Typography>
+                </Box>
+
+                <Stack direction="row" spacing={1}>
+                  <Button variant="text" onClick={clearCart} disabled={cart.length === 0}>Clear</Button>
+                  <Button variant="contained" fullWidth onClick={placeOrder} disabled={placingOrder || cart.length === 0}>
+                    {placingOrder ? 'Placing order...' : 'Place order'}
+                  </Button>
                 </Stack>
               </Stack>
             </Paper>
-          </Stack>
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Stack spacing={2.5}>
-            <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2.25 }}>
-              <Typography variant="subtitle1" fontWeight={700} mb={0.5}>
-                Order history
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mb={2}>
-                {orders.length === 0 ? 'No orders placed yet' : `Latest ${orders.length} orders`}
-              </Typography>
+
+            <Paper elevation={0} sx={{ p: 2.25, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
+              <Typography variant="h6" sx={{ fontWeight: 900, mb: 1 }}>My Orders</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Track history and reorder instantly.</Typography>
               <Divider sx={{ mb: 2 }} />
 
               {orders.length === 0 ? (
-                <Box sx={{ py: 4, textAlign: 'center' }}>
-                  <ShoppingCartIcon sx={{ fontSize: 36, color: 'text.disabled', mb: 1 }} />
-                  <Typography variant="body2" color="text.secondary">
-                    Your order history will appear here.
-                  </Typography>
-                </Box>
+                <Typography variant="body2" color="text.secondary">No orders yet.</Typography>
               ) : (
-                <Stack spacing={1.25}>
-                  {orders.map(order => (
+                <Stack spacing={1.1}>
+                  {orders.map((order) => (
                     <Box
                       key={order.id}
-                      onClick={() => setSelectedOrderId(order.id)}
                       sx={{
                         border: '1px solid',
-                        borderColor: selectedOrder?.id === order.id ? 'text.primary' : 'divider',
+                        borderColor: selectedOrder?.id === order.id ? 'primary.main' : 'divider',
                         borderRadius: 2,
-                        p: 1.5,
-                        cursor: 'pointer',
+                        p: 1.2,
                       }}
                     >
-                      <Stack spacing={0.75}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-                          <Typography variant="body2" fontWeight={700}>
-                            Order #{order.id}
-                          </Typography>
-                          <Chip label={orderStatusLabel(order.status)} size="small" variant="outlined" />
-                        </Box>
-                        <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          <AccessTimeIcon sx={{ fontSize: 12 }} />
-                          {new Date(order.placedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                        </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-                          <Typography variant="body2" fontWeight={700}>
-                            {currency(order.totalAmount ?? 0)}
-                          </Typography>
-                          <Button size="small" startIcon={<ReplayIcon />} onClick={event => { event.stopPropagation(); reorder(order); }}>
-                            Order again
-                          </Button>
-                        </Box>
+                      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="body2" sx={{ fontWeight: 800 }}>Order #{order.id}</Typography>
+                        <Chip size="small" label={normalizeStatus(order.status)} variant="outlined" />
+                      </Stack>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.4 }}>
+                        {new Date(order.placedAt).toLocaleString('en-IN')}
+                      </Typography>
+                      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mt: 0.8 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>{formatCurrency(Number(order.totalAmount) || 0)}</Typography>
+                        <Stack direction="row" spacing={0.5}>
+                          <Button size="small" onClick={() => setSelectedOrderId(order.id)}>View</Button>
+                          <Button size="small" startIcon={<ReplayIcon />} onClick={() => orderAgain(order)}>Order Again</Button>
+                        </Stack>
                       </Stack>
                     </Box>
                   ))}
@@ -639,135 +634,37 @@ export default function ShopPage() {
               )}
             </Paper>
 
-            <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2.25 }}>
-              <Typography variant="subtitle1" fontWeight={700} mb={0.5}>
-                Order details
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mb={2}>
-                {selectedOrder ? `Order #${selectedOrder.id}` : 'Select an order to inspect it'}
-              </Typography>
-              <Divider sx={{ mb: 2 }} />
-
-              {selectedOrder ? (
-                <Stack spacing={1.5}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                    <Typography variant="body2" color="text.secondary">Placed at</Typography>
-                    <Typography variant="body2" fontWeight={600} align="right">
-                      {new Date(selectedOrder.placedAt).toLocaleString('en-IN')}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                    <Typography variant="body2" color="text.secondary">Status</Typography>
-                    <Typography variant="body2" fontWeight={600} align="right">
-                      {orderStatusLabel(selectedOrder.status)}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                    <Typography variant="body2" color="text.secondary">Payment</Typography>
-                    <Typography variant="body2" fontWeight={600} align="right">
-                      Cash on delivery
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                    <Typography variant="body2" color="text.secondary">Total</Typography>
-                    <Typography variant="body2" fontWeight={700} align="right">
-                      {currency(selectedOrder.totalAmount ?? 0)}
-                    </Typography>
-                  </Box>
-
-                  <Divider />
-
-                  <Typography variant="subtitle2" fontWeight={700}>
-                    Items
+            {selectedOrder && (
+              <Paper elevation={0} sx={{ p: 2.25, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
+                <Stack spacing={1.1}>
+                  <Typography variant="h6" sx={{ fontWeight: 900 }}>Delivery Tracking</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Current status: {normalizeStatus(selectedOrder.status)}
                   </Typography>
-                  <Stack spacing={1}>
-                    {selectedOrder.items.map(item => {
-                      const product = productMap[item.productId];
-                      return (
-                        <Box key={item.id} sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                          <Box sx={{ minWidth: 0 }}>
-                            <Typography variant="body2" fontWeight={600} noWrap>
-                              {product?.name ?? `Product #${item.productId}`}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {item.quantity} x {currency(item.priceAtTime)}
-                            </Typography>
-                          </Box>
-                          <Typography variant="body2" fontWeight={700}>
-                            {currency(item.quantity * item.priceAtTime)}
-                          </Typography>
-                        </Box>
-                      );
-                    })}
-                  </Stack>
-                </Stack>
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  No order selected.
-                </Typography>
-              )}
-            </Paper>
-
-            <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2.25 }}>
-              <Typography variant="subtitle1" fontWeight={700} mb={0.5}>
-                Delivery details
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mb={2}>
-                Live delivery information for the selected order.
-              </Typography>
-              <Divider sx={{ mb: 2 }} />
-
-              {selectedOrder ? (
-                <Stack spacing={2}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Avatar sx={{ bgcolor: 'grey.100', color: 'text.primary' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Avatar sx={{ bgcolor: '#e0f2fe', color: '#0369a1', width: 34, height: 34 }}>
                       <LocalShippingIcon fontSize="small" />
                     </Avatar>
-                    <Box>
-                      <Typography variant="body2" fontWeight={700}>
-                        {currentDriver.name}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {currentDriver.bike}
-                      </Typography>
-                    </Box>
+                    <Typography variant="body2">Tracking ref: RO-{selectedOrder.id}-{String(selectedOrder.userId).padStart(4, '0')}</Typography>
                   </Box>
-
-                  <Box>
-                    <Typography variant="caption" color="text.secondary" display="block" mb={1}>
-                      Distance from hub
-                    </Typography>
-                    <Typography variant="body2" fontWeight={600}>
-                      {currentDriver.distanceKm.toFixed(1)} km away · ETA {currentDriver.etaMinutes} min
-                    </Typography>
-                  </Box>
-
-                  <Box>
-                    <Typography variant="caption" color="text.secondary" display="block" mb={1}>
-                      Location tracker
-                    </Typography>
-                    <LinearProgress variant="determinate" value={progress} sx={{ height: 8, borderRadius: 999, mb: 1.5 }} />
-                    <Stack direction="row" justifyContent="space-between" spacing={1}>
-                      <Typography variant="caption" color="text.secondary">Warehouse</Typography>
-                      <Typography variant="caption" color="text.secondary">Route</Typography>
-                      <Typography variant="caption" color="text.secondary">Your address</Typography>
-                    </Stack>
-                  </Box>
+                  <Typography variant="caption" color="text.secondary">
+                    Delivery address: {selectedOrder.deliveryAddress}
+                  </Typography>
                 </Stack>
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  Select an order to show delivery details.
-                </Typography>
-              )}
-            </Paper>
-          </Stack>
-        </Grid>
-      </Grid>
+              </Paper>
+            )}
+        </Stack>
+      </Box>
+
       <CouponSuccessPopup
-        open={couponPopupOpen}
-        couponCode={appliedCoupon?.code ?? ''}
-        discountAmount={couponDiscount}
-        onClose={() => setCouponPopupOpen(false)}
+        open={popup.open}
+        title={popup.title}
+        description={popup.description}
+        couponCode={popup.code}
+        highlightLabel={popup.label}
+        highlightValue={popup.value}
+        ctaLabel="Got it"
+        onClose={() => setPopup((current) => ({ ...current, open: false }))}
       />
     </Box>
   );

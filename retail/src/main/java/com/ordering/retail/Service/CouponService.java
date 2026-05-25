@@ -3,22 +3,25 @@ package com.ordering.retail.Service;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ordering.retail.DTOs.CouponRequestDTO;
 import com.ordering.retail.DTOs.CouponResponseDTO;
 import com.ordering.retail.Entity.Coupon;
 import com.ordering.retail.Exception.ResourceNotFoundException;
 import com.ordering.retail.Repository.CouponRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class CouponService {
 
     private final CouponRepository couponRepository;
+    private final CouponNotificationService couponNotificationService;
 
-    public CouponService(CouponRepository couponRepository) {
+    public CouponService(CouponRepository couponRepository, CouponNotificationService couponNotificationService) {
         this.couponRepository = couponRepository;
+        this.couponNotificationService = couponNotificationService;
     }
 
     @Transactional(readOnly = true)
@@ -44,7 +47,9 @@ public class CouponService {
 
         Coupon coupon = new Coupon();
         applyRequest(coupon, request);
-        return toResponse(couponRepository.save(coupon));
+        Coupon saved = couponRepository.save(coupon);
+        couponNotificationService.sendNewCouponAnnouncement(saved);
+        return toResponse(saved);
     }
 
     public CouponResponseDTO update(Long id, CouponRequestDTO request) {

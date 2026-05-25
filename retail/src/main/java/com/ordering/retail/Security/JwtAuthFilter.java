@@ -3,10 +3,6 @@ package com.ordering.retail.Security;
 import java.io.IOException;
 import java.util.List;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +10,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -29,8 +30,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		String path = request.getRequestURI();
 		return path.startsWith("/api/auth/")
 				|| path.startsWith("/v3/api-docs")
-				|| path.startsWith("/swagger-ui")
-				|| path.startsWith("/h2-console");
+				|| path.startsWith("/swagger-ui");
 	}
 
 	@Override

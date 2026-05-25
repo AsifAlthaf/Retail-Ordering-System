@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import {
   Alert,
-  Avatar,
   Box,
   Button,
   Card,
   CardContent,
-  Chip,
   CircularProgress,
   Collapse,
   Container,
-  Divider,
   FormControl,
   FormHelperText,
   IconButton,
@@ -18,73 +15,46 @@ import {
   InputLabel,
   Link,
   OutlinedInput,
-  Paper,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import PersonIcon from '@mui/icons-material/Person';
-
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { validateEmail, validatePassword } from '../utils/validation';
 
-const DEMO_CREDS = [
-  { label: 'Admin', email: 'admin@retailos.com', password: 'Admin@1234', role: 'ADMIN' as const },
-  { label: 'User',  email: 'john@retailos.com',  password: 'User@1234',  role: 'USER'  as const },
-];
-
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [email,        setEmail]        = useState('');
-  const [password,     setPassword]     = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [touched,      setTouched]      = useState({ email: false, password: false });
-  const [loading,      setLoading]      = useState(false);
-  const [loginError,   setLoginError]   = useState('');
+  const [touched, setTouched] = useState({ email: false, password: false });
+  const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
-  const emailError    = touched.email    ? validateEmail(email)       : '';
+  const emailError = touched.email ? validateEmail(email) : '';
   const passwordError = touched.password ? validatePassword(password) : '';
-  const isValid       = !validateEmail(email) && !validatePassword(password);
+  const isValid = !validateEmail(email) && !validatePassword(password);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched({ email: true, password: true });
     setLoginError('');
     if (!isValid) return;
+
     try {
       setLoading(true);
       await login(email, password);
-      toast.success('Logged in successfully!');
-      navigate('/shop');
+      toast.success('Logged in successfully');
+      navigate('/');
     } catch (err: any) {
-      setLoginError(err.message ?? 'Invalid credentials. Please try again.');
+      setLoginError(err?.message ?? 'Invalid credentials. Please try again.');
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const fillDemo = async (e: string, p: string) => {
-    setEmail(e);
-    setPassword(p);
-    setTouched({ email: true, password: true });
-    setLoginError('');
-    
-    // Auto-submit with demo credentials
-    try {
-      setLoading(true);
-      await login(e, p);
-      toast.success('Logged in successfully!');
-      navigate('/shop');
-    } catch (err: any) {
-      setLoginError(err.message ?? 'Invalid credentials.');
       setLoading(false);
     }
   };
@@ -93,161 +63,108 @@ export default function LoginPage() {
     <Box
       sx={{
         minHeight: '100vh',
-        bgcolor: 'grey.50',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        py: 4,
+        py: { xs: 3, md: 6 },
         px: 2,
+        background: '#ffffff',
       }}
     >
-      <Container maxWidth="sm" disableGutters>
-
-        {/* Header */}
-        <Box sx={{ mb: 4 }}>
-          <Stack alignItems="center" spacing={2}>
-            <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
-              <LockOutlinedIcon fontSize="large" />
-            </Avatar>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h4" fontWeight={700} color="text.primary">
-                Welcome to RetailOS
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mt={1}>
-                Sign in to your account to start shopping
+      <Container maxWidth="lg">
+        <Card sx={{ borderRadius: 0, overflow: 'hidden', border: '1px solid #d0d0d0', boxShadow: 'none' }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1.1fr 1fr' } }}>
+            <Box
+              sx={{
+                minHeight: { xs: 220, md: 620 },
+                p: { xs: 3, md: 5 },
+                color: 'white',
+                backgroundImage: 'linear-gradient(145deg, rgba(0, 0, 0, 0.84), rgba(0, 0, 0, 0.74)), url(https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1400&q=80)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Box>
+                <Typography variant="overline" sx={{ letterSpacing: 2.2, opacity: 0.9 }}>
+                  RETAIL OS
+                </Typography>
+                <Typography variant="h3" sx={{ mt: 1, lineHeight: 1.15, fontWeight: 900 }}>
+                  Trusted retail ordering for real operations.
+                </Typography>
+                <Typography sx={{ mt: 2, maxWidth: 420, opacity: 0.9 }}>
+                  Manage products, orders, and coupons with reliable order history and live status updates.
+                </Typography>
+              </Box>
+              <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                Secure sign-in powered by JWT.
               </Typography>
             </Box>
-          </Stack>
-        </Box>
 
-        {/* Demo Accounts Section */}
-        <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2.5, mb: 2.5 }}>
-          <Stack spacing={1.5}>
-            <Box>
-              <Typography variant="subtitle2" fontWeight={700} color="text.primary" mb={1}>
-                Try Demo Accounts
+            <CardContent sx={{ p: { xs: 3, md: 5 } }}>
+              <Typography variant="h4" sx={{ fontWeight: 900, mb: 1 }}>
+                Welcome back
               </Typography>
-              <Typography variant="caption" color="text.secondary" display="block" mb={1.5}>
-                Click a button below to auto-fill credentials
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                Sign in to access your dashboard and track every order.
               </Typography>
-            </Box>
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-              {DEMO_CREDS.map(d => (
-                <Chip
-                  key={d.label}
-                  label={d.label}
-                  size="medium"
-                  color={d.role === 'ADMIN' ? 'primary' : 'success'}
-                  variant="outlined"
-                  icon={
-                    d.role === 'ADMIN'
-                      ? <AdminPanelSettingsIcon />
-                      : <PersonIcon />
-                  }
-                  onClick={() => fillDemo(d.email, d.password)}
-                  clickable
-                  disabled={loading}
-                />
-              ))}
-            </Stack>
-          </Stack>
-        </Paper>
 
-        {/* Login Form Section */}
-        <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-          <CardContent sx={{ p: 3 }}>
+              <Collapse in={!!loginError} unmountOnExit>
+                <Alert severity="error" onClose={() => setLoginError('')} sx={{ mb: 2 }}>
+                  {loginError}
+                </Alert>
+              </Collapse>
 
-            {/* Login error */}
-            <Collapse in={!!loginError} unmountOnExit>
-              <Alert
-                severity="error"
-                onClose={() => setLoginError('')}
-                sx={{ mb: 2 }}
-              >
-                {loginError}
-              </Alert>
-            </Collapse>
+              <Box component="form" onSubmit={handleSubmit} noValidate>
+                <Stack spacing={2.2}>
+                  <FormControl fullWidth error={!!emailError}>
+                    <InputLabel htmlFor="login-email">Email</InputLabel>
+                    <OutlinedInput
+                      id="login-email"
+                      label="Email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setLoginError('');
+                      }}
+                      onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+                      autoComplete="email"
+                    />
+                    {emailError && <FormHelperText>{emailError}</FormHelperText>}
+                  </FormControl>
 
-            <Box component="form" onSubmit={handleSubmit} noValidate>
-              <Stack spacing={2.5}>
+                  <FormControl fullWidth error={!!passwordError}>
+                    <InputLabel htmlFor="login-password">Password</InputLabel>
+                    <OutlinedInput
+                      id="login-password"
+                      label="Password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setLoginError('');
+                      }}
+                      onBlur={() => setTouched((t) => ({ ...t, password: true }))}
+                      autoComplete="current-password"
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => setShowPassword((v) => !v)} edge="end">
+                            {showPassword ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                    />
+                    {passwordError && <FormHelperText>{passwordError}</FormHelperText>}
+                  </FormControl>
 
-                {/* Email */}
-                <TextField
-                  id="login-email"
-                  label="Email address"
-                  type="email"
-                  value={email}
-                  onChange={e => { setEmail(e.target.value); setLoginError(''); }}
-                  onBlur={() => setTouched(t => ({ ...t, email: true }))}
-                  error={!!emailError}
-                  helperText={emailError}
-                  fullWidth
-                  autoComplete="email"
-                  autoFocus
-                  size="medium"
-                />
+                  <Button type="submit" variant="contained" size="large" disabled={loading} endIcon={!loading ? <ArrowForwardIcon /> : undefined}>
+                    {loading ? <CircularProgress size={20} color="inherit" /> : 'Sign In'}
+                  </Button>
+                </Stack>
+              </Box>
 
-                {/* Password */}
-                <FormControl
-                  fullWidth
-                  variant="outlined"
-                  error={touched.password && !!passwordError}
-                >
-                  <InputLabel htmlFor="login-password">Password</InputLabel>
-                  <OutlinedInput
-                    id="login-password"
-                    label="Password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={e => { setPassword(e.target.value); setLoginError(''); }}
-                    onBlur={() => setTouched(t => ({ ...t, password: true }))}
-                    autoComplete="current-password"
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label={showPassword ? 'Hide password' : 'Show password'}
-                          onClick={() => setShowPassword(v => !v)}
-                          edge="end"
-                        >
-                          {showPassword
-                            ? <VisibilityOffIcon fontSize="small" />
-                            : <VisibilityIcon   fontSize="small" />
-                          }
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                  {touched.password && passwordError && (
-                    <FormHelperText>{passwordError}</FormHelperText>
-                  )}
-                </FormControl>
-
-                {/* Submit */}
-                <Button
-                  id="login-submit"
-                  type="submit"
-                  variant="contained"
-                  size="large"
-                  fullWidth
-                  disabled={loading}
-                  sx={{ mt: 1 }}
-                >
-                  {loading
-                    ? <CircularProgress size={22} color="inherit" />
-                    : 'Sign In'
-                  }
-                </Button>
-
-              </Stack>
-            </Box>
-
-            {/* Divider */}
-            <Divider sx={{ my: 2.5 }} />
-
-            {/* Sign up link */}
-            <Stack spacing={2}>
-              <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
-                Don't have an account?{' '}
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 3 }}>
+                New customer?{' '}
                 <Link
                   component="button"
                   type="button"
@@ -255,37 +172,14 @@ export default function LoginPage() {
                     e.preventDefault();
                     navigate('/signup');
                   }}
-                  sx={{ fontWeight: 600, cursor: 'pointer' }}
+                  sx={{ fontWeight: 700 }}
                 >
-                  Sign up here
+                  Create your account
                 </Link>
               </Typography>
-
-              <Stack direction="row" spacing={1} useFlexGap sx={{ justifyContent: 'center', flexWrap: 'wrap' }}>
-                <Chip
-                  size="small"
-                  icon={<AdminPanelSettingsIcon />}
-                  label="Admin → Dashboard"
-                  color="primary"
-                  variant="outlined"
-                />
-                <Chip
-                  size="small"
-                  icon={<PersonIcon />}
-                  label="User → Shop"
-                  color="success"
-                  variant="outlined"
-                />
-              </Stack>
-            </Stack>
-
-          </CardContent>
-        </Paper>
-
-        <Typography variant="caption" color="text.disabled" display="block" sx={{ textAlign: 'center', mt: 3 }}>
-          © {new Date().getFullYear()} RetailOS. Backend-connected authentication.
-        </Typography>
-
+            </CardContent>
+          </Box>
+        </Card>
       </Container>
     </Box>
   );

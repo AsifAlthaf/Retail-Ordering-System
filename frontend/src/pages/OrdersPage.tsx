@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box, Button, Chip, CircularProgress, Dialog, DialogActions,
   DialogContent, DialogTitle, FormControl, IconButton, InputLabel,
@@ -7,7 +7,6 @@ import {
   Divider, Stack,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -270,7 +269,7 @@ export default function OrdersPage() {
           <Divider><Typography variant="caption" color="text.secondary">Order Items</Typography></Divider>
 
           {form.items.map((item, idx) => (
-            <Stack key={idx} direction="row" spacing={1} alignItems="center">
+            <Stack key={idx} direction="row" spacing={1} sx={{ alignItems: 'center' }}>
               <FormControl size="small" sx={{ minWidth: 150 }}>
                 <InputLabel>Product</InputLabel>
                 <Select label="Product" value={item.productId}
@@ -279,9 +278,9 @@ export default function OrdersPage() {
                 </Select>
               </FormControl>
               <TextField label="Qty" type="number" size="small" value={item.quantity} sx={{ width: 70 }}
-                onChange={e => updateItem(idx, { quantity: parseInt(e.target.value) || 1 })} inputProps={{ min: 1 }} />
+                onChange={e => updateItem(idx, { quantity: parseInt(e.target.value) || 1 })} />
               <TextField label="Price" type="number" size="small" value={item.priceAtTime} sx={{ width: 100 }}
-                onChange={e => updateItem(idx, { priceAtTime: parseFloat(e.target.value) || 0 })} inputProps={{ min: 0, step: 0.01 }} />
+                onChange={e => updateItem(idx, { priceAtTime: parseFloat(e.target.value) || 0 })} />
               <IconButton color="error" size="small" onClick={() => removeItem(idx)} disabled={form.items.length === 1}>
                 <RemoveCircleIcon />
               </IconButton>
@@ -315,7 +314,7 @@ export default function OrdersPage() {
               <Typography><b>Total:</b> ₹{detailOrder.totalAmount?.toFixed(2)}</Typography>
               <Typography><b>Placed:</b> {new Date(detailOrder.placedAt).toLocaleString()}</Typography>
               <Divider />
-              <Typography fontWeight={700}>Items:</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Items:</Typography>
               {detailOrder.items?.length ? detailOrder.items.map(item => (
                 <Box key={item.id} sx={{ pl: 1 }}>
                   <Typography variant="body2">
@@ -326,7 +325,7 @@ export default function OrdersPage() {
                 <Typography variant="body2" color="text.secondary">No items available for this order.</Typography>
               )}
               <Divider />
-              <Typography fontWeight={700}>Admin actions:</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Admin actions:</Typography>
               <Stack direction="row" spacing={1}>
                 <Button
                   variant="contained"
