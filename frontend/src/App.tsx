@@ -20,7 +20,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
-import UserDashboardPage from './pages/UserDashboardPage';
+import UserDashboardPage from './pages/ShopPage';
 import ProductsPage from './pages/ProductsPage';
 import OrdersPage from './pages/OrdersPage';
 import CouponsPage from './pages/CouponsPage';
@@ -36,7 +36,7 @@ const ADMIN_NAV = [
 ];
 
 const USER_NAV = [
-  { label: 'My Dashboard', icon: <DashboardIcon />,    path: '/my-orders' },
+  { label: 'Shop',         icon: <DashboardIcon />,    path: '/my-orders' },
   { label: 'Orders',       icon: <ShoppingCartIcon />, path: '/orders' },
 ];
 
@@ -310,7 +310,7 @@ export default function App() {
           closeOnClick
           pauseOnHover
           draggable
-          theme="colored"
+          theme="light"
         />
       </AuthProvider>
     </BrowserRouter>
