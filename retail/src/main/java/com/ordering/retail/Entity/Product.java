@@ -1,45 +1,55 @@
 package com.ordering.retail.Entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.math.BigDecimal;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "products")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Product {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank
     private String name;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @NotNull
+    private Double price;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+    public Product() {
+    }
 
-    private String packaging; // Box, Bottle, Bag, etc.
+    public Product(String name, Double price) {
+        this.name = name;
+        this.price = price;
+    }
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    public Long getId() {
+        return id;
+    }
 
-    @Column(name = "is_available")
-    private Boolean isAvailable;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
+    public String getName() {
+        return name;
+    }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "brand_id")
-    private Brand brand;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 }
