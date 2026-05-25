@@ -1,5 +1,9 @@
 package com.ordering.retail.Enum;
 
-public class OrderStatus {
-    
+public enum OrderStatus {
+	PENDING,
+	CONFIRMED,
+	SHIPPED,
+	DELIVERED,
+	CANCELLED
 }
