@@ -37,18 +37,29 @@ function StatCard({ label, value, icon, color, sub }: StatCardProps) {
     <Card
       elevation={0}
       sx={{
-        borderRadius: 3,
-        border: '1px solid',
-        borderColor: 'divider',
+        borderRadius: 4,
+        border: '1px solid rgba(148, 163, 184, 0.22)',
+        background: 'linear-gradient(145deg, #ffffff 0%, #f8fbff 100%)',
+        boxShadow: '0 14px 28px rgba(15, 23, 42, 0.08)',
         height: '100%',
         position: 'relative',
         overflow: 'hidden',
-        transition: 'box-shadow 0.2s, transform 0.2s',
-        '&:hover': { boxShadow: 4, transform: 'translateY(-2px)' },
+        transition: 'box-shadow 0.25s, transform 0.25s',
+        '&:hover': { boxShadow: '0 20px 34px rgba(30, 64, 175, 0.16)', transform: 'translateY(-4px)' },
       }}
     >
-      {/* top accent bar */}
-      <Box sx={{ height: 4, bgcolor: color, width: '100%' }} />
+      <Box
+        sx={{
+          position: 'absolute',
+          right: -22,
+          top: -22,
+          width: 90,
+          height: 90,
+          borderRadius: '50%',
+          bgcolor: color + '16',
+        }}
+      />
+      <Box sx={{ height: 5, bgcolor: color, width: '100%' }} />
       <CardContent sx={{ p: 2.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <Box>
@@ -119,16 +130,42 @@ export default function DashboardPage() {
   );
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
+    <Box
+      sx={{
+        maxWidth: 1240,
+        mx: 'auto',
+        px: { xs: 1, md: 0 },
+        pb: 2,
+        fontFamily: '"Space Grotesk", "Segoe UI", sans-serif',
+      }}
+    >
 
-      {/* Page header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h5" fontWeight={800} color="text.primary">
+      <Box
+        sx={{
+          mb: 4,
+          p: { xs: 2.5, md: 3.5 },
+          borderRadius: 4,
+          color: 'white',
+          background: 'radial-gradient(circle at 85% 20%, rgba(56, 189, 248, 0.35) 0%, rgba(56, 189, 248, 0) 40%), linear-gradient(120deg, #0f172a 0%, #1e3a8a 48%, #0b4ea2 100%)',
+          boxShadow: '0 22px 38px rgba(30, 64, 175, 0.25)',
+          border: '1px solid rgba(191, 219, 254, 0.2)',
+        }}
+      >
+        <Typography variant="overline" sx={{ letterSpacing: 2, opacity: 0.84 }}>
+          Operations overview
+        </Typography>
+        <Typography variant="h4" fontWeight={900} mt={0.3}>
           Dashboard
         </Typography>
-        <Typography variant="body2" color="text.secondary" mt={0.5}>
-          Welcome back — here's what's happening today.
+        <Typography variant="body2" sx={{ mt: 1, opacity: 0.9, maxWidth: 700 }}>
+          Live pulse of orders, catalog health, and conversion outcomes. Confirm or cancel pending orders from the orders screen to trigger customer notifications.
         </Typography>
+
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} mt={2.2}>
+          <Chip label={`${pendingOrders} pending orders`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white', fontWeight: 700 }} />
+          <Chip label={`₹${totalRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })} delivered revenue`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white', fontWeight: 700 }} />
+          <Chip label={`${activeCoupons} active coupons`} sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'white', fontWeight: 700 }} />
+        </Stack>
       </Box>
 
       {/* ── Stat Cards Row ── */}
@@ -179,9 +216,10 @@ export default function DashboardPage() {
           <Paper
             elevation={0}
             sx={{
-              borderRadius: 3,
-              border: '1px solid',
-              borderColor: 'divider',
+              borderRadius: 4,
+              border: '1px solid rgba(148, 163, 184, 0.22)',
+              background: 'linear-gradient(165deg, #ffffff 0%, #f8fafc 100%)',
+              boxShadow: '0 10px 28px rgba(15, 23, 42, 0.07)',
               p: 3,
               height: '100%',
             }}
@@ -253,9 +291,10 @@ export default function DashboardPage() {
           <Paper
             elevation={0}
             sx={{
-              borderRadius: 3,
-              border: '1px solid',
-              borderColor: 'divider',
+              borderRadius: 4,
+              border: '1px solid rgba(148, 163, 184, 0.22)',
+              background: 'linear-gradient(165deg, #ffffff 0%, #f8fafc 100%)',
+              boxShadow: '0 10px 28px rgba(15, 23, 42, 0.07)',
               p: 3,
               height: '100%',
             }}
