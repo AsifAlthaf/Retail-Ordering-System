@@ -3,7 +3,6 @@ package com.ordering.retail.Service;
 import com.ordering.retail.Entity.Cart;
 import com.ordering.retail.Entity.CartItem;
 import com.ordering.retail.Entity.Product;
-import com.ordering.retail.Exception.OutOfStockException;
 import com.ordering.retail.Repository.CartItemRepository;
 import com.ordering.retail.Repository.ProductRepository;
 import org.springframework.stereotype.Service;
