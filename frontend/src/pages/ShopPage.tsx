@@ -31,7 +31,9 @@ import { useAuth } from '../context/AuthContext';
 import { createOrder, getOrdersByUser } from '../api/orders';
 import { getProducts } from '../api/products';
 import { getInventory } from '../api/inventory';
-import type { OrderResponse, Product } from '../types';
+import { getCouponByCode } from '../api/coupons';
+import CouponSuccessPopup from '../components/CouponSuccessPopup';
+import type { CouponResponse, OrderResponse, Product } from '../types';
 
 interface CartLine {
   productId: number;
@@ -85,6 +87,10 @@ export default function ShopPage() {
   const [search, setSearch] = useState('');
   const [cart, setCart] = useState<CartLine[]>([]);
   const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<CouponResponse | null>(null);
+  const [couponApplying, setCouponApplying] = useState(false);
+  const [couponPopupOpen, setCouponPopupOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [placingOrder, setPlacingOrder] = useState(false);
@@ -93,6 +99,13 @@ export default function ShopPage() {
 
   const productMap = Object.fromEntries(products.map(product => [product.id, product]));
   const selectedOrder = orders.find(order => order.id === selectedOrderId) ?? orders[0] ?? null;
+  const cartSubtotal = cart.reduce((sum, line) => sum + ((productMap[line.productId]?.price ?? 0) * line.quantity), 0);
+  const couponDiscount = appliedCoupon
+    ? appliedCoupon.type === 'PERCENTAGE'
+      ? Math.round(cartSubtotal * (appliedCoupon.value / 100))
+      : Number(appliedCoupon.value)
+    : 0;
+  const orderTotal = Math.max(0, cartSubtotal - couponDiscount);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -162,10 +175,6 @@ export default function ShopPage() {
   });
 
   const cartCount = cart.reduce((sum, line) => sum + line.quantity, 0);
-  const cartSubtotal = cart.reduce((sum, line) => {
-    const product = productMap[line.productId];
-    return sum + (product?.price ?? 0) * line.quantity;
-  }, 0);
 
   const addToCart = (product: Product, quantity = 1) => {
     const stock = inventory[product.id];
@@ -230,6 +239,7 @@ export default function ShopPage() {
       const placedOrder = await createOrder({
         userId: user.id,
         deliveryAddress: deliveryAddress.trim(),
+        couponCode: appliedCoupon?.code,
         status: 'PENDING',
         items: cart.map(line => {
           const product = productMap[line.productId];
@@ -245,6 +255,8 @@ export default function ShopPage() {
       setSelectedOrderId(placedOrder.id);
       setCart([]);
       setDeliveryAddress('');
+      setCouponCode('');
+      setAppliedCoupon(null);
       toast.success(`Order #${placedOrder.id} placed`);
     } catch {
       toast.error('Failed to place order');
@@ -263,6 +275,8 @@ export default function ShopPage() {
 
   const currentDriver = selectedOrder ? selectedDriver(selectedOrder.id) : DRIVER_PROFILES[0];
   const progress = selectedOrder ? progressForStatus(selectedOrder.status) : 0;
+
+  const closeCouponPopup = () => setCouponPopupOpen(false);
 
   if (loading) {
     return (
@@ -479,23 +493,94 @@ export default function ShopPage() {
                     minRows={2}
                     fullWidth
                   />
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                    <TextField
+                      label="Coupon code"
+                      value={couponCode}
+                      onChange={event => {
+                        const value = event.target.value.toUpperCase();
+                        setCouponCode(value);
+                        if (appliedCoupon?.code !== value) {
+                          setAppliedCoupon(null);
+                        }
+                      }}
+                      fullWidth
+                      helperText={appliedCoupon ? `Coupon ${appliedCoupon.code} applied` : 'Enter a coupon code to apply'}
+                    />
+                    <Button
+                      variant="contained"
+                      disabled={!couponCode.trim() || couponApplying}
+                      onClick={async () => {
+                        if (!couponCode.trim()) {
+                          toast.warning('Please enter a coupon code');
+                          return;
+                        }
+                        try {
+                          setCouponApplying(true);
+                          const coupon = await getCouponByCode(couponCode.trim().toUpperCase());
+                          if (!coupon.active) {
+                            toast.error('This coupon is not active');
+                            setAppliedCoupon(null);
+                            return;
+                          }
+                          setAppliedCoupon(coupon);
+                          setCouponPopupOpen(true);
+                        } catch {
+                          toast.error('Invalid coupon code');
+                          setAppliedCoupon(null);
+                        } finally {
+                          setCouponApplying(false);
+                        }
+                      }}
+                    >
+                      Apply
+                    </Button>
+                  </Box>
+                  {appliedCoupon && (
+                    <Box sx={{ border: '1px solid', borderColor: 'success.main', bgcolor: 'success.50', borderRadius: 2, p: 1.5 }}>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+                        <Box>
+                          <Typography variant="body2" fontWeight={700}>
+                            Coupon {appliedCoupon.code} applied
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {appliedCoupon.type === 'PERCENTAGE'
+                              ? `${appliedCoupon.value}% off`
+                              : `₹${appliedCoupon.value} off`}
+                          </Typography>
+                        </Box>
+                        <Button size="small" onClick={() => { setAppliedCoupon(null); setCouponCode(''); }}>
+                          Remove
+                        </Button>
+                      </Stack>
+                    </Box>
+                  )}
                   <Typography variant="caption" color="text.secondary">
                     Payment method: Cash on delivery.
                   </Typography>
-                  <Stack direction="row" spacing={1} justifyContent="space-between">
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
                     <Button variant="text" onClick={clearCart} disabled={cart.length === 0}>
                       Clear cart
                     </Button>
+                    <Box sx={{ textAlign: 'right' }}>
+                      {couponDiscount > 0 && (
+                        <Typography variant="body2" color="text.secondary">
+                          Discount: -{currency(couponDiscount)}
+                        </Typography>
+                      )}
+                      <Typography variant="subtitle1" fontWeight={700}>
+                        Order total: {currency(orderTotal)}
+                      </Typography>
+                    </Box>
                     <Button variant="contained" onClick={placeOrder} disabled={placingOrder || cart.length === 0}>
                       {placingOrder ? 'Placing order...' : 'Place order'}
                     </Button>
-                  </Stack>
+                  </Box>
                 </Stack>
               </Stack>
             </Paper>
           </Stack>
         </Grid>
-
         <Grid item xs={12} md={3}>
           <Stack spacing={2.5}>
             <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2.25 }}>
@@ -678,6 +763,12 @@ export default function ShopPage() {
           </Stack>
         </Grid>
       </Grid>
+      <CouponSuccessPopup
+        open={couponPopupOpen}
+        couponCode={appliedCoupon?.code ?? ''}
+        discountAmount={couponDiscount}
+        onClose={() => setCouponPopupOpen(false)}
+      />
     </Box>
   );
 }
