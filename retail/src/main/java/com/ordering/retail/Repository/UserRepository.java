@@ -1,5 +1,7 @@
 package com.ordering.retail.Repository;
 
-public class UserRepository {
-    
+import com.ordering.retail.Entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, Long> {
 }
