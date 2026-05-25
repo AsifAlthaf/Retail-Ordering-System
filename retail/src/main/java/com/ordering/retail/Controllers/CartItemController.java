@@ -1,7 +1,6 @@
 package com.ordering.retail.Controllers;
 
 import com.ordering.retail.DTOs.CartItemDTO;
-import com.ordering.retail.Entity.CartItem;
 import com.ordering.retail.Service.CartService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

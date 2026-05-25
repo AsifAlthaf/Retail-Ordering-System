@@ -6,8 +6,6 @@ import com.ordering.retail.Service.CartService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-
 @RestController
 @RequestMapping("/api/carts")
 public class CartController {
