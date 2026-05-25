@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import {
   Box, CssBaseline, Toolbar, Typography, AppBar,
-  IconButton, Avatar, Divider,
+  IconButton, Avatar, Divider, Button, Stack,
   Menu, MenuItem as MuiMenuItem, Chip,
 } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -87,6 +87,25 @@ function AppLayout() {
       <CssBaseline />
       <TopAppBar />
       <Toolbar />
+
+      {user?.role === 'ADMIN' && (
+        <Box sx={{ px: { xs: 2, md: 4 }, pb: 2 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems="center">
+            <Button component={Link} to="/" variant="contained" color="primary" sx={{ minWidth: 112 }}>
+              Dashboard
+            </Button>
+            <Button component={Link} to="/products" variant="outlined" color="primary" sx={{ minWidth: 112 }}>
+              Items
+            </Button>
+            <Button component={Link} to="/coupons" variant="outlined" color="primary" sx={{ minWidth: 112 }}>
+              Coupons
+            </Button>
+            <Button component={Link} to="/orders" variant="outlined" color="primary" sx={{ minWidth: 112 }}>
+              Orders
+            </Button>
+          </Stack>
+        </Box>
+      )}
 
       <Box
         component="main"

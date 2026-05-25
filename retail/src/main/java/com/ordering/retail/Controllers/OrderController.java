@@ -58,6 +58,12 @@ public class OrderController {
         return orderService.findByUserId(userId);
     }
 
+    @GetMapping("/status/{status}")
+    @Operation(summary = "Get orders by status")
+    public List<OrderResponseDTO> findByStatus(@PathVariable OrderStatus status) {
+        return orderService.findByStatus(status);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new order")
@@ -90,6 +96,26 @@ public class OrderController {
     public OrderResponseDTO updateStatus(@PathVariable Long id,
             @Parameter(description = "New order status") @RequestParam OrderStatus status) {
         return orderService.updateStatus(id, status);
+    }
+
+    @PatchMapping("/{id}/confirm")
+    @Operation(summary = "Confirm an order")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Order confirmed"),
+            @ApiResponse(responseCode = "404", description = "Order not found")
+    })
+    public OrderResponseDTO confirm(@PathVariable Long id) {
+        return orderService.confirm(id);
+    }
+
+    @PatchMapping("/{id}/cancel")
+    @Operation(summary = "Cancel an order")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Order cancelled"),
+            @ApiResponse(responseCode = "404", description = "Order not found")
+    })
+    public OrderResponseDTO cancel(@PathVariable Long id) {
+        return orderService.cancel(id);
     }
 
     @DeleteMapping("/{id}")

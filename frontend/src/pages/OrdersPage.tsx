@@ -14,7 +14,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { toast } from 'react-toastify';
-import { getOrders, createOrder, updateOrderStatus, deleteOrder } from '../api/orders';
+import { getOrders, getOrderById, createOrder, updateOrderStatus, deleteOrder } from '../api/orders';
 import { getProducts } from '../api/products';
 import type { OrderResponse, OrderRequest, OrderStatus, Product, OrderItemRequest } from '../types';
 
@@ -48,6 +48,7 @@ export default function OrdersPage() {
   // Detail dialog
   const [detailDialog, setDetailDialog] = useState(false);
   const [detailOrder, setDetailOrder] = useState<OrderResponse | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   // Status dialog
   const [statusDialog, setStatusDialog] = useState(false);
@@ -107,6 +108,19 @@ export default function OrdersPage() {
     setStatusDialog(true);
   };
 
+  const viewDetails = async (orderId: number) => {
+    try {
+      setDetailLoading(true);
+      const order = await getOrderById(orderId);
+      setDetailOrder(order);
+      setDetailDialog(true);
+    } catch {
+      toast.error('Failed to load order details');
+    } finally {
+      setDetailLoading(false);
+    }
+  };
+
   const handleStatusUpdate = async () => {
     if (!statusOrder) return;
     try {
@@ -126,7 +140,7 @@ export default function OrdersPage() {
     try {
       const updatedOrder = await updateOrderStatus(order.id, status);
       toast.success(status === 'CONFIRMED' ? 'Order accepted' : 'Order rejected');
-      if (status === 'CONFIRMED' || status === 'CANCELLED') {
+      if (detailOrder?.id === order.id) {
         setDetailOrder(updatedOrder);
       }
       load();
@@ -201,7 +215,7 @@ export default function OrdersPage() {
                   <TableCell>{new Date(o.placedAt).toLocaleDateString()}</TableCell>
                   <TableCell align="center">
                     <Tooltip title="View details">
-                      <IconButton size="small" color="primary" onClick={() => { setDetailOrder(o); setDetailDialog(true); }}>
+                      <IconButton size="small" color="primary" onClick={() => viewDetails(o.id)}>
                         <VisibilityIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
@@ -296,7 +310,9 @@ export default function OrdersPage() {
       <Dialog open={detailDialog} onClose={() => setDetailDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Order #{detailOrder?.id}</DialogTitle>
         <DialogContent>
-          {detailOrder && (
+          {detailLoading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}><CircularProgress /></Box>
+          ) : detailOrder ? (
             <Stack spacing={1.5}>
               <Typography><b>User:</b> #{detailOrder.userId}</Typography>
               <Typography><b>Status:</b> <Chip label={detailOrder.status} color={STATUS_COLORS[detailOrder.status]} size="small" /></Typography>
@@ -307,13 +323,15 @@ export default function OrdersPage() {
               <Typography><b>Placed:</b> {new Date(detailOrder.placedAt).toLocaleString()}</Typography>
               <Divider />
               <Typography fontWeight={700}>Items:</Typography>
-              {detailOrder.items?.map(item => (
+              {detailOrder.items?.length ? detailOrder.items.map(item => (
                 <Box key={item.id} sx={{ pl: 1 }}>
                   <Typography variant="body2">
                     {productMap[item.productId]?.name ?? `Product #${item.productId}`} × {item.quantity} @ ₹{item.priceAtTime}
                   </Typography>
                 </Box>
-              ))}
+              )) : (
+                <Typography variant="body2" color="text.secondary">No items available for this order.</Typography>
+              )}
               <Divider />
               <Typography fontWeight={700}>Admin actions:</Typography>
               <Stack direction="row" spacing={1}>
@@ -335,6 +353,8 @@ export default function OrdersPage() {
                 </Button>
               </Stack>
             </Stack>
+          ) : (
+            <Typography sx={{ py: 4, color: 'text.secondary' }}>Select an order to view details.</Typography>
           )}
         </DialogContent>
         <DialogActions>

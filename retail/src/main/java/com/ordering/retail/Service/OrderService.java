@@ -65,12 +65,37 @@ public class OrderService {
 
     public OrderResponseDTO update(Long id, OrderRequestDTO request) {
         Order order = getOrderEntity(id);
+        OrderStatus previousStatus = order.getStatus();
         applyRequest(order, request, false);
-        return toResponse(orderRepository.save(order));
+        Order saved = orderRepository.save(order);
+        if (previousStatus != saved.getStatus()) {
+            orderNotificationService.sendOrderStatusEmail(saved);
+        }
+        return toResponse(saved);
     }
 
     public OrderResponseDTO updateStatus(Long id, OrderStatus status) {
         Order order = getOrderEntity(id);
+        return toResponse(updateStatusAndNotify(order, status));
+    }
+
+    public OrderResponseDTO confirm(Long id) {
+        return toResponse(updateStatusAndNotify(getOrderEntity(id), OrderStatus.CONFIRMED));
+    }
+
+    public OrderResponseDTO cancel(Long id) {
+        return toResponse(updateStatusAndNotify(getOrderEntity(id), OrderStatus.CANCELLED));
+    }
+
+    public List<OrderResponseDTO> findByStatus(OrderStatus status) {
+        return orderRepository.findByStatus(status).stream().map(this::toResponse).toList();
+    }
+
+    public void delete(Long id) {
+        orderRepository.delete(getOrderEntity(id));
+    }
+
+    private Order updateStatusAndNotify(Order order, OrderStatus status) {
         OrderStatus previousStatus = order.getStatus();
         order.setStatus(status);
         if (status == OrderStatus.DELIVERED && order.getDeliveredAt() == null) {
@@ -80,11 +105,7 @@ public class OrderService {
         if (previousStatus != status) {
             orderNotificationService.sendOrderStatusEmail(saved);
         }
-        return toResponse(saved);
-    }
-
-    public void delete(Long id) {
-        orderRepository.delete(getOrderEntity(id));
+        return saved;
     }
 
     private Order getOrderEntity(Long id) {
