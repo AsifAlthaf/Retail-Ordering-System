@@ -6,11 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.ordering.retail.Entity.Inventory;
 import com.ordering.retail.Entity.Product;
+import com.ordering.retail.Entity.User;
+import com.ordering.retail.Enum.Role;
 import com.ordering.retail.Repository.InventoryRepository;
 import com.ordering.retail.Repository.ProductRepository;
+import com.ordering.retail.Repository.UserRepository;
 
 @Configuration
 public class DataInitializer {
@@ -21,9 +25,27 @@ public class DataInitializer {
     @Autowired
     private InventoryRepository inventoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Bean
     public CommandLineRunner initializeData() {
         return args -> {
+            if (userRepository.findByEmail("admin@retailos.com").isEmpty()) {
+                User admin = new User();
+                admin.setName("Admin");
+                admin.setEmail("admin@retailos.com");
+                admin.setPasswordHash(passwordEncoder.encode("Admin@123"));
+                admin.setPhone("9999999999");
+                admin.setAddress("RetailOS HQ");
+                admin.setRole(Role.ADMIN);
+                admin.setLoyaltyPoints(0);
+                userRepository.save(admin);
+            }
+
             // Seed base product catalog only when empty.
             if (productRepository.count() == 0) {
                 List<Product> seededProducts = List.of(

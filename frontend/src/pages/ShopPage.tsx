@@ -87,6 +87,27 @@ export default function ShopPage() {
     postalCode: '',
   });
 
+  useEffect(() => {
+    if (!user) return;
+
+    setDelivery((current) => {
+      const next = {
+        line1: user.address?.trim() || current.line1,
+        landmark: current.landmark,
+        city: user.city?.trim() || current.city,
+        state: user.state?.trim() || current.state,
+        postalCode: user.postalCode?.trim() || current.postalCode,
+      };
+
+      return next.line1 === current.line1
+        && next.city === current.city
+        && next.state === current.state
+        && next.postalCode === current.postalCode
+        ? current
+        : next;
+    });
+  }, [user]);
+
   const [popup, setPopup] = useState<{
     open: boolean;
     title: string;

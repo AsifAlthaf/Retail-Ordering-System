@@ -7,6 +7,10 @@ export interface AuthUser {
   role: UserRole;
   name: string;
   token?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
 }
 
 // ─── Enums ────────────────────────────────────────────────────────────────────

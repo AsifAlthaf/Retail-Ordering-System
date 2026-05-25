@@ -53,5 +53,9 @@ export const signupUser = async (payload: SignupRequest): Promise<AuthUser> => {
     name,
     role: role.toUpperCase() as any,
     token,
+    address: payload.address,
+    city: payload.city,
+    state: payload.state,
+    postalCode: payload.postalCode,
   };
 };
