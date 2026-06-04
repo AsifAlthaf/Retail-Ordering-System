@@ -36,7 +36,7 @@ function AppLayout() {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
-      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', ml: { xs: 0, md: `${sidebarWidth}px` }, transition: 'margin-left 200ms ease' }}>
+      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', height: 56, px: 2, background: '#ffffff', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, zIndex: 100 }}>
           <IconButton size="small" onClick={() => setMobileOpen(true)} sx={{ mr: 2 }}><MenuIcon /></IconButton>
           <Box sx={{ fontSize: 16, fontWeight: 700 }}>RetailOS</Box>

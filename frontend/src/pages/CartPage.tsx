@@ -89,10 +89,10 @@ export default function CartPage() {
   }, []);
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id || !cartLoaded) return;
     sessionStorage.setItem(CART_KEY(user.id), JSON.stringify(cart));
     sessionStorage.setItem(DELIVERY_KEY(user.id), JSON.stringify(delivery));
-  }, [cart, delivery, user?.id]);
+  }, [cart, delivery, user?.id, cartLoaded]);
 
   const productMap = useMemo(() => Object.fromEntries(products.map(p => [p.id, p])), [products]);
   const subtotal   = useMemo(() => cart.reduce((s, l) => s + (productMap[l.productId]?.price ?? 0) * l.quantity, 0), [cart, productMap]);
