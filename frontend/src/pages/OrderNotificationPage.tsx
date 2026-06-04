@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Button, CardContent, Chip, Divider, Stack, Typography, Paper } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -63,11 +62,11 @@ export default function OrderNotificationPage() {
               {order.items.map(item => (
                 <Box key={item.id} sx={{ display: 'flex', justifyContent: 'space-between', p: 1.5, bgcolor: '#f8fafc', borderRadius: 1 }}>
                   <Typography>Product #{item.productId} (x{item.quantity})</Typography>
-                  <Typography fontWeight={600}>{formatINR(item.priceAtTime * item.quantity)}</Typography>
+                  <Typography sx={{ fontWeight: 600 }}>{formatINR(item.priceAtTime * item.quantity)}</Typography>
                 </Box>
               ))}
               <Divider />
-              <Stack direction="row" spacing={1} justifyContent="flex-end">
+              <Stack direction="row" spacing={1.5} sx={{ justifyContent: 'flex-end' }}>
                 <Button variant="outlined" onClick={() => navigate('/orders')}>Back to Orders</Button>
               </Stack>
             </Stack>

@@ -36,7 +36,7 @@ export const loginUser = async (email: string, password: string): Promise<AuthUs
     id,
     email: responseEmail,
     name,
-    role: role.toUpperCase() as any,
+    role: role.toUpperCase() as 'ADMIN' | 'USER',
     token,
   };
 };
@@ -51,7 +51,7 @@ export const signupUser = async (payload: SignupRequest): Promise<AuthUser> => {
     id,
     email: responseEmail,
     name,
-    role: role.toUpperCase() as any,
+    role: role.toUpperCase() as 'ADMIN' | 'USER',
     token,
     address: payload.address,
     city: payload.city,

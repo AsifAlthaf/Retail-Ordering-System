@@ -71,8 +71,11 @@ export default function SignUpPage() {
       });
       notify.success('Account created!');
       navigate('/shop');
-    } catch (err: any) {
-      setSignupError(err?.message ?? 'Failed to create account.');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+      setSignupError(err?.response?.data?.message || err?.message || 'Failed to create account.');
     } finally {
       setLoading(false);
     }
