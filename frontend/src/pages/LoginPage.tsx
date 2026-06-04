@@ -1,44 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-  Alert, Box, Button, CircularProgress, Collapse,
-  FormControl, FormHelperText, IconButton, InputAdornment,
-  InputLabel, OutlinedInput, Stack, Typography, Link, Paper
-} from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { validateEmail, validatePassword } from '../utils/validation';
-import notify from '../utils/notify';
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Collapse,
+  FormControl,
+  FormHelperText,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  Stack,
+  Typography,
+  Link,
+  Paper,
+} from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { validateEmail, validatePassword } from "../utils/validation";
+import notify from "../utils/notify";
 
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail]             = useState('');
-  const [password, setPassword]       = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [touched, setTouched]         = useState({ email: false, password: false });
-  const [loading, setLoading]         = useState(false);
-  const [loginError, setLoginError]   = useState('');
+  const [touched, setTouched] = useState({ email: false, password: false });
+  const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
-  const emailError    = touched.email    ? validateEmail(email) : '';
-  const passwordError = touched.password ? validatePassword(password) : '';
-  const isValid       = !validateEmail(email) && !validatePassword(password);
+  const emailError = touched.email ? validateEmail(email) : "";
+  const passwordError = touched.password ? validatePassword(password) : "";
+  const isValid = !validateEmail(email) && !validatePassword(password);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched({ email: true, password: true });
-    setLoginError('');
+    setLoginError("");
     if (!isValid) return;
     try {
       setLoading(true);
-      await login(email, password, 'USER');
-      notify.success('Welcome back!');
-      navigate('/');
+      await login(email, password, "USER");
+      notify.success("Welcome back!");
+      navigate("/");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setLoginError(err?.message ?? 'Invalid credentials. Please try again.');
+      setLoginError(err?.message ?? "Invalid credentials. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -46,21 +58,55 @@ export default function LoginPage() {
 
   return (
     <Box className="auth-bg">
-      <Paper sx={{ width: '100%', maxWidth: 440, p: { xs: 3, md: 5 }, borderRadius: '12px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 4, justifyContent: 'center' }}>
-          <Box sx={{ width: 28, height: 28, borderRadius: '6px', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: '#fff' }}>R</Box>
-          <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>RetailOS</Typography>
+      <Paper
+        sx={{
+          width: "100%",
+          maxWidth: 440,
+          p: { xs: 3, md: 5 },
+          borderRadius: "12px",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            mb: 4,
+            justifyContent: "center",
+          }}
+        >
+          <Box
+            sx={{
+              width: 28,
+              height: 28,
+              borderRadius: "6px",
+              background: "#0f172a",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 14,
+              fontWeight: 700,
+              color: "#fff",
+            }}
+          >
+            R
+          </Box>
+          <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#0f172a" }}>
+            RetailOS
+          </Typography>
         </Box>
 
-        <Box sx={{ textAlign: 'center', mb: 3 }}>
+        <Box sx={{ textAlign: "center", mb: 3 }}>
           <Typography variant="h5">Welcome back</Typography>
-          <Typography sx={{ mt: 0.5, fontSize: 14, color: 'text.secondary' }}>
+          <Typography sx={{ mt: 0.5, fontSize: 14, color: "text.secondary" }}>
             Sign in to your account
           </Typography>
         </Box>
 
         <Collapse in={!!loginError} unmountOnExit sx={{ mb: 3 }}>
-          <Alert severity="error" onClose={() => setLoginError('')}>{loginError}</Alert>
+          <Alert severity="error" onClose={() => setLoginError("")}>
+            {loginError}
+          </Alert>
         </Collapse>
 
         <Box component="form" onSubmit={handleSubmit} noValidate>
@@ -68,9 +114,15 @@ export default function LoginPage() {
             <FormControl fullWidth error={!!emailError}>
               <InputLabel>Email address</InputLabel>
               <OutlinedInput
-                label="Email address" type="email" autoComplete="email"
-                value={email} onChange={e => { setEmail(e.target.value); setLoginError(''); }}
-                onBlur={() => setTouched(t => ({ ...t, email: true }))}
+                label="Email address"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setLoginError("");
+                }}
+                onBlur={() => setTouched((t) => ({ ...t, email: true }))}
               />
               {emailError && <FormHelperText>{emailError}</FormHelperText>}
             </FormControl>
@@ -78,35 +130,101 @@ export default function LoginPage() {
             <FormControl fullWidth error={!!passwordError}>
               <InputLabel>Password</InputLabel>
               <OutlinedInput
-                label="Password" type={showPassword ? 'text' : 'password'} autoComplete="current-password"
-                value={password} onChange={e => { setPassword(e.target.value); setLoginError(''); }}
-                onBlur={() => setTouched(t => ({ ...t, password: true }))}
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setLoginError("");
+                }}
+                onBlur={() => setTouched((t) => ({ ...t, password: true }))}
                 endAdornment={
                   <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(v => !v)} edge="end" size="small">
-                      {showPassword ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
+                    <IconButton
+                      onClick={() => setShowPassword((v) => !v)}
+                      edge="end"
+                      size="small"
+                    >
+                      {showPassword ? (
+                        <VisibilityOffIcon fontSize="small" />
+                      ) : (
+                        <VisibilityIcon fontSize="small" />
+                      )}
                     </IconButton>
                   </InputAdornment>
                 }
               />
-              {passwordError && <FormHelperText>{passwordError}</FormHelperText>}
+              {passwordError && (
+                <FormHelperText>{passwordError}</FormHelperText>
+              )}
             </FormControl>
 
-            <Button type="submit" variant="contained" color="primary" size="large" disabled={loading} fullWidth sx={{ py: 1.25 }}>
-              {loading ? <CircularProgress size={20} color="inherit" /> : 'Sign In'}
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+              disabled={loading}
+              fullWidth
+              sx={{ py: 1.25 }}
+            >
+              {loading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                "Sign In"
+              )}
             </Button>
           </Stack>
         </Box>
 
-        <Typography sx={{ mt: 3, fontSize: 14, textAlign: 'center', color: 'text.secondary' }}>
-          New here?{' '}
-          <Link component="button" type="button" onClick={e => { e.preventDefault(); navigate('/signup'); }} sx={{ fontWeight: 600, color: 'primary.main', textDecoration: 'none' }}>
+        <Typography
+          sx={{
+            mt: 3,
+            fontSize: 14,
+            textAlign: "center",
+            color: "text.secondary",
+          }}
+        >
+          New here?{" "}
+          <Link
+            component="button"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/signup");
+            }}
+            sx={{
+              fontWeight: 600,
+              color: "primary.main",
+              textDecoration: "none",
+            }}
+          >
             Create an account
           </Link>
         </Typography>
 
-        <Typography sx={{ mt: 2, fontSize: 13, textAlign: 'center', color: 'text.secondary' }}>
-          <Link component="button" type="button" onClick={e => { e.preventDefault(); navigate('/admin-login'); }} sx={{ color: 'text.secondary', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
+        <Typography
+          sx={{
+            mt: 2,
+            fontSize: 13,
+            textAlign: "center",
+            color: "text.secondary",
+          }}
+        >
+          <Link
+            component="button"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/admin-login");
+            }}
+            sx={{
+              color: "text.secondary",
+              textDecoration: "none",
+              "&:hover": { textDecoration: "underline" },
+            }}
+          >
             Admin Portal
           </Link>
         </Typography>

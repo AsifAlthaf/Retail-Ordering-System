@@ -1,5 +1,5 @@
 // ─── Auth ─────────────────────────────────────────────────────────────────────
-export type UserRole = 'ADMIN' | 'USER';
+export type UserRole = "ADMIN" | "USER";
 
 export interface AuthUser {
   id: number;
@@ -14,8 +14,13 @@ export interface AuthUser {
 }
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
-export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
-export type DiscountType = 'PERCENTAGE' | 'FLAT';
+export type OrderStatus =
+  | "PENDING"
+  | "CONFIRMED"
+  | "SHIPPED"
+  | "DELIVERED"
+  | "CANCELLED";
+export type DiscountType = "PERCENTAGE" | "FLAT";
 
 // ─── Product ──────────────────────────────────────────────────────────────────
 export interface Product {

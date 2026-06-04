@@ -1,15 +1,21 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import type { AuthUser } from '../types';
-import { loginUser, signupUser } from '../api/auth';
-import type { SignupRequest } from '../api/auth';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
+import type { AuthUser } from "../types";
+import { loginUser, signupUser } from "../api/auth";
+import type { SignupRequest } from "../api/auth";
 
-const LS_KEY = 'retail_auth_v2';
+const LS_KEY = "retail_auth_v2";
 
 function decodeJwtExp(token: string): number | null {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return typeof payload.exp === 'number' ? payload.exp * 1000 : null;
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return typeof payload.exp === "number" ? payload.exp * 1000 : null;
   } catch {
     return null;
   }
@@ -28,11 +34,12 @@ function loadPersistedUser(): AuthUser | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<AuthUser>;
     if (
-      typeof parsed.id !== 'number' ||
-      typeof parsed.email !== 'string' ||
-      typeof parsed.role !== 'string' ||
-      typeof parsed.name !== 'string'
-    ) return null;
+      typeof parsed.id !== "number" ||
+      typeof parsed.email !== "string" ||
+      typeof parsed.role !== "string" ||
+      typeof parsed.name !== "string"
+    )
+      return null;
     if (isTokenExpired(parsed.token)) {
       localStorage.removeItem(LS_KEY);
       sessionStorage.removeItem(LS_KEY);
@@ -46,22 +53,38 @@ function loadPersistedUser(): AuthUser | null {
 
 function persistUser(user: AuthUser) {
   const serialized = JSON.stringify(user);
-  try { localStorage.setItem(LS_KEY, serialized); } catch { /* quota */ }
-  try { sessionStorage.setItem(LS_KEY, serialized); } catch { /* quota */ }
+  try {
+    localStorage.setItem(LS_KEY, serialized);
+  } catch {
+    /* quota */
+  }
+  try {
+    sessionStorage.setItem(LS_KEY, serialized);
+  } catch {
+    /* quota */
+  }
   // backward-compat key for API axios interceptor
-  try { sessionStorage.setItem('retail_auth_user', serialized); } catch { /* quota */ }
+  try {
+    sessionStorage.setItem("retail_auth_user", serialized);
+  } catch {
+    /* quota */
+  }
 }
 
 function clearUser() {
   localStorage.removeItem(LS_KEY);
   sessionStorage.removeItem(LS_KEY);
-  sessionStorage.removeItem('retail_auth_user');
+  sessionStorage.removeItem("retail_auth_user");
 }
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 interface AuthContextValue {
   user: AuthUser | null;
-  login:  (email: string, password: string, expectedRole: 'USER' | 'ADMIN') => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    expectedRole: "USER" | "ADMIN",
+  ) => Promise<void>;
   signup: (payload: SignupRequest) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -80,23 +103,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!exp) return;
     const remaining = exp - Date.now() - 60_000;
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (remaining <= 0) { clearUser(); setUser(null); return; }
-    const timer = window.setTimeout(() => { clearUser(); setUser(null); }, remaining);
+    if (remaining <= 0) {
+      clearUser();
+      setUser(null);
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      clearUser();
+      setUser(null);
+    }, remaining);
     return () => clearTimeout(timer);
   }, [user?.token]);
 
-  const login = useCallback(async (email: string, password: string, expectedRole: 'USER' | 'ADMIN') => {
-    const authUser = await loginUser(email, password);
-    if (authUser.role !== expectedRole) {
-      if (expectedRole === 'ADMIN') {
-        throw new Error('Access denied. You do not have administrator privileges.');
-      } else {
-        throw new Error('Administrators must log in through the Admin Portal.');
+  const login = useCallback(
+    async (email: string, password: string, expectedRole: "USER" | "ADMIN") => {
+      const authUser = await loginUser(email, password);
+      if (authUser.role !== expectedRole) {
+        if (expectedRole === "ADMIN") {
+          throw new Error(
+            "Access denied. You do not have administrator privileges.",
+          );
+        } else {
+          throw new Error(
+            "Administrators must log in through the Admin Portal.",
+          );
+        }
       }
-    }
-    persistUser(authUser);
-    setUser(authUser);
-  }, []);
+      persistUser(authUser);
+      setUser(authUser);
+    },
+    [],
+  );
 
   const signup = useCallback(async (payload: SignupRequest) => {
     const authUser = await signupUser(payload);
@@ -110,7 +147,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const refreshUser = useCallback((patch: Partial<AuthUser>) => {
-    setUser(prev => {
+    setUser((prev) => {
       if (!prev) return prev;
       const updated = { ...prev, ...patch };
       persistUser(updated);
@@ -119,7 +156,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, isAuthenticated: !!user, refreshUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        signup,
+        logout,
+        isAuthenticated: !!user,
+        refreshUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -127,6 +173,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>');
+  if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");
   return ctx;
 }
