@@ -1,17 +1,11 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
-import {
-  Box, CssBaseline, Toolbar, Typography, AppBar,
-  IconButton, Avatar, Divider, Button, Stack,
-  Menu, MenuItem as MuiMenuItem, Chip,
-} from '@mui/material';
-import LogoutIcon from '@mui/icons-material/Logout';
-import PersonIcon from '@mui/icons-material/Person';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Box, IconButton, Tooltip } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Toaster } from 'react-hot-toast';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { Sidebar } from './components/Sidebar';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import DashboardPage from './pages/DashboardPage';
@@ -21,138 +15,147 @@ import OrdersPage from './pages/OrdersPage';
 import CouponsPage from './pages/CouponsPage';
 import OrderNotificationPage from './pages/OrderNotificationPage';
 
-// ─── Protected Route ───────────────────────────────────────────────────────────
+// ─── Route Guards ─────────────────────────────────────────────────────────────
 function ProtectedRoute({ children, adminOnly = false }: { children: React.ReactNode; adminOnly?: boolean }) {
   const { isAuthenticated, user } = useAuth();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (adminOnly && user?.role !== 'ADMIN') return <Navigate to="/my-orders" replace />;
+  if (adminOnly && user?.role !== 'ADMIN') return <Navigate to="/shop" replace />;
   return <>{children}</>;
 }
 
-function TopAppBar() {
-  const { user, logout } = useAuth();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleLogout = () => {
-    logout();
-    toast.info('Signed out.');
-    setAnchorEl(null);
-  };
-
-  return (
-    <AppBar position="fixed" elevation={0} sx={{ backdropFilter: 'blur(14px)', bgcolor: 'rgba(15, 23, 42, 0.92)' }}>
-      <Toolbar>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexGrow: 1 }}>
-          <Avatar sx={{ bgcolor: 'secondary.main', width: 36, height: 36, fontWeight: 800 }}>R</Avatar>
-          <Box>
-            <Typography variant="h6" sx={{ lineHeight: 1.1, fontWeight: 800, letterSpacing: 0.8 }}>RetailOS</Typography>
-            <Typography variant="caption" sx={{ opacity: 0.75 }}>Ordering platform</Typography>
-          </Box>
-        </Box>
-        {user && (
-          <>
-            <Chip
-              size="small"
-              icon={user.role === 'ADMIN' ? <AdminPanelSettingsIcon sx={{ fontSize: '14px !important' }} /> : <PersonIcon sx={{ fontSize: '14px !important' }} />}
-              label={user.role}
-              sx={{ mr: 1.5, bgcolor: user.role === 'ADMIN' ? '#6366f133' : '#10b98133', color: 'white', fontWeight: 700 }}
-            />
-            <IconButton color="inherit" onClick={e => setAnchorEl(e.currentTarget)}>
-              <Avatar sx={{ width: 30, height: 30, fontSize: 13, bgcolor: 'rgba(255,255,255,0.3)' }}>
-                {user.name.charAt(0)}
-              </Avatar>
-            </IconButton>
-            <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={() => setAnchorEl(null)}>
-              <MuiMenuItem disabled>
-                <Typography variant="caption">{user.email}</Typography>
-              </MuiMenuItem>
-              <Divider />
-              <MuiMenuItem onClick={handleLogout}>
-                <LogoutIcon fontSize="small" sx={{ mr: 1 }} /> Sign Out
-              </MuiMenuItem>
-            </Menu>
-          </>
-        )}
-      </Toolbar>
-    </AppBar>
-  );
-}
-
-// ─── Authenticated layout ─────────────────────────────────────────────────────
+// ─── Main authenticated layout ────────────────────────────────────────────────
 function AppLayout() {
   const { user } = useAuth();
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const sidebarWidth = collapsed ? 72 : 260;
 
   return (
-    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%)' }}>
-      <CssBaseline />
-      <TopAppBar />
-      <Toolbar />
+    <Box sx={{ display: 'flex', minHeight: '100vh', background: '#060b14' }}>
+      <Sidebar
+        collapsed={collapsed}
+        onToggle={() => setCollapsed(c => !c)}
+        mobileOpen={mobileOpen}
+        onMobileClose={() => setMobileOpen(false)}
+      />
 
-      {user?.role === 'ADMIN' && (
-        <Box sx={{ px: { xs: 2, md: 4 }, pb: 2 }}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ alignItems: 'center' }}>
-            <Button component={Link} to="/" variant="contained" color="primary" sx={{ minWidth: 112 }}>
-              Dashboard
-            </Button>
-            <Button component={Link} to="/products" variant="outlined" color="primary" sx={{ minWidth: 112 }}>
-              Items
-            </Button>
-            <Button component={Link} to="/coupons" variant="outlined" color="primary" sx={{ minWidth: 112 }}>
-              Coupons
-            </Button>
-            <Button component={Link} to="/orders" variant="outlined" color="primary" sx={{ minWidth: 112 }}>
-              Orders
-            </Button>
-          </Stack>
-        </Box>
-      )}
-
+      {/* Main content area */}
       <Box
-        component="main"
         sx={{
-          flexGrow: 1,
-          p: { xs: 2, md: 4 },
-          pt: { xs: 3, md: 4 },
-          maxWidth: '100%',
-          overflow: 'auto',
+          flex: 1,
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          ml: { xs: 0, md: `${sidebarWidth}px` },
+          transition: 'margin-left 280ms cubic-bezier(0.4,0,0.2,1)',
         }}
       >
-        <Routes>
-          {/* Admin-only routes */}
-          <Route path="/" element={<ProtectedRoute adminOnly><DashboardPage /></ProtectedRoute>} />
-          <Route path="/products" element={<ProtectedRoute adminOnly><ProductsPage /></ProtectedRoute>} />
-          <Route path="/coupons" element={<ProtectedRoute adminOnly><CouponsPage /></ProtectedRoute>} />
+        {/* Mobile top bar */}
+        <Box
+          sx={{
+            display: { xs: 'flex', md: 'none' },
+            alignItems: 'center',
+            height: 56,
+            px: 2,
+            gap: 1.5,
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            background: 'rgba(10,14,26,0.95)',
+            backdropFilter: 'blur(20px)',
+            position: 'sticky',
+            top: 0,
+            zIndex: 100,
+            flexShrink: 0,
+          }}
+        >
+          <Tooltip title="Open menu">
+            <IconButton
+              size="small"
+              onClick={() => setMobileOpen(true)}
+              sx={{ color: '#94a3b8', '&:hover': { color: '#f1f5f9' } }}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Tooltip>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              flex: 1,
+            }}
+          >
+            <Box
+              sx={{
+                width: 26,
+                height: 26,
+                borderRadius: '7px',
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 12,
+                fontWeight: 900,
+                color: '#fff',
+              }}
+            >
+              R
+            </Box>
+            <Box sx={{ fontSize: 14, fontWeight: 800, color: '#f1f5f9' }}>RetailOS</Box>
+          </Box>
+        </Box>
 
-          {/* Shared routes (both roles) */}
-          <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
-          <Route path="/order-notification" element={<ProtectedRoute><OrderNotificationPage /></ProtectedRoute>} />
+        {/* Page content */}
+        <Box
+          component="main"
+          sx={{
+            flex: 1,
+            p: { xs: 2, md: 3 },
+            maxWidth: '100%',
+            overflowX: 'hidden',
+          }}
+        >
+          <Routes>
+            {/* Admin-only */}
+            <Route path="/" element={<ProtectedRoute adminOnly><DashboardPage /></ProtectedRoute>} />
+            <Route path="/products" element={<ProtectedRoute adminOnly><ProductsPage /></ProtectedRoute>} />
+            <Route path="/coupons" element={<ProtectedRoute adminOnly><CouponsPage /></ProtectedRoute>} />
+            <Route path="/orders" element={<ProtectedRoute adminOnly><OrdersPage /></ProtectedRoute>} />
 
-          {/* User-only dashboard */}
-          <Route path="/my-orders" element={<ProtectedRoute><ShopPage /></ProtectedRoute>} />
-          <Route path="/shop" element={<ProtectedRoute><ShopPage /></ProtectedRoute>} />
+            {/* Shared */}
+            <Route path="/order-notification" element={<ProtectedRoute><OrderNotificationPage /></ProtectedRoute>} />
 
-          {/* Fallback */}
-          <Route path="*" element={
-            user?.role === 'ADMIN' ? <Navigate to="/" replace /> : <Navigate to="/my-orders" replace />
-          } />
-        </Routes>
+            {/* User */}
+            <Route path="/shop" element={<ProtectedRoute><ShopPage /></ProtectedRoute>} />
+            <Route path="/my-orders" element={<ProtectedRoute><ShopPage /></ProtectedRoute>} />
+
+            {/* Fallback per role */}
+            <Route path="*" element={
+              user?.role === 'ADMIN' ? <Navigate to="/" replace /> : <Navigate to="/shop" replace />
+            } />
+          </Routes>
+        </Box>
       </Box>
     </Box>
   );
 }
 
-// ─── Root ─────────────────────────────────────────────────────────────────────
+// ─── Root router ──────────────────────────────────────────────────────────────
 function AppRoutes() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   return (
     <Routes>
       <Route
         path="/login"
-        element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />}
+        element={isAuthenticated
+          ? <Navigate to={user?.role === 'ADMIN' ? '/' : '/shop'} replace />
+          : <LoginPage />}
       />
       <Route
         path="/signup"
-        element={isAuthenticated ? <Navigate to="/" replace /> : <SignUpPage />}
+        element={isAuthenticated
+          ? <Navigate to={user?.role === 'ADMIN' ? '/' : '/shop'} replace />
+          : <SignUpPage />}
       />
       <Route path="/*" element={
         isAuthenticated ? <AppLayout /> : <Navigate to="/login" replace />
@@ -161,20 +164,64 @@ function AppRoutes() {
   );
 }
 
+// ─── App root ─────────────────────────────────────────────────────────────────
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <AppRoutes />
-        <ToastContainer
+
+        {/* react-hot-toast portal */}
+        <Toaster
           position="bottom-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          pauseOnHover
-          draggable
-          theme="light"
+          gutter={10}
+          containerStyle={{ bottom: 24, right: 24 }}
+          toastOptions={{
+            duration: 3500,
+            style: {
+              background: '#1a2235',
+              color: '#f1f5f9',
+              border: '1px solid rgba(255,255,255,0.09)',
+              borderRadius: '12px',
+              fontSize: '13.5px',
+              fontWeight: 500,
+              fontFamily: '"Inter", system-ui, sans-serif',
+              padding: '12px 16px',
+              boxShadow: '0 16px 40px rgba(0,0,0,0.55)',
+              maxWidth: '380px',
+            },
+            success: {
+              iconTheme: { primary: '#10b981', secondary: '#111827' },
+              style: {
+                background: '#1a2235',
+                color: '#f1f5f9',
+                border: '1px solid rgba(255,255,255,0.09)',
+                borderLeft: '3px solid #10b981',
+                borderRadius: '12px',
+                fontSize: '13.5px',
+                fontWeight: 500,
+                fontFamily: '"Inter", system-ui, sans-serif',
+                padding: '12px 16px',
+                boxShadow: '0 16px 40px rgba(0,0,0,0.55)',
+              },
+            },
+            error: {
+              duration: 5000,
+              iconTheme: { primary: '#ef4444', secondary: '#111827' },
+              style: {
+                background: '#1a2235',
+                color: '#f1f5f9',
+                border: '1px solid rgba(255,255,255,0.09)',
+                borderLeft: '3px solid #ef4444',
+                borderRadius: '12px',
+                fontSize: '13.5px',
+                fontWeight: 500,
+                fontFamily: '"Inter", system-ui, sans-serif',
+                padding: '12px 16px',
+                boxShadow: '0 16px 40px rgba(0,0,0,0.55)',
+              },
+            },
+          }}
         />
       </AuthProvider>
     </BrowserRouter>
