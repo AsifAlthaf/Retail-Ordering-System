@@ -1,156 +1,75 @@
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  Divider,
-  Paper,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Box, Button, CardContent, Chip, Divider, Stack, Typography, Paper } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import type { OrderResponse, OrderStatus } from '../types';
 
-type NotificationState = {
-  order?: OrderResponse;
-  outcome?: Extract<OrderStatus, 'CONFIRMED' | 'CANCELLED'>;
-};
-
-function formatCurrency(value?: number) {
-  return `₹${(value ?? 0).toFixed(2)}`;
-}
+function formatINR(v?: number) { return `₹${(v ?? 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`; }
 
 export default function OrderNotificationPage() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const state = (location.state ?? {}) as NotificationState;
-  const order = state.order;
-  const outcome = state.outcome ?? order?.status;
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const state     = (location.state ?? {}) as { order?: OrderResponse; outcome?: Extract<OrderStatus, 'CONFIRMED' | 'CANCELLED'> };
+  const order     = state.order;
+  const outcome   = state.outcome ?? order?.status;
   const isCancelled = outcome === 'CANCELLED';
+  const hasState = !!order;
+
+  if (!hasState) {
+    return (
+      <Box sx={{ maxWidth: 480, mx: 'auto', mt: 8, textAlign: 'center' }}>
+        <ShoppingBagIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>No order data</Typography>
+        <Typography sx={{ color: 'text.secondary', mt: 1, mb: 3 }}>Please return to the orders dashboard.</Typography>
+        <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={() => navigate('/orders')}>Back to Orders</Button>
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ maxWidth: 960, mx: 'auto' }}>
-      <Paper elevation={0} sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
-        <Box
-          sx={{
-            px: 3,
-            py: 4,
-            color: 'white',
-            background: isCancelled
-              ? 'linear-gradient(135deg, #b91c1c 0%, #ef4444 100%)'
-              : 'linear-gradient(135deg, #065f46 0%, #10b981 100%)',
-          }}
-        >
-          <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-            {isCancelled ? <CancelIcon sx={{ fontSize: 44 }} /> : <CheckCircleIcon sx={{ fontSize: 44 }} />}
-            <Box>
-              <Typography variant="h4" sx={{ fontWeight: 800, lineHeight: 1.1 }}>
-                {isCancelled ? 'Order Cancelled' : 'Order Confirmed'}
-              </Typography>
-              <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.75 }}>
-                {isCancelled
-                  ? 'The order has been cancelled and the customer will receive an email notification.'
-                  : 'The order has been confirmed and the customer will receive a confirmation email.'}
-              </Typography>
-            </Box>
-          </Stack>
+    <Box sx={{ maxWidth: 600, mx: 'auto' }}>
+      <Paper sx={{ overflow: 'hidden' }}>
+        <Box sx={{ p: 4, bgcolor: isCancelled ? '#fef2f2' : '#f0fdf4', display: 'flex', alignItems: 'center', gap: 2, borderBottom: '1px solid #e2e8f0' }}>
+          {isCancelled ? <CancelIcon color="error" sx={{ fontSize: 32 }} /> : <CheckCircleIcon color="success" sx={{ fontSize: 32 }} />}
+          <Box>
+            <Typography variant="h5" sx={{ color: isCancelled ? '#991b1b' : '#166534', mb: 0.5 }}>
+              Order {isCancelled ? 'Cancelled' : 'Confirmed'}
+            </Typography>
+            <Typography sx={{ fontSize: 14, color: isCancelled ? '#b91c1c' : '#15803d' }}>
+              {isCancelled ? 'The order has been cancelled.' : 'The order has been successfully confirmed.'}
+            </Typography>
+          </Box>
         </Box>
 
-        <CardContent sx={{ p: 3 }}>
-          {!order ? (
-            <Box sx={{ textAlign: 'center', py: 4 }}>
-              <ShoppingBagIcon sx={{ fontSize: 48, color: 'text.secondary', opacity: 0.4 }} />
-              <Typography variant="h6" sx={{ fontWeight: 700, mt: 1 }}>No order details available</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                Open this page from the orders screen after confirming or cancelling an order.
-              </Typography>
-            </Box>
-          ) : (
-            <Stack spacing={2.5}>
-              <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
-                <Chip label={`Order #${order.id}`} color="primary" />
-                <Chip label={order.status} color={isCancelled ? 'error' : 'success'} />
-                <Chip label={formatCurrency(order.totalAmount)} variant="outlined" />
+        <CardContent sx={{ p: 4 }}>
+          {order && (
+            <Stack spacing={3}>
+              <Stack direction="row" spacing={1}>
+                <Chip label={`Order #${order.id}`} />
+                <Chip label={outcome} color={isCancelled ? 'error' : 'success'} />
               </Stack>
-
               <Divider />
-
-              <Box>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                  Delivery Address
-                </Typography>
-                <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                  {order.deliveryAddress}
-                </Typography>
+              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                <Box><Typography variant="caption" color="text.secondary">Placed</Typography><Typography>{new Date(order.placedAt).toLocaleString()}</Typography></Box>
+                <Box><Typography variant="caption" color="text.secondary">Total</Typography><Typography sx={{ fontWeight: 600 }}>{formatINR(order.totalAmount)}</Typography></Box>
+                <Box><Typography variant="caption" color="text.secondary">Coupon</Typography><Typography>{order.couponCode ?? 'None'}</Typography></Box>
               </Box>
-
-              <Box>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                  Order Summary
-                </Typography>
-                <Card variant="outlined" sx={{ borderRadius: 2 }}>
-                  <CardContent>
-                    <Stack spacing={1.5}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                        <Typography variant="body2" color="text.secondary">Placed at</Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{new Date(order.placedAt).toLocaleString()}</Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                        <Typography variant="body2" color="text.secondary">Coupon</Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{order.couponCode ?? 'None'}</Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                        <Typography variant="body2" color="text.secondary">Discount</Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatCurrency(order.discount)}</Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                        <Typography variant="body2" color="text.secondary">Total</Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 800 }}>{formatCurrency(order.totalAmount)}</Typography>
-                      </Box>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Box>
-
-              <Box>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                  Items
-                </Typography>
-                <Stack spacing={1.25}>
-                  {order.items.map(item => (
-                    <Card key={item.id} variant="outlined" sx={{ borderRadius: 2 }}>
-                      <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                          <Box>
-                            <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                              Product #{item.productId}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              Quantity: {item.quantity}
-                            </Typography>
-                          </Box>
-                          <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                            {formatCurrency(item.priceAtTime * item.quantity)}
-                          </Typography>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </Stack>
-              </Box>
-
-              <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'flex-end' }}>
-                <Button variant="outlined" onClick={() => navigate('/orders')}>
-                  Back to orders
-                </Button>
-                <Button variant="contained" onClick={() => navigate('/shop')}>
-                  Go to shop
-                </Button>
-              </Box>
+              <Box><Typography variant="caption" color="text.secondary">Address</Typography><Typography>{order.deliveryAddress}</Typography></Box>
+              <Divider />
+              <Typography variant="subtitle2">Items</Typography>
+              {order.items.map(item => (
+                <Box key={item.id} sx={{ display: 'flex', justifyContent: 'space-between', p: 1.5, bgcolor: '#f8fafc', borderRadius: 1 }}>
+                  <Typography>Product #{item.productId} (x{item.quantity})</Typography>
+                  <Typography fontWeight={600}>{formatINR(item.priceAtTime * item.quantity)}</Typography>
+                </Box>
+              ))}
+              <Divider />
+              <Stack direction="row" spacing={1} justifyContent="flex-end">
+                <Button variant="outlined" onClick={() => navigate('/orders')}>Back to Orders</Button>
+              </Stack>
             </Stack>
           )}
         </CardContent>

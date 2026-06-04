@@ -1,72 +1,39 @@
-import {
-  Button, CircularProgress, Dialog, DialogActions,
-  DialogContent, DialogTitle, Typography, Box,
-} from '@mui/material';
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Box } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface ConfirmDialogProps {
-  open: boolean;
-  title: string;
-  message: string;
-  confirmLabel?: string;
-  confirmColor?: 'error' | 'warning' | 'primary' | 'success';
-  loading?: boolean;
-  onConfirm: () => void;
-  onCancel: () => void;
-  danger?: boolean;
+  open: boolean; title: string; message: string;
+  confirmLabel?: string; cancelLabel?: string;
+  confirmColor?: 'primary' | 'error' | 'warning' | 'info' | 'success';
+  onConfirm: () => void; onCancel: () => void;
+  loading?: boolean; danger?: boolean;
 }
 
 export default function ConfirmDialog({
-  open,
-  title,
-  message,
-  confirmLabel = 'Confirm',
-  confirmColor = 'error',
-  loading = false,
-  onConfirm,
-  onCancel,
-  danger = false,
+  open, title, message, confirmLabel = 'Confirm', cancelLabel = 'Cancel',
+  confirmColor = 'primary', onConfirm, onCancel, loading = false, danger = false,
 }: ConfirmDialogProps) {
   return (
-    <Dialog open={open} onClose={onCancel} maxWidth="xs" fullWidth>
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-        <Box
-          sx={{
-            width: 36,
-            height: 36,
-            borderRadius: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: danger ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)',
-            border: `1px solid ${danger ? 'rgba(239,68,68,0.3)' : 'rgba(245,158,11,0.3)'}`,
-            flexShrink: 0,
-          }}
-        >
-          {danger
-            ? <DeleteOutlineIcon sx={{ fontSize: 18, color: '#ef4444' }} />
-            : <WarningAmberIcon sx={{ fontSize: 18, color: '#f59e0b' }} />}
+    <Dialog open={open} onClose={loading ? undefined : onCancel} maxWidth="xs" fullWidth>
+      <DialogTitle sx={{ pb: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {danger && <WarningAmberIcon color="error" />}
+          <Typography sx={{ fontSize: 16, fontWeight: 600 }}>{title}</Typography>
         </Box>
-        {title}
       </DialogTitle>
       <DialogContent>
-        <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-          {message}
-        </Typography>
+        <Typography sx={{ fontSize: 14, color: 'text.secondary' }}>{message}</Typography>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onCancel} disabled={loading} variant="outlined">
-          Cancel
+      <DialogActions sx={{ p: 2, pt: 1 }}>
+        <Button onClick={onCancel} disabled={loading} color="inherit">
+          {cancelLabel}
         </Button>
         <Button
-          onClick={onConfirm}
-          disabled={loading}
-          variant="contained"
-          color={confirmColor}
-          startIcon={loading ? undefined : (danger ? <DeleteOutlineIcon fontSize="small" /> : undefined)}
+          onClick={onConfirm} variant="contained" color={confirmColor} disabled={loading}
+          startIcon={loading ? <CircularProgress size={16} /> : danger ? <DeleteIcon fontSize="small" /> : undefined}
         >
-          {loading ? <CircularProgress size={16} color="inherit" /> : confirmLabel}
+          {confirmLabel}
         </Button>
       </DialogActions>
     </Dialog>
