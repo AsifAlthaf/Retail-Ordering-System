@@ -282,7 +282,7 @@ export default function ShopPage() {
         </Typography>
       </Box>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 2.2fr) 340px' }, gap: 2.5, alignItems: 'start' }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 2.2fr) 340px' }, gap: 2.5 }}>
         <Box>
           <TextField
             fullWidth size="small"
@@ -304,40 +304,66 @@ export default function ShopPage() {
                 const isOut  = stock != null && stock <= 0;
                 const isLow  = stock != null && stock > 0 && stock <= 5;
                 return (
-                  <Card key={product.id} sx={{ opacity: isOut ? 0.7 : 1, position: 'relative' }}>
+                  <Card 
+                    key={product.id} 
+                    elevation={0}
+                    sx={{ 
+                      opacity: isOut ? 0.7 : 1, 
+                      position: 'relative',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      transition: 'all 200ms ease',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025)'
+                      }
+                    }}
+                  >
                     <CardMedia
-                      component="img" height="140"
+                      component="img" height="180"
                       image={imageForProduct(product.id)} alt={product.name}
                       sx={{ objectFit: 'cover' }}
                     />
                     {isLow && !isOut && (
-                      <Box sx={{ position: 'absolute', top: 8, right: 8 }}>
-                        <Chip label={`Only ${stock} left`} color="warning" size="small" />
+                      <Box sx={{ position: 'absolute', top: 12, right: 12 }}>
+                        <Chip label={`Only ${stock} left`} color="warning" size="small" sx={{ fontWeight: 600, backdropFilter: 'blur(4px)', bgcolor: 'rgba(245, 158, 11, 0.9)', color: '#fff' }} />
                       </Box>
                     )}
-                    <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
-                      <Typography sx={{ fontWeight: 600, fontSize: 14, mb: 0.5 }} noWrap>{product.name}</Typography>
-                      <Typography sx={{ fontSize: 16, fontWeight: 700, mb: 1.5 }}>
+                    <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                      <Typography sx={{ fontWeight: 600, fontSize: 15, mb: 0.5, color: '#0f172a' }} noWrap>{product.name}</Typography>
+                      <Typography sx={{ fontSize: 18, fontWeight: 700, mb: 2, color: '#0f172a' }}>
                         {formatINR(product.price)}
                       </Typography>
                       {inCart > 0 ? (
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <IconButton size="small" onClick={() => updateQty(product.id, inCart - 1)} sx={{ border: '1px solid #e2e8f0', p: 0.5 }}>
+                        <Stack direction="row" alignItems="center" spacing={1} sx={{ bgcolor: '#f8fafc', p: 0.5, borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                          <IconButton size="small" onClick={() => updateQty(product.id, inCart - 1)} sx={{ color: '#475569' }}>
                             <RemoveIcon fontSize="small" />
                           </IconButton>
-                          <Typography sx={{ fontWeight: 600, minWidth: 20, textAlign: 'center' }}>{inCart}</Typography>
-                          <IconButton size="small" onClick={() => addToCart(product.id)} disabled={isOut} sx={{ border: '1px solid #e2e8f0', p: 0.5 }}>
+                          <Typography sx={{ fontWeight: 600, flex: 1, textAlign: 'center', fontSize: 14 }}>{inCart}</Typography>
+                          <IconButton size="small" onClick={() => addToCart(product.id)} disabled={isOut} sx={{ color: '#0f172a' }}>
                             <AddIcon fontSize="small" />
                           </IconButton>
                         </Stack>
                       ) : (
                         <Button
-                          variant={isOut ? 'outlined' : 'contained'} fullWidth size="small"
+                          variant={isOut ? 'outlined' : 'contained'} fullWidth 
                           disabled={isOut}
                           startIcon={<ShoppingCartIcon fontSize="small" />}
                           onClick={() => addToCart(product.id)}
+                          sx={{ 
+                            py: 1,
+                            borderRadius: '8px', 
+                            textTransform: 'none', 
+                            fontWeight: 600,
+                            boxShadow: 'none',
+                            bgcolor: isOut ? 'transparent' : '#0f172a',
+                            '&:hover': {
+                              boxShadow: 'none',
+                              bgcolor: isOut ? 'transparent' : '#334155'
+                            }
+                          }}
                         >
-                          {isOut ? 'Out of stock' : 'Add to cart'}
+                          {isOut ? 'Out of stock' : 'Add to Cart'}
                         </Button>
                       )}
                     </CardContent>
@@ -348,7 +374,8 @@ export default function ShopPage() {
           )}
         </Box>
 
-        <Stack spacing={2} sx={{ position: { lg: 'sticky' }, top: { lg: 16 } }}>
+        <Box sx={{ height: '100%' }}>
+          <Stack spacing={2} sx={{ position: { lg: 'sticky' }, top: { lg: 16 } }}>
           <Paper sx={{ p: 2.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
               <Typography sx={{ fontWeight: 600 }}>Order Summary</Typography>
@@ -472,6 +499,7 @@ export default function ShopPage() {
             )}
           </Paper>
         </Stack>
+        </Box>
       </Box>
 
       <CouponSuccessPopup

@@ -15,6 +15,8 @@ import OrdersPage from './pages/OrdersPage';
 import CouponsPage from './pages/CouponsPage';
 import OrderNotificationPage from './pages/OrderNotificationPage';
 
+import AdminLoginPage from './pages/AdminLoginPage';
+
 function ProtectedRoute({ children, adminOnly = false }: { children: React.ReactNode; adminOnly?: boolean }) {
   const { isAuthenticated, user } = useAuth();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
@@ -59,6 +61,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={isAuthenticated ? <Navigate to={user?.role === 'ADMIN' ? '/' : '/shop'} replace /> : <LoginPage />} />
+      <Route path="/admin-login" element={isAuthenticated ? <Navigate to={user?.role === 'ADMIN' ? '/' : '/shop'} replace /> : <AdminLoginPage />} />
       <Route path="/signup" element={isAuthenticated ? <Navigate to={user?.role === 'ADMIN' ? '/' : '/shop'} replace /> : <SignUpPage />} />
       <Route path="/*" element={isAuthenticated ? <AppLayout /> : <Navigate to="/login" replace />} />
     </Routes>
