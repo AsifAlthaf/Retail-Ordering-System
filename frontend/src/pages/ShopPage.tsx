@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -447,7 +447,7 @@ export default function ShopPage() {
                           direction="row"
                           spacing={2}
                           sx={{
-                            alignItems: 'center',
+                            alignItems: "center",
                             bgcolor: "#ffffff",
                             p: 0.5,
                             borderRadius: "10px",

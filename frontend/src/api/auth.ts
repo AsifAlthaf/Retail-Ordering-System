@@ -1,5 +1,5 @@
-import api from './axios';
-import type { AuthUser } from '../types';
+import api from "./axios";
+import type { AuthUser } from "../types";
 
 export interface LoginRequest {
   email: string;
@@ -25,8 +25,11 @@ export interface AuthResponse {
   token?: string;
 }
 
-export const loginUser = async (email: string, password: string): Promise<AuthUser> => {
-  const response = await api.post<AuthResponse>('/api/auth/login', {
+export const loginUser = async (
+  email: string,
+  password: string,
+): Promise<AuthUser> => {
+  const response = await api.post<AuthResponse>("/api/auth/login", {
     email,
     password,
   });
@@ -36,13 +39,13 @@ export const loginUser = async (email: string, password: string): Promise<AuthUs
     id,
     email: responseEmail,
     name,
-    role: role.toUpperCase() as 'ADMIN' | 'USER',
+    role: role.toUpperCase() as "ADMIN" | "USER",
     token,
   };
 };
 
 export const signupUser = async (payload: SignupRequest): Promise<AuthUser> => {
-  const response = await api.post<AuthResponse>('/api/auth/signup', {
+  const response = await api.post<AuthResponse>("/api/auth/signup", {
     ...payload,
   });
 
@@ -51,7 +54,7 @@ export const signupUser = async (payload: SignupRequest): Promise<AuthUser> => {
     id,
     email: responseEmail,
     name,
-    role: role.toUpperCase() as 'ADMIN' | 'USER',
+    role: role.toUpperCase() as "ADMIN" | "USER",
     token,
     address: payload.address,
     city: payload.city,

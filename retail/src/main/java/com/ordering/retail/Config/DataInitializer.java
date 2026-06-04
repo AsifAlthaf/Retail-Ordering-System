@@ -68,8 +68,7 @@ public class DataInitializer {
                         new Product("Pasta Whole Wheat 500g", 179.0),
                         new Product("Coffee Beans Premium 250g", 349.0),
                         new Product("Cashew Nuts 250g", 449.0),
-                        new Product("Cooking Oil Refined 1L", 179.0)
-                );
+                        new Product("Cooking Oil Refined 1L", 179.0));
 
                 productRepository.saveAll(seededProducts);
 

@@ -235,7 +235,7 @@ export function Sidebar({
       <Divider />
       <Box sx={{ p: 2, flexShrink: 0 }}>
         {collapsed ? (
-          <Stack spacing={1} sx={{ alignItems: 'center' }}>
+          <Stack spacing={1} sx={{ alignItems: "center" }}>
             <Avatar
               sx={{
                 width: 32,
