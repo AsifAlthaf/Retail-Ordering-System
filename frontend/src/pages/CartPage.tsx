@@ -33,7 +33,7 @@ export default function CartPage() {
   const [products, setProducts]   = useState<Product[]>([]);
   const [inventory, setInventory] = useState<Record<number, number | null>>({});
   
-  const [, setCartLoaded] = useState(false);
+  const [cartLoaded, setCartLoaded] = useState(false);
   const [cart, setCart] = useState<CartLine[]>([]);
   const [delivery, setDelivery] = useState<DeliveryForm>({ line1: '', landmark: '', city: '', state: '', postalCode: '' });
   const [deliveryErrors, setDeliveryErrors] = useState<Partial<DeliveryForm>>({});

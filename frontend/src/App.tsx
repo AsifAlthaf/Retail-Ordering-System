@@ -31,7 +31,7 @@ function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const sidebarWidth = collapsed ? 72 : 260;
+
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
