@@ -1,219 +1,200 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Box, Button, Chip, CircularProgress, Dialog, DialogActions,
-  DialogContent, DialogTitle, FormControl, IconButton, InputLabel,
-  MenuItem, Paper, Select, Switch, Table, TableBody, TableCell,
-  TableContainer, TableHead, TableRow, TextField, Tooltip, Typography,
-  FormControlLabel,
+  DialogContent, DialogTitle, FormControl, FormControlLabel,
+  IconButton, InputAdornment, InputLabel, LinearProgress, MenuItem,
+  Paper, Select, Skeleton, Stack, Switch, Table, TableBody,
+  TableCell, TableContainer, TableHead, TableRow, TextField,
+  Tooltip, Typography,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { toast } from 'react-toastify';
+import SearchIcon from '@mui/icons-material/Search';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { getCoupons, createCoupon, updateCoupon, setCouponActive, deleteCoupon } from '../api/coupons';
 import type { CouponRequest, CouponResponse, DiscountType } from '../types';
+import ConfirmDialog from '../components/ConfirmDialog';
+import notify from '../utils/notify';
 
-function toErrorMessage(error: any, fallback: string) {
-  return error?.response?.data?.message || error?.message || fallback;
-}
-
-const emptyForm = (): CouponRequest => ({
-  code: '',
-  type: 'PERCENTAGE',
-  value: 0,
-  expiryDate: new Date().toISOString().split('T')[0],
-  active: true,
-  usageLimit: undefined,
-});
+function toErr(e: any, fallback: string) { return e?.response?.data?.message || e?.message || fallback; }
+function emptyForm(): CouponRequest { return { code: '', type: 'PERCENTAGE', value: 0, expiryDate: new Date().toISOString().split('T')[0], active: true }; }
+function isExpired(dateStr: string) { const d = new Date(dateStr); const today = new Date(); return d < new Date(today.getFullYear(), today.getMonth(), today.getDate()); }
+function usagePct(used: number, limit?: number) { if (!limit) return 0; return Math.min((used / limit) * 100, 100); }
 
 export default function CouponsPage() {
-  const [coupons, setCoupons] = useState<CouponResponse[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [dialog, setDialog] = useState(false);
+  const [coupons, setCoupons]       = useState<CouponResponse[]>([]);
+  const [loading, setLoading]       = useState(true);
+  const [search, setSearch]         = useState('');
+  const [dialog, setDialog]         = useState(false);
   const [editCoupon, setEditCoupon] = useState<CouponResponse | null>(null);
-  const [form, setForm] = useState<CouponRequest>(emptyForm());
-  const [saving, setSaving] = useState(false);
+  const [form, setForm]             = useState<CouponRequest>(emptyForm());
+  const [saving, setSaving]         = useState(false);
+  const [deleteId, setDeleteId]     = useState<number | null>(null);
+  const [togglingIds, setTogglingIds] = useState<Set<number>>(new Set());
 
-  const load = async () => {
+  const load = useCallback(async () => {
     try {
-      setLoading(true);
-      const data = await getCoupons();
-      setCoupons(data);
-    } catch (error) {
-      toast.error(toErrorMessage(error, 'Failed to load coupons'));
-    } finally {
-      setLoading(false);
-    }
-  };
+      setLoading(true); setCoupons(await getCoupons());
+    } catch (e) { notify.error(toErr(e, 'Failed to load coupons')); }
+    finally { setLoading(false); }
+  }, []);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const openCreate = () => { setEditCoupon(null); setForm(emptyForm()); setDialog(true); };
-  const openEdit = (c: CouponResponse) => {
-    setEditCoupon(c);
-    setForm({
-      code: c.code,
-      type: c.type,
-      value: c.value,
-      expiryDate: c.expiryDate,
-      active: c.active,
-      usageLimit: c.usageLimit,
-    });
-    setDialog(true);
-  };
+  const openEdit = (c: CouponResponse) => { setEditCoupon(c); setForm({ code: c.code, type: c.type, value: c.value, expiryDate: c.expiryDate, active: c.active, usageLimit: c.usageLimit }); setDialog(true); };
 
   const handleSave = async () => {
-    if (!form.code.trim()) { toast.warning('Code is required'); return; }
-    if (form.value <= 0) { toast.warning('Value must be positive'); return; }
-    if (form.type === 'PERCENTAGE' && form.value > 100) { toast.warning('Percentage coupon cannot exceed 100'); return; }
-    if (!form.expiryDate) { toast.warning('Expiry date is required'); return; }
-
-    const normalized: CouponRequest = {
-      ...form,
-      code: form.code.trim().toUpperCase(),
-    };
-
+    if (!form.code.trim()) { notify.warning('Code is required'); return; }
     try {
       setSaving(true);
+      const payload = { ...form, code: form.code.trim().toUpperCase() };
       if (editCoupon) {
-        await updateCoupon(editCoupon.id, normalized);
-        toast.success('Coupon updated!');
+        const updated = await updateCoupon(editCoupon.id, payload);
+        setCoupons(cs => cs.map(c => c.id === updated.id ? updated : c));
+        notify.success('Coupon updated');
       } else {
-        await createCoupon(normalized);
-        toast.success('Coupon created!');
+        const created = await createCoupon(payload);
+        setCoupons(cs => [created, ...cs]);
+        notify.success('Coupon created');
       }
       setDialog(false);
-      load();
-    } catch (error) {
-      toast.error(toErrorMessage(error, 'Failed to save coupon'));
-    } finally {
-      setSaving(false);
-    }
+    } catch (e) { notify.error(toErr(e, 'Failed to save coupon')); }
+    finally { setSaving(false); }
   };
 
-  const handleToggleActive = async (c: CouponResponse) => {
+  const handleToggle = async (c: CouponResponse) => {
+    if (togglingIds.has(c.id)) return;
+    const next = !c.active;
+    setTogglingIds(s => new Set(s).add(c.id));
+    setCoupons(cs => cs.map(x => x.id === c.id ? { ...x, active: next } : x));
     try {
-      await setCouponActive(c.id, !c.active);
-      toast.success(`Coupon ${!c.active ? 'activated' : 'deactivated'}`);
-      load();
-    } catch (error) {
-      toast.error(toErrorMessage(error, 'Failed to toggle coupon'));
-    }
+      await setCouponActive(c.id, next);
+      notify.success(`Coupon ${next ? 'activated' : 'deactivated'}`);
+    } catch (e) {
+      setCoupons(cs => cs.map(x => x.id === c.id ? { ...x, active: c.active } : x));
+      notify.error(toErr(e, 'Failed to toggle coupon'));
+    } finally { setTogglingIds(s => { const n = new Set(s); n.delete(c.id); return n; }); }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Delete this coupon?')) return;
+  const confirmDelete = async () => {
+    if (!deleteId) return;
     try {
-      await deleteCoupon(id);
-      toast.success('Coupon deleted');
-      load();
-    } catch (error) {
-      toast.error(toErrorMessage(error, 'Failed to delete coupon'));
-    }
+      await deleteCoupon(deleteId);
+      setCoupons(cs => cs.filter(c => c.id !== deleteId));
+      notify.success('Coupon deleted');
+    } catch (e) { notify.error(toErr(e, 'Failed to delete coupon')); }
+    finally { setDeleteId(null); }
   };
+
+  const copyCode = (code: string) => { navigator.clipboard.writeText(code).then(() => notify.info(`Copied ${code}`)); };
+  const filtered = coupons.filter(c => c.code.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700, flexGrow: 1 }}>Coupons</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>
-          New Coupon
-        </Button>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+        <Typography variant="h5">Coupons</Typography>
+        <Stack direction="row" spacing={1.5}>
+          <TextField
+            size="small" placeholder="Search by code..." value={search} onChange={e => setSearch(e.target.value)}
+            InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> }}
+          />
+          <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>New Coupon</Button>
+        </Stack>
       </Box>
 
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}><CircularProgress /></Box>
+        <Stack spacing={1}><Skeleton height={60} variant="rounded" /></Stack>
       ) : (
-        <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 2 }}>
+        <TableContainer component={Paper}>
           <Table>
             <TableHead>
-              <TableRow sx={{ '& th': { fontWeight: 700, bgcolor: 'primary.main', color: 'white' } }}>
+              <TableRow>
                 <TableCell>Code</TableCell>
                 <TableCell>Type</TableCell>
                 <TableCell align="right">Value</TableCell>
                 <TableCell>Expiry</TableCell>
-                <TableCell align="center">Usage</TableCell>
+                <TableCell>Usage</TableCell>
                 <TableCell align="center">Active</TableCell>
                 <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {coupons.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} align="center" sx={{ py: 6, color: 'text.secondary' }}>
-                    No coupons yet
-                  </TableCell>
-                </TableRow>
-              ) : coupons.map((c, idx) => (
-                <TableRow key={c.id}
-                  sx={{ bgcolor: idx % 2 === 0 ? 'background.paper' : 'action.hover', '&:hover': { bgcolor: 'action.selected' } }}>
-                  <TableCell>
-                    <Chip label={c.code} variant="outlined" size="small" color="secondary" />
-                  </TableCell>
-                  <TableCell>{c.type}</TableCell>
-                  <TableCell align="right">
-                    {c.type === 'PERCENTAGE' ? `${c.value}%` : `₹${c.value}`}
-                  </TableCell>
-                  <TableCell>{c.expiryDate}</TableCell>
-                  <TableCell align="center">
-                    {c.usedCount} / {c.usageLimit ?? '∞'}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Switch
-                      checked={c.active}
-                      onChange={() => handleToggleActive(c)}
-                      color="success"
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell align="center">
-                    <Tooltip title="Edit"><IconButton size="small" color="primary" onClick={() => openEdit(c)}><EditIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Delete"><IconButton size="small" color="error" onClick={() => handleDelete(c.id)}><DeleteIcon fontSize="small" /></IconButton></Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {filtered.length === 0 ? (
+                <TableRow><TableCell colSpan={7} align="center" sx={{ py: 4, color: 'text.secondary' }}>No coupons found</TableCell></TableRow>
+              ) : filtered.map(c => {
+                const expired = isExpired(c.expiryDate);
+                const pct = usagePct(c.usedCount, c.usageLimit);
+                return (
+                  <TableRow key={c.id}>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography sx={{ fontFamily: 'monospace', fontWeight: 600, color: c.active && !expired ? 'primary.main' : 'text.secondary', p: 0.5, bgcolor: '#f1f5f9', borderRadius: 1 }}>
+                          {c.code}
+                        </Typography>
+                        <IconButton size="small" onClick={() => copyCode(c.code)}><ContentCopyIcon sx={{ fontSize: 14 }} /></IconButton>
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Chip label={c.type === 'PERCENTAGE' ? 'Percentage' : 'Flat'} size="small" sx={{ bgcolor: '#f1f5f9' }} />
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 600 }}>
+                      {c.type === 'PERCENTAGE' ? `${c.value}%` : `₹${c.value}`}
+                    </TableCell>
+                    <TableCell>
+                      <Typography sx={{ fontSize: 13, color: expired ? 'error.main' : 'text.secondary' }}>
+                        {c.expiryDate} {expired && '(Expired)'}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography sx={{ fontSize: 12, color: 'text.secondary', mb: 0.5 }}>{c.usedCount} / {c.usageLimit ?? '∞'}</Typography>
+                      {c.usageLimit && <LinearProgress variant="determinate" value={pct} sx={{ height: 4, borderRadius: 2 }} />}
+                    </TableCell>
+                    <TableCell align="center">
+                      <Switch size="small" checked={c.active} disabled={togglingIds.has(c.id)} onChange={() => handleToggle(c)} color="success" />
+                    </TableCell>
+                    <TableCell align="center">
+                      <IconButton size="small" onClick={() => openEdit(c)}><EditIcon fontSize="small" /></IconButton>
+                      <IconButton size="small" onClick={() => setDeleteId(c.id)} color="error"><DeleteIcon fontSize="small" /></IconButton>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>
       )}
 
-      {/* Dialog */}
       <Dialog open={dialog} onClose={() => setDialog(false)} maxWidth="xs" fullWidth>
         <DialogTitle>{editCoupon ? 'Edit Coupon' : 'New Coupon'}</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
-          <TextField label="Code" value={form.code} required
-            onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} fullWidth />
-          <FormControl fullWidth>
-            <InputLabel>Discount Type</InputLabel>
-            <Select label="Discount Type" value={form.type}
-              onChange={e => setForm(f => ({ ...f, type: e.target.value as DiscountType }))}>
-              <MenuItem value="PERCENTAGE">Percentage (%)</MenuItem>
-              <MenuItem value="FLAT">Flat Amount (₹)</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField label={form.type === 'PERCENTAGE' ? 'Value (%)' : 'Value (₹)'}
-            type="number" value={form.value}
-            onChange={e => setForm(f => ({ ...f, value: parseFloat(e.target.value) || 0 }))}
-            fullWidth />
-          <TextField label="Expiry Date" type="date" value={form.expiryDate}
-            onChange={e => setForm(f => ({ ...f, expiryDate: e.target.value }))}
-            fullWidth />
-          <TextField label="Usage Limit (leave blank for unlimited)"
-            type="number" value={form.usageLimit ?? ''}
-            onChange={e => setForm(f => ({ ...f, usageLimit: e.target.value ? parseInt(e.target.value) : undefined }))}
-            fullWidth />
-          <FormControlLabel
-            control={<Switch checked={form.active ?? true} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} />}
-            label="Active"
-          />
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 1 }}>
+            <TextField label="Code" value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase().replace(/\s/g, '') }))} fullWidth required />
+            <FormControl fullWidth>
+              <InputLabel>Type</InputLabel>
+              <Select label="Type" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value as DiscountType, value: 0 }))}>
+                <MenuItem value="PERCENTAGE">Percentage (%)</MenuItem>
+                <MenuItem value="FLAT">Flat Amount (₹)</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField label={form.type === 'PERCENTAGE' ? 'Discount (%)' : 'Discount (₹)'} type="number" value={form.value || ''} onChange={e => setForm(f => ({ ...f, value: parseFloat(e.target.value) || 0 }))} fullWidth />
+            <TextField label="Expiry Date" type="date" value={form.expiryDate} onChange={e => setForm(f => ({ ...f, expiryDate: e.target.value }))} fullWidth InputLabelProps={{ shrink: true }} />
+            <TextField label="Usage Limit (blank = unlimited)" type="number" value={form.usageLimit ?? ''} onChange={e => setForm(f => ({ ...f, usageLimit: e.target.value ? parseInt(e.target.value) : undefined }))} fullWidth />
+            <FormControlLabel control={<Switch checked={form.active ?? true} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} color="success" />} label="Active" />
+          </Stack>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialog(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSave} disabled={saving}>
-            {saving ? <CircularProgress size={20} /> : 'Save'}
-          </Button>
+          <Button variant="contained" onClick={handleSave} disabled={saving}>Save</Button>
         </DialogActions>
       </Dialog>
+
+      <ConfirmDialog
+        open={deleteId !== null} title="Delete Coupon"
+        message="Permanently delete this coupon?" confirmLabel="Delete" confirmColor="error" danger
+        onConfirm={confirmDelete} onCancel={() => setDeleteId(null)}
+      />
     </Box>
   );
 }
