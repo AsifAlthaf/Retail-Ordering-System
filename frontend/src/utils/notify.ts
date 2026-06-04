@@ -75,7 +75,8 @@ const notify = {
       loading: { style: withBorder('#6366f1') },
       success: { style: withBorder('#10b981'), iconTheme: { primary: '#10b981', secondary: '#0d1421' } },
       error:   { style: withBorder('#ef4444'), iconTheme: { primary: '#ef4444', secondary: '#0d1421' } },
-    } as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as unknown as any);
   },
 
   /** Specific notification after an order status change */

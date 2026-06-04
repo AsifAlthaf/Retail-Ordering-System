@@ -29,7 +29,7 @@ export default function CouponSuccessPopup({
           <CloseIcon fontSize="small" />
         </IconButton>
 
-        <Stack spacing={2} alignItems="center" textAlign="center">
+        <Stack spacing={2} sx={{ alignItems: 'center', textAlign: 'center' }}>
           <Box sx={{ width: 56, height: 56, borderRadius: '16px', bgcolor: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26 }}>
             🎉
           </Box>

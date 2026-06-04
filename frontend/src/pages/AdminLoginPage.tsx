@@ -36,6 +36,7 @@ export default function AdminLoginPage() {
       await login(email, password, 'ADMIN');
       notify.success('Admin authenticated.');
       navigate('/');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setLoginError(err?.message ?? 'Invalid credentials. Please try again.');
     } finally {

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  Box, Button, Chip, CircularProgress, Dialog, DialogActions,
+  Box, Button, Chip, Dialog, DialogActions,
   DialogContent, DialogTitle, FormControl, FormControlLabel,
   IconButton, InputAdornment, InputLabel, LinearProgress, MenuItem,
   Paper, Select, Skeleton, Stack, Switch, Table, TableBody,
   TableCell, TableContainer, TableHead, TableRow, TextField,
-  Tooltip, Typography,
+  Typography,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -17,6 +17,7 @@ import type { CouponRequest, CouponResponse, DiscountType } from '../types';
 import ConfirmDialog from '../components/ConfirmDialog';
 import notify from '../utils/notify';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toErr(e: any, fallback: string) { return e?.response?.data?.message || e?.message || fallback; }
 function emptyForm(): CouponRequest { return { code: '', type: 'PERCENTAGE', value: 0, expiryDate: new Date().toISOString().split('T')[0], active: true }; }
 function isExpired(dateStr: string) { const d = new Date(dateStr); const today = new Date(); return d < new Date(today.getFullYear(), today.getMonth(), today.getDate()); }
@@ -40,7 +41,10 @@ export default function CouponsPage() {
     finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load(); 
+  }, [load]);
 
   const openCreate = () => { setEditCoupon(null); setForm(emptyForm()); setDialog(true); };
   const openEdit = (c: CouponResponse) => { setEditCoupon(c); setForm({ code: c.code, type: c.type, value: c.value, expiryDate: c.expiryDate, active: c.active, usageLimit: c.usageLimit }); setDialog(true); };
@@ -98,7 +102,7 @@ export default function CouponsPage() {
         <Stack direction="row" spacing={1.5}>
           <TextField
             size="small" placeholder="Search by code..." value={search} onChange={e => setSearch(e.target.value)}
-            InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> }}
+            slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> } }}
           />
           <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>New Coupon</Button>
         </Stack>
@@ -179,7 +183,7 @@ export default function CouponsPage() {
               </Select>
             </FormControl>
             <TextField label={form.type === 'PERCENTAGE' ? 'Discount (%)' : 'Discount (₹)'} type="number" value={form.value || ''} onChange={e => setForm(f => ({ ...f, value: parseFloat(e.target.value) || 0 }))} fullWidth />
-            <TextField label="Expiry Date" type="date" value={form.expiryDate} onChange={e => setForm(f => ({ ...f, expiryDate: e.target.value }))} fullWidth InputLabelProps={{ shrink: true }} />
+            <TextField label="Expiry Date" type="date" value={form.expiryDate} onChange={e => setForm(f => ({ ...f, expiryDate: e.target.value }))} fullWidth slotProps={{ inputLabel: { shrink: true } }} />
             <TextField label="Usage Limit (blank = unlimited)" type="number" value={form.usageLimit ?? ''} onChange={e => setForm(f => ({ ...f, usageLimit: e.target.value ? parseInt(e.target.value) : undefined }))} fullWidth />
             <FormControlLabel control={<Switch checked={form.active ?? true} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} color="success" />} label="Active" />
           </Stack>

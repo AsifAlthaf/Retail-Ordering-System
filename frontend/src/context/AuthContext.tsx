@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import type { AuthUser } from '../types';
 import { loginUser, signupUser } from '../api/auth';
@@ -78,6 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const exp = decodeJwtExp(user.token);
     if (!exp) return;
     const remaining = exp - Date.now() - 60_000;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (remaining <= 0) { clearUser(); setUser(null); return; }
     const timer = window.setTimeout(() => { clearUser(); setUser(null); }, remaining);
     return () => clearTimeout(timer);

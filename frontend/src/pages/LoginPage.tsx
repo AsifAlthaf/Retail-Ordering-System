@@ -6,7 +6,6 @@ import {
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { validateEmail, validatePassword } from '../utils/validation';
@@ -37,6 +36,7 @@ export default function LoginPage() {
       await login(email, password, 'USER');
       notify.success('Welcome back!');
       navigate('/');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setLoginError(err?.message ?? 'Invalid credentials. Please try again.');
     } finally {

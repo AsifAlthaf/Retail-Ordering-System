@@ -1,22 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Box, Button, Chip, CircularProgress, Dialog, DialogActions,
-  DialogContent, DialogTitle, Divider, FormControl, IconButton,
-  InputAdornment, InputLabel, MenuItem, Select, Skeleton, Stack,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  TextField, Tooltip, Typography, Paper,
+  Box, Button, IconButton, Paper, Table, TableBody, TableCell,
+  TableContainer, TableHead, TableRow, Typography, Dialog,
+  DialogActions, DialogContent, DialogTitle, Divider, FormControl,
+  InputAdornment, MenuItem, Select, Skeleton, Stack, TextField, InputLabel
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { useNavigate } from 'react-router-dom';
-import { getOrders, getOrderById, createOrder, updateOrderStatus, deleteOrder } from '../api/orders';
+import { getOrders, getOrderById, updateOrderStatus, deleteOrder, createOrder } from '../api/orders';
 import { getProducts } from '../api/products';
 import type { OrderResponse, OrderRequest, OrderStatus, Product, OrderItemRequest } from '../types';
 import StatusBadge from '../components/StatusBadge';
@@ -28,8 +23,6 @@ const ALL_STATUSES: OrderStatus[] = ['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVER
 function formatINR(v?: number) { return `₹${(v ?? 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`; }
 
 export default function OrdersPage() {
-  const navigate = useNavigate();
-
   const [orders, setOrders]     = useState<OrderResponse[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading]   = useState(true);
@@ -53,7 +46,7 @@ export default function OrdersPage() {
   const [newStatus, setNewStatus]       = useState<OrderStatus>('PENDING');
 
   const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [actionIds, setActionIds] = useState<Record<number, 'accepting' | 'rejecting'>>({});
+  const [actionIds, setActionIds] = useState<Record<number, 'accepting' | 'rejecting' | 'processing'>>({});
 
   const productMap = useMemo(() => Object.fromEntries(products.map(p => [p.id, p])), [products]);
 
@@ -66,7 +59,10 @@ export default function OrdersPage() {
     finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load(); 
+  }, [load]);
 
   const filteredOrders = useMemo(() => {
     return orders.filter(o => {
@@ -144,7 +140,7 @@ export default function OrdersPage() {
         <Stack direction="row" spacing={1.5}>
           <TextField
             size="small" placeholder="Search orders..." value={search} onChange={e => setSearch(e.target.value)}
-            InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> }}
+            slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> } }}
           />
           <FormControl size="small" sx={{ minWidth: 140 }}>
             <Select value={statusFilter} onChange={e => setStatusFilter(e.target.value as OrderStatus | 'ALL')}>
@@ -182,7 +178,7 @@ export default function OrdersPage() {
                   <TableCell sx={{ maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{o.deliveryAddress}</TableCell>
                   <TableCell align="right" sx={{ fontWeight: 600 }}>{formatINR(o.totalAmount)}</TableCell>
                   <TableCell align="center">
-                    <Stack direction="row" spacing={0.5} justifyContent="center">
+                    <Stack direction="row" spacing={0.5} sx={{ justifyContent: 'center' }}>
                       <IconButton size="small" onClick={() => viewDetails(o.id)}><VisibilityIcon fontSize="small" /></IconButton>
                       {o.status === 'PENDING' && (
                         <>
@@ -224,7 +220,7 @@ export default function OrdersPage() {
               {detailOrder.items.map(item => (
                 <Box key={item.id} sx={{ display: 'flex', justifyContent: 'space-between', p: 1, bgcolor: '#f8fafc', borderRadius: 1 }}>
                   <Typography>{productMap[item.productId]?.name ?? `Product #${item.productId}`} (x{item.quantity})</Typography>
-                  <Typography fontWeight={600}>{formatINR(item.priceAtTime * item.quantity)}</Typography>
+                  <Typography sx={{ fontWeight: 600 }}>{formatINR(item.priceAtTime * item.quantity)}</Typography>
                 </Box>
               ))}
             </Stack>

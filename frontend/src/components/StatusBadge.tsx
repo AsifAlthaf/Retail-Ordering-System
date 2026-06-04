@@ -1,5 +1,4 @@
 import { Chip } from '@mui/material';
-import type { OrderStatus } from '../types';
 
 export default function StatusBadge({ status, onClick, size = 'md' }: { status: string; onClick?: () => void; size?: 'sm' | 'md' }) {
   const cfg: Record<string, { label: string; color: string; bgcolor: string }> = {

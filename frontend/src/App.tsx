@@ -15,6 +15,7 @@ import OrdersPage from './pages/OrdersPage';
 import CouponsPage from './pages/CouponsPage';
 import OrderNotificationPage from './pages/OrderNotificationPage';
 import UserOrdersPage from './pages/UserOrdersPage';
+import CartPage from './pages/CartPage';
 
 import AdminLoginPage from './pages/AdminLoginPage';
 
@@ -35,7 +36,7 @@ function AppLayout() {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
-      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', ml: { xs: 0, md: `${sidebarWidth}px` }, transition: 'margin-left 200ms ease' }}>
+      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', height: 56, px: 2, background: '#ffffff', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, zIndex: 100 }}>
           <IconButton size="small" onClick={() => setMobileOpen(true)} sx={{ mr: 2 }}><MenuIcon /></IconButton>
           <Box sx={{ fontSize: 16, fontWeight: 700 }}>RetailOS</Box>
@@ -48,6 +49,7 @@ function AppLayout() {
             <Route path="/orders" element={<ProtectedRoute adminOnly><OrdersPage /></ProtectedRoute>} />
             <Route path="/order-notification" element={<ProtectedRoute><OrderNotificationPage /></ProtectedRoute>} />
             <Route path="/shop" element={<ProtectedRoute><ShopPage /></ProtectedRoute>} />
+            <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
             <Route path="/my-orders" element={<ProtectedRoute><UserOrdersPage /></ProtectedRoute>} />
             <Route path="*" element={user?.role === 'ADMIN' ? <Navigate to="/" replace /> : <Navigate to="/shop" replace />} />
           </Routes>

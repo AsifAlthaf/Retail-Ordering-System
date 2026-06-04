@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Box, Button, Chip, Divider, IconButton, Paper, Skeleton,
+  Box, Button, Chip, IconButton, Paper, Skeleton,
   Stack, Typography, Tooltip,
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -51,10 +51,13 @@ export default function DashboardPage() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load();
+  }, [load]);
 
   const totalRevenue = useMemo(() => orders.filter(o => o.status === 'DELIVERED').reduce((s, o) => s + Number(o.totalAmount ?? 0), 0), [orders]);
-  const pendingOrders = useMemo(() => orders.filter(o => o.status === 'PENDING').length, [orders]);
+
   const activeCoupons = useMemo(() => coupons.filter(c => c.active).length, [coupons]);
 
   const statusGroups = useMemo(() => {
