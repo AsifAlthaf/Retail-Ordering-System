@@ -416,13 +416,16 @@ export default function ShopPage() {
                         sx={{
                           fontWeight: 700,
                           fontSize: 16,
-                          mb: 1,
+                          mb: 0.5,
                           color: "#0f172a",
                           lineHeight: 1.2,
                         }}
                         noWrap
                       >
                         {product.name}
+                      </Typography>
+                      <Typography sx={{ fontSize: 13, color: "text.secondary", mb: 1 }}>
+                        {product.brand?.name} • {product.category?.name} • {product.packaging}
                       </Typography>
                       <Box
                         sx={{

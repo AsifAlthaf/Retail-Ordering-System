@@ -22,16 +22,34 @@ export type OrderStatus =
   | "CANCELLED";
 export type DiscountType = "PERCENTAGE" | "FLAT";
 
-// ─── Product ──────────────────────────────────────────────────────────────────
+export interface Category {
+  id: number;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+}
+
+export interface Brand {
+  id: number;
+  name: string;
+  logoUrl?: string;
+}
+
 export interface Product {
   id: number;
   name: string;
   price: number;
+  category?: Category;
+  brand?: Brand;
+  packaging?: string;
 }
 
 export interface ProductRequest {
   name: string;
   price: number;
+  categoryId: number;
+  brandId: number;
+  packaging: string;
 }
 
 // ─── Inventory ────────────────────────────────────────────────────────────────

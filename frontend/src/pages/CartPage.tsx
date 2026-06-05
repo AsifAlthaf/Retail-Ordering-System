@@ -369,6 +369,9 @@ export default function CartPage() {
                       >
                         {product.name}
                       </Typography>
+                      <Typography sx={{ fontSize: 12, color: "text.secondary", mt: 0.5, mb: 0.5 }}>
+                        {product.brand?.name} • {product.category?.name} • {product.packaging}
+                      </Typography>
                       <Typography
                         sx={{ color: "text.secondary", fontSize: 14 }}
                       >

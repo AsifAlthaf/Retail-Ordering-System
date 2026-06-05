@@ -14,9 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final com.ordering.retail.Repository.BrandRepository brandRepository;
+    private final com.ordering.retail.Repository.CategoryRepository categoryRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository,
+                          com.ordering.retail.Repository.BrandRepository brandRepository,
+                          com.ordering.retail.Repository.CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
+        this.brandRepository = brandRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Transactional(readOnly = true)
@@ -49,5 +55,18 @@ public class ProductService {
     private void applyRequest(Product product, ProductRequestDTO request) {
         product.setName(request.getName());
         product.setPrice(request.getPrice());
+        product.setPackaging(request.getPackaging());
+        
+        if (request.getBrandId() != null) {
+            com.ordering.retail.Entity.Brand brand = brandRepository.findById(request.getBrandId())
+                .orElseThrow(() -> new ResourceNotFoundException("Brand not found with id: " + request.getBrandId()));
+            product.setBrand(brand);
+        }
+        
+        if (request.getCategoryId() != null) {
+            com.ordering.retail.Entity.Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + request.getCategoryId()));
+            product.setCategory(category);
+        }
     }
 }

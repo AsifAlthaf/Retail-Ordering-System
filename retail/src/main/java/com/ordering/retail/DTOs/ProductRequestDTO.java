@@ -13,6 +13,15 @@ public class ProductRequestDTO {
 	@Positive(message = "Product price must be greater than zero")
 	private Double price;
 
+	@NotNull(message = "Brand ID is required")
+	private Long brandId;
+
+	@NotNull(message = "Category ID is required")
+	private Long categoryId;
+
+	@NotBlank(message = "Packaging info is required")
+	private String packaging;
+
 	public String getName() {
 		return name;
 	}
@@ -27,5 +36,29 @@ public class ProductRequestDTO {
 
 	public void setPrice(Double price) {
 		this.price = price;
+	}
+
+	public Long getBrandId() {
+		return brandId;
+	}
+
+	public void setBrandId(Long brandId) {
+		this.brandId = brandId;
+	}
+
+	public Long getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public String getPackaging() {
+		return packaging;
+	}
+
+	public void setPackaging(String packaging) {
+		this.packaging = packaging;
 	}
 }
