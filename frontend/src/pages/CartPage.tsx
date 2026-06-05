@@ -42,8 +42,8 @@ const DELIVERY_KEY = (uid: number) => `retail_delivery_${uid}`;
 function formatINR(v: number) {
   return `₹${v.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
 }
-function imageForProduct(id: number) {
-  return `https://picsum.photos/seed/rp-${id}/400/300`;
+function imageForProduct(product: Product) {
+  return `https://placehold.co/400x300/e2e8f0/0f172a?text=${encodeURIComponent(product.name)}`;
 }
 
 export default function CartPage() {
@@ -347,7 +347,7 @@ export default function CartPage() {
                   >
                     <Box
                       component="img"
-                      src={imageForProduct(product.id)}
+                      src={imageForProduct(product)}
                       sx={{
                         width: 80,
                         height: 80,
@@ -367,6 +367,9 @@ export default function CartPage() {
                         sx={{ fontWeight: 600, color: "#0f172a", fontSize: 15 }}
                       >
                         {product.name}
+                      </Typography>
+                      <Typography sx={{ fontSize: 12, color: "text.secondary", mt: 0.5, mb: 0.5 }}>
+                        {product.brand?.name} • {product.category?.name} • {product.packaging}
                       </Typography>
                       <Typography
                         sx={{ color: "text.secondary", fontSize: 14 }}

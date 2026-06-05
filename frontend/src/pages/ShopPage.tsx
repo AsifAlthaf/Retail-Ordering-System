@@ -43,8 +43,8 @@ function toErr(e: unknown, fb: string) {
   const err = e as any;
   return err?.response?.data?.message || err?.message || fb;
 }
-function imageForProduct(id: number) {
-  return `https://picsum.photos/seed/rp-${id}/400/300`;
+function imageForProduct(product: Product) {
+  return `https://placehold.co/400x300/e2e8f0/0f172a?text=${encodeURIComponent(product.name)}`;
 }
 
 export default function ShopPage() {
@@ -361,7 +361,7 @@ export default function ShopPage() {
                       <CardMedia
                         component="img"
                         height="200"
-                        image={imageForProduct(product.id)}
+                        image={imageForProduct(product)}
                         alt={product.name}
                         sx={{
                           objectFit: "cover",
@@ -415,13 +415,16 @@ export default function ShopPage() {
                         sx={{
                           fontWeight: 700,
                           fontSize: 16,
-                          mb: 1,
+                          mb: 0.5,
                           color: "#0f172a",
                           lineHeight: 1.2,
                         }}
                         noWrap
                       >
                         {product.name}
+                      </Typography>
+                      <Typography sx={{ fontSize: 13, color: "text.secondary", mb: 1 }}>
+                        {product.brand?.name} • {product.category?.name} • {product.packaging}
                       </Typography>
                       <Box
                         sx={{

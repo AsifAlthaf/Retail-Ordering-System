@@ -1,6 +1,7 @@
 package com.ordering.retail.Config;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -11,10 +12,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.ordering.retail.Entity.Inventory;
 import com.ordering.retail.Entity.Product;
 import com.ordering.retail.Entity.User;
+import com.ordering.retail.Entity.Brand;
+import com.ordering.retail.Entity.Category;
 import com.ordering.retail.Enum.Role;
 import com.ordering.retail.Repository.InventoryRepository;
 import com.ordering.retail.Repository.ProductRepository;
 import com.ordering.retail.Repository.UserRepository;
+import com.ordering.retail.Repository.BrandRepository;
+import com.ordering.retail.Repository.CategoryRepository;
 
 @Configuration
 public class DataInitializer {
@@ -27,6 +32,12 @@ public class DataInitializer {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private BrandRepository brandRepository;
+    
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -41,36 +52,42 @@ public class DataInitializer {
                 admin.setPasswordHash(passwordEncoder.encode("Admin@123"));
                 admin.setPhone("9999999999");
                 admin.setAddress("RetailOS HQ");
+                admin.setCity("Mumbai");
+                admin.setState("MH");
+                admin.setPostalCode("400001");
                 admin.setRole(Role.ADMIN);
                 admin.setLoyaltyPoints(0);
                 userRepository.save(admin);
             }
 
-            // Seed base product catalog only when empty.
             if (productRepository.count() == 0) {
-                List<Product> seededProducts = List.of(
-                        new Product("Premium Wireless Headphones", 2999.0),
-                        new Product("USB-C Fast Charger", 799.0),
-                        new Product("Phone Screen Protector (Pack of 3)", 499.0),
-                        new Product("Portable Power Bank 20000mAh", 1799.0),
-                        new Product("Bluetooth Speaker", 1499.0),
-                        new Product("Phone Case Protective", 599.0),
-                        new Product("Wireless Mouse", 899.0),
-                        new Product("USB Hub 7-Port", 1299.0),
-                        new Product("HDMI Cable 2m", 399.0),
-                        new Product("Laptop Stand Adjustable", 1599.0),
-                        new Product("Olive Oil Premium 500ml", 449.0),
-                        new Product("Basmati Rice 1kg", 299.0),
-                        new Product("Dark Chocolate Bar 100g", 199.0),
-                        new Product("Almond Nuts 250g", 399.0),
-                        new Product("Green Tea Bags (25 pack)", 249.0),
-                        new Product("Honey Natural 500ml", 549.0),
-                        new Product("Pasta Whole Wheat 500g", 179.0),
-                        new Product("Coffee Beans Premium 250g", 349.0),
-                        new Product("Cashew Nuts 250g", 449.0),
-                        new Product("Cooking Oil Refined 1L", 179.0));
+                // Seed Categories
+                Category pizzaCategory = categoryRepository.save(new Category("Pizza", "Delicious freshly baked pizzas", ""));
+                Category drinksCategory = categoryRepository.save(new Category("Cold Drinks", "Refreshing beverages", ""));
+                Category breadCategory = categoryRepository.save(new Category("Breads", "Freshly baked breads and garlic breads", ""));
 
-                productRepository.saveAll(seededProducts);
+                // Seed Brands
+                Brand dominos = brandRepository.save(new Brand(null, "Domino's", ""));
+                Brand cocaCola = brandRepository.save(new Brand(null, "Coca Cola", ""));
+                Brand britannia = brandRepository.save(new Brand(null, "Britannia", ""));
+                Brand pepsi = brandRepository.save(new Brand(null, "Pepsi", ""));
+
+                List<Product> products = new ArrayList<>();
+                
+                products.add(createProduct("Margherita Pizza", 199.0, pizzaCategory, dominos, "Box"));
+                products.add(createProduct("Farmhouse Pizza", 399.0, pizzaCategory, dominos, "Box"));
+                products.add(createProduct("Peppy Paneer Pizza", 459.0, pizzaCategory, dominos, "Box"));
+                products.add(createProduct("Veg Extravaganza Pizza", 549.0, pizzaCategory, dominos, "Box"));
+                products.add(createProduct("Coca Cola 500ml", 40.0, drinksCategory, cocaCola, "Bottle"));
+                products.add(createProduct("Diet Coke 300ml", 45.0, drinksCategory, cocaCola, "Can"));
+                products.add(createProduct("Pepsi 500ml", 40.0, drinksCategory, pepsi, "Bottle"));
+                products.add(createProduct("Sprite 500ml", 40.0, drinksCategory, cocaCola, "Bottle"));
+                products.add(createProduct("Garlic Breadsticks", 109.0, breadCategory, dominos, "Box"));
+                products.add(createProduct("Stuffed Garlic Bread", 159.0, breadCategory, dominos, "Box"));
+                products.add(createProduct("Whole Wheat Bread", 50.0, breadCategory, britannia, "Packet"));
+                products.add(createProduct("Multigrain Bread", 65.0, breadCategory, britannia, "Packet"));
+
+                productRepository.saveAll(products);
 
                 for (Product product : productRepository.findAll()) {
                     if (inventoryRepository.findByProductId(product.getId()).isEmpty()) {
@@ -83,5 +100,13 @@ public class DataInitializer {
                 }
             }
         };
+    }
+    
+    private Product createProduct(String name, Double price, Category category, Brand brand, String packaging) {
+        Product p = new Product(name, price);
+        p.setCategory(category);
+        p.setBrand(brand);
+        p.setPackaging(packaging);
+        return p;
     }
 }
