@@ -35,7 +35,7 @@ public class SignupRequestDTO {
     private String state;
 
     @NotBlank(message = "Postal code is required")
-    @Pattern(regexp = "^[0-9]{6}$", message = "Postal code must be 6 digits")
+    @Pattern(regexp = "^[0-9]{5}$", message = "Postal code must be 5 digits")
     private String postalCode;
 
     public SignupRequestDTO() {

@@ -43,8 +43,9 @@ function toErr(e: unknown, fb: string) {
   const err = e as any;
   return err?.response?.data?.message || err?.message || fb;
 }
-function imageForProduct(id: number) {
-  return `https://picsum.photos/seed/rp-${id}/400/300`;
+function imageForProduct(product: Product) {
+  const keyword = encodeURIComponent(product.name.split(' ').join(','));
+  return `https://loremflickr.com/400/300/${keyword}?lock=${product.id}`;
 }
 
 export default function ShopPage() {
@@ -361,7 +362,7 @@ export default function ShopPage() {
                       <CardMedia
                         component="img"
                         height="200"
-                        image={imageForProduct(product.id)}
+                        image={imageForProduct(product)}
                         alt={product.name}
                         sx={{
                           objectFit: "cover",

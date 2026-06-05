@@ -42,8 +42,9 @@ const DELIVERY_KEY = (uid: number) => `retail_delivery_${uid}`;
 function formatINR(v: number) {
   return `₹${v.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
 }
-function imageForProduct(id: number) {
-  return `https://picsum.photos/seed/rp-${id}/400/300`;
+function imageForProduct(product: Product) {
+  const keyword = encodeURIComponent(product.name.split(' ').join(','));
+  return `https://loremflickr.com/400/300/${keyword}?lock=${product.id}`;
 }
 
 export default function CartPage() {
@@ -347,7 +348,7 @@ export default function CartPage() {
                   >
                     <Box
                       component="img"
-                      src={imageForProduct(product.id)}
+                      src={imageForProduct(product)}
                       sx={{
                         width: 80,
                         height: 80,
