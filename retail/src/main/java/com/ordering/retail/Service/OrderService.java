@@ -31,13 +31,17 @@ public class OrderService {
     private final UserRepository userRepository;
     private final CouponRepository couponRepository;
     private final OrderNotificationService orderNotificationService;
+    private final com.ordering.retail.Repository.InventoryRepository inventoryRepository;
 
-    public OrderService(OrderRepository orderRepository, UserRepository userRepository, CouponRepository couponRepository,
-            OrderNotificationService orderNotificationService) {
+    public OrderService(OrderRepository orderRepository, UserRepository userRepository,
+            CouponRepository couponRepository,
+            OrderNotificationService orderNotificationService,
+            com.ordering.retail.Repository.InventoryRepository inventoryRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.couponRepository = couponRepository;
         this.orderNotificationService = orderNotificationService;
+        this.inventoryRepository = inventoryRepository;
     }
 
     @Transactional(readOnly = true)
@@ -102,10 +106,29 @@ public class OrderService {
             order.setDeliveredAt(LocalDateTime.now());
         }
         Order saved = orderRepository.save(order);
+
         if (previousStatus != status) {
+            if (status == OrderStatus.CONFIRMED) {
+                decrementInventory(saved);
+            }
             orderNotificationService.sendOrderStatusEmail(saved);
         }
         return saved;
+    }
+
+    private void decrementInventory(Order order) {
+        for (OrderItem item : order.getItems()) {
+            com.ordering.retail.Entity.Inventory inventory = inventoryRepository.findByProductId(item.getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Inventory not found for product: " + item.getProductId()));
+
+            if (inventory.getQuantity() < item.getQuantity()) {
+                throw new IllegalStateException("Insufficient inventory for product: " + item.getProductId());
+            }
+
+            inventory.setQuantity(inventory.getQuantity() - item.getQuantity());
+            inventoryRepository.save(inventory);
+        }
     }
 
     private Order getOrderEntity(Long id) {
@@ -199,7 +222,8 @@ public class OrderService {
         if (coupon.getExpiryDate() != null && coupon.getExpiryDate().isBefore(java.time.LocalDate.now())) {
             throw new IllegalArgumentException("Coupon is expired: " + coupon.getCode());
         }
-        if (coupon.getUsageLimit() != null && coupon.getUsedCount() != null && coupon.getUsedCount() >= coupon.getUsageLimit()) {
+        if (coupon.getUsageLimit() != null && coupon.getUsedCount() != null
+                && coupon.getUsedCount() >= coupon.getUsageLimit()) {
             throw new IllegalArgumentException("Coupon usage limit reached: " + coupon.getCode());
         }
     }

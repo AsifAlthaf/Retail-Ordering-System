@@ -44,8 +44,7 @@ function toErr(e: unknown, fb: string) {
   return err?.response?.data?.message || err?.message || fb;
 }
 function imageForProduct(product: Product) {
-  const keyword = encodeURIComponent(product.name.split(' ').join(','));
-  return `https://loremflickr.com/400/300/${keyword}?lock=${product.id}`;
+  return `https://placehold.co/400x300/e2e8f0/0f172a?text=${encodeURIComponent(product.name)}`;
 }
 
 export default function ShopPage() {

@@ -14,7 +14,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 
     private final Map<String, TokenBucket> buckets = new ConcurrentHashMap<>();
 
-    private static final int MAX_TOKENS = 100;
+    private static final int MAX_TOKENS = 1000;
     private static final long REFILL_TIME_MS = 60000; // 1 minute
 
     @Override
