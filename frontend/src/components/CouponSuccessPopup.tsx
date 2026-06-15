@@ -99,7 +99,7 @@ export default function CouponSuccessPopup({
             >
               <Typography
                 sx={{
-                  fontFamily: '"CohereText", monospace',
+                  fontFamily: '"Plus Jakarta Sans", "CohereText", monospace',
                   fontSize: 18,
                   fontWeight: 700,
                   color: "#191919",

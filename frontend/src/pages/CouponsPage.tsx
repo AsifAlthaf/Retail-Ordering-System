@@ -264,7 +264,7 @@ export default function CouponsPage() {
                         >
                           <Typography
                             sx={{
-                              fontFamily: '"CohereText", monospace',
+                              fontFamily: '"Plus Jakarta Sans", "CohereText", monospace',
                               fontWeight: 600,
                               fontSize: 13,
                               color:
