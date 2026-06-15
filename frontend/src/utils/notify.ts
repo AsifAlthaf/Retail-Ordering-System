@@ -8,37 +8,38 @@
 import toast from "react-hot-toast";
 
 const DARK_BASE = {
-  background: "#1a2235",
-  color: "#f1f5f9",
-  border: "1px solid rgba(255,255,255,0.09)",
-  borderRadius: "10px",
+  background: "rgba(255, 255, 255, 0.88)",
+  backdropFilter: "blur(20px) saturate(190%)",
+  color: "#191919",
+  border: "1px solid rgba(230, 228, 221, 0.7)",
+  borderRadius: "12px",
   fontSize: "13.5px",
-  fontWeight: "500",
-  fontFamily: '"Inter", system-ui, sans-serif',
-  padding: "11px 15px",
-  boxShadow: "0 12px 32px rgba(0,0,0,0.5)",
-  maxWidth: "360px",
+  fontWeight: "600",
+  fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif',
+  padding: "12px 18px",
+  boxShadow: "0 8px 32px -4px rgba(25, 25, 25, 0.06), 0 2px 12px -2px rgba(25, 25, 25, 0.02)",
+  maxWidth: "380px",
 };
 
 const withBorder = (color: string) => ({
   ...DARK_BASE,
-  borderLeft: `3px solid ${color}`,
+  borderLeft: `4px solid ${color}`,
 });
 
 const notify = {
   success(msg: string) {
     return toast.success(msg, {
       duration: 3000,
-      style: withBorder("#10b981"),
-      iconTheme: { primary: "#10b981", secondary: "#0d1421" },
+      style: withBorder("#15803D"),
+      iconTheme: { primary: "#15803D", secondary: "#ffffff" },
     });
   },
 
   error(msg: string) {
     return toast.error(msg, {
       duration: 4500,
-      style: withBorder("#ef4444"),
-      iconTheme: { primary: "#ef4444", secondary: "#0d1421" },
+      style: withBorder("#B91C1C"),
+      iconTheme: { primary: "#B91C1C", secondary: "#ffffff" },
     });
   },
 
@@ -46,7 +47,7 @@ const notify = {
     return toast(msg, {
       duration: 3500,
       icon: "⚠️",
-      style: withBorder("#f59e0b"),
+      style: withBorder("#B45309"),
     });
   },
 
@@ -54,13 +55,13 @@ const notify = {
     return toast(msg, {
       duration: 3000,
       icon: "ℹ️",
-      style: withBorder("#3b82f6"),
+      style: withBorder("#1D4ED8"),
     });
   },
 
   loading(msg: string) {
     return toast.loading(msg, {
-      style: withBorder("#6366f1"),
+      style: withBorder("#6d28d9"),
     });
   },
 
@@ -75,14 +76,14 @@ const notify = {
   ) {
     return toast.promise(prom, msgs, {
       style: DARK_BASE,
-      loading: { style: withBorder("#6366f1") },
+      loading: { style: withBorder("#6d28d9") },
       success: {
-        style: withBorder("#10b981"),
-        iconTheme: { primary: "#10b981", secondary: "#0d1421" },
+        style: withBorder("#15803D"),
+        iconTheme: { primary: "#15803D", secondary: "#ffffff" },
       },
       error: {
-        style: withBorder("#ef4444"),
-        iconTheme: { primary: "#ef4444", secondary: "#0d1421" },
+        style: withBorder("#B91C1C"),
+        iconTheme: { primary: "#B91C1C", secondary: "#ffffff" },
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as unknown as any);
@@ -93,33 +94,33 @@ const notify = {
     const cfg: Record<string, { icon: string; color: string; msg: string }> = {
       CONFIRMED: {
         icon: "✅",
-        color: "#10b981",
+        color: "#15803D",
         msg: `Order #${orderId} confirmed`,
       },
       CANCELLED: {
         icon: "❌",
-        color: "#ef4444",
+        color: "#B91C1C",
         msg: `Order #${orderId} cancelled`,
       },
       SHIPPED: {
         icon: "🚚",
-        color: "#8b5cf6",
+        color: "#6d28d9",
         msg: `Order #${orderId} shipped`,
       },
       DELIVERED: {
         icon: "📦",
-        color: "#06b6d4",
+        color: "#1D4ED8",
         msg: `Order #${orderId} delivered`,
       },
       PENDING: {
         icon: "⏳",
-        color: "#f59e0b",
+        color: "#B45309",
         msg: `Order #${orderId} set to pending`,
       },
     };
     const c = cfg[status] ?? {
       icon: "📋",
-      color: "#6366f1",
+      color: "#6d28d9",
       msg: `Order #${orderId} updated`,
     };
     return toast(c.msg, {
@@ -134,7 +135,7 @@ const notify = {
     return toast(`Coupon ${code} applied — saving ${saving}`, {
       icon: "🎉",
       duration: 4000,
-      style: withBorder("#6366f1"),
+      style: withBorder("#1D4ED8"),
     });
   },
 
@@ -147,7 +148,7 @@ const notify = {
       {
         icon: action === "added" ? "🛒" : "🗑️",
         duration: 2000,
-        style: withBorder("#8b5cf6"),
+        style: withBorder("#6d28d9"),
       },
     );
   },

@@ -39,7 +39,7 @@ function AppLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", background: "#f8fafc" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh", background: "transparent" }}>
       <Sidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed((c) => !c)}
@@ -55,8 +55,9 @@ function AppLayout() {
             alignItems: "center",
             height: 56,
             px: 2,
-            background: "#ffffff",
-            borderBottom: "1px solid #e2e8f0",
+            background: "rgba(255, 255, 255, 0.75)",
+            backdropFilter: "blur(20px) saturate(190%)",
+            borderBottom: "1px solid rgba(230, 228, 221, 0.6)",
             position: "sticky",
             top: 0,
             zIndex: 100,

@@ -1,45 +1,187 @@
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 
-/* ─── Minimal SaaS Design Tokens ─────────────────────────────────────────── */
+@font-face {
+  font-family: 'CohereText';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: local('Plus Jakarta Sans Light'), local('PlusJakartaSans-Light'), local('Plus Jakarta Sans'), url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_907NSg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'CohereText';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Plus Jakarta Sans Regular'), local('PlusJakartaSans-Regular'), local('Plus Jakarta Sans'), url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_qU7NSg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'CohereText';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: local('Plus Jakarta Sans Medium'), local('PlusJakartaSans-Medium'), local('Plus Jakarta Sans'), url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_m07NSg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'CohereText';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Plus Jakarta Sans SemiBold'), local('PlusJakartaSans-SemiBold'), local('Plus Jakarta Sans'), url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_d0nNSg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'CohereText';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Plus Jakarta Sans Bold'), local('PlusJakartaSans-Bold'), local('Plus Jakarta Sans'), url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_TknNSg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'CohereText';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: local('Plus Jakarta Sans ExtraBold'), local('PlusJakartaSans-ExtraBold'), local('Plus Jakarta Sans'), url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KUnNSg.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Anthropic Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: normal;
+  font-display: swap;
+  src: local('Instrument Sans Regular'), local('InstrumentSans-Regular'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSTF-Qf1.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Anthropic Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: normal;
+  font-display: swap;
+  src: local('Instrument Sans Medium'), local('InstrumentSans-Medium'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npST3-Qf1.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Anthropic Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: normal;
+  font-display: swap;
+  src: local('Instrument Sans SemiBold'), local('InstrumentSans-SemiBold'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQb_gf1.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Anthropic Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: normal;
+  font-display: swap;
+  src: local('Instrument Sans Bold'), local('InstrumentSans-Bold'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQi_gf1.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: normal;
+  font-display: swap;
+  src: local('SF Pro Display'), local('SFProDisplay'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSTF-Qf1.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: normal;
+  font-display: swap;
+  src: local('SF Pro Display Medium'), local('SFProDisplay-Medium'), local('SF Pro Display'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npST3-Qf1.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: normal;
+  font-display: swap;
+  src: local('SF Pro Display SemiBold'), local('SFProDisplay-SemiBold'), local('SF Pro Display'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQb_gf1.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: normal;
+  font-display: swap;
+  src: local('SF Pro Display Bold'), local('SFProDisplay-Bold'), local('SF Pro Display'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQi_gf1.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: normal;
+  font-display: swap;
+  src: local('SF Pro Text'), local('SFProText'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSTF-Qf1.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: normal;
+  font-display: swap;
+  src: local('SF Pro Text Medium'), local('SFProText-Medium'), local('SF Pro Text'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npST3-Qf1.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: normal;
+  font-display: swap;
+  src: local('SF Pro Text SemiBold'), local('SFProText-SemiBold'), local('SF Pro Text'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQb_gf1.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'SF Pro Text';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: normal;
+  font-display: swap;
+  src: local('SF Pro Text Bold'), local('SFProText-Bold'), local('SF Pro Text'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQi_gf1.ttf) format('truetype');
+}
+
+/* ─── Premium AI-Native Editorial Design Tokens ───────────────────────────── */
 :root {
-  /* Background layers */
-  --bg-base: #f8fafc;
-  --bg-surface: #ffffff;
-  --bg-card: #ffffff;
-  --bg-hover: #f1f5f9;
+  /* Background layers (Claude-inspired glassmorphism sand layout) */
+  --bg-base: transparent;
+  --bg-surface: rgba(255, 255, 255, 0.8);
+  --bg-card: rgba(255, 255, 255, 0.8);
+  --bg-hover: rgba(243, 241, 235, 0.85);
 
-  /* Brand */
-  --primary: #0f172a;
-  --primary-hover: #334155;
-  --primary-subtle: #f1f5f9;
+  /* Brand (Apple-grade deep charcoal and soft cream accents) */
+  --primary: #191919;
+  --primary-hover: #2E2E2E;
+  --primary-subtle: rgba(240, 237, 230, 0.8);
 
-  /* Semantic */
-  --success: #10b981;
-  --success-subtle: rgba(16, 185, 129, 0.1);
-  --warning: #f59e0b;
-  --warning-subtle: rgba(245, 158, 11, 0.1);
-  --error: #ef4444;
-  --error-subtle: rgba(239, 68, 68, 0.1);
-  --info: #3b82f6;
+  /* Semantic (Calm, highly legible forest greens/crimsons) */
+  --success: #15803D;
+  --success-subtle: rgba(21, 128, 61, 0.06);
+  --warning: #B45309;
+  --warning-subtle: rgba(180, 83, 9, 0.06);
+  --error: #B91C1C;
+  --error-subtle: rgba(185, 28, 28, 0.06);
+  --info: #1D4ED8;
+  --info-subtle: rgba(29, 78, 216, 0.06);
 
-  /* Text */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  --text-inverse: #ffffff;
+  /* Text layers */
+  --text-primary: #191919;
+  --text-secondary: #5E5E5E;
+  --text-muted: #8E8E8E;
+  --text-inverse: #FFFFFF;
 
-  /* Borders */
-  --border: #e2e8f0;
-  --border-focus: var(--primary);
+  /* Borders & Rules */
+  --border: rgba(230, 228, 221, 0.6);
+  --border-focus: #191919;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  /* Shadows (Super soft low-contrast elevations) */
+  --shadow-sm: 0 1px 2px 0 rgba(25, 25, 25, 0.01);
+  --shadow-md: 0 8px 32px -4px rgba(25, 25, 25, 0.04), 0 2px 12px -2px rgba(25, 25, 25, 0.02);
 
-  /* Transitions */
-  --t-fast: 150ms ease;
-  --t-base: 250ms ease;
+  /* Transitions (Apple ease-out cubic curve) */
+  --t-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --t-base: 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ─── Reset ───────────────────────────────────────────────────────────────── */
@@ -52,8 +194,16 @@
 }
 
 body {
-  font-family: "Outfit", system-ui, sans-serif;
-  background: var(--bg-base);
+  font-family: "CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+  background-color: #F6F5EF;
+  /* Satisfying mesh gradient background (dopamine lighting blobs) */
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(206, 172, 114, 0.16) 0px, transparent 40%),
+    radial-gradient(at 100% 0%, rgba(212, 190, 153, 0.16) 0px, transparent 40%),
+    radial-gradient(at 50% 100%, rgba(220, 215, 201, 0.22) 0px, transparent 50%),
+    radial-gradient(at 20% 70%, rgba(240, 237, 230, 0.2) 0px, transparent 40%),
+    radial-gradient(at 80% 40%, rgba(21, 128, 61, 0.02) 0px, transparent 30%);
+  background-attachment: fixed;
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
@@ -64,17 +214,33 @@ a {
   color: inherit;
 }
 
+/* ─── Global Micro-Interactions (Haptic Feeling) ───────────────────────── */
+button, 
+.MuiButton-root, 
+.nav-item, 
+.MuiCard-root, 
+.haptic-active {
+  transition: transform var(--t-fast) !important;
+}
+
+button:active, 
+.MuiButton-root:active, 
+.nav-item:active, 
+.haptic-active:active {
+  transform: scale(0.97) !important;
+}
+
 /* ─── Utilities ───────────────────────────────────────────────────────────── */
 .auth-bg {
   min-height: 100vh;
-  background: var(--bg-base);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
+  background-color: transparent;
 }
 
-/* Sidebar nav item */
+/* Sidebar nav item (Claude/Apple pill-nav) */
 .nav-item {
   display: flex;
   align-items: center;
@@ -93,8 +259,8 @@ a {
   color: var(--text-primary);
 }
 .nav-item.active {
-  background: var(--primary);
-  color: var(--text-inverse);
+  background: var(--primary-subtle);
+  color: var(--primary);
   font-weight: 600;
 }
 
@@ -103,11 +269,12 @@ a {
   background: var(--bg-surface) !important;
   color: var(--text-primary) !important;
   border: 1px solid var(--border) !important;
-  border-radius: 8px !important;
-  font-family: "Outfit", sans-serif !important;
+  border-radius: 12px !important;
+  font-family: "CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif !important;
   font-size: 14px !important;
   font-weight: 500 !important;
   box-shadow: var(--shadow-md) !important;
+  backdrop-filter: blur(12px);
 }
 
 @keyframes spin {
@@ -126,4 +293,21 @@ a {
     opacity: 0.5;
     transform: scale(0.8);
   }
+}
+
+/* ─── Premium Rounded Custom Scrollbars ────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(25, 25, 25, 0.08);
+  border-radius: 99px;
+  transition: background var(--t-fast);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(25, 25, 25, 0.16);
 }
