@@ -22,6 +22,8 @@ public class ProductRequestDTO {
 	@NotBlank(message = "Packaging info is required")
 	private String packaging;
 
+	private String imageUrl;
+
 	public String getName() {
 		return name;
 	}
@@ -60,5 +62,13 @@ public class ProductRequestDTO {
 
 	public void setPackaging(String packaging) {
 		this.packaging = packaging;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 }
