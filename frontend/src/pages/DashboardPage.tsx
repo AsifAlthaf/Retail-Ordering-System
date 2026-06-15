@@ -192,29 +192,29 @@ export default function DashboardPage() {
           title="Total Orders"
           value={String(orders.length)}
           icon={<ShoppingCartIcon fontSize="small" />}
-          color="#191919"
-          bgColor="#f0ede6"
+          color="#1d1d1f"
+          bgColor="#f5f5f7"
         />
         <StatCard
           title="Revenue"
           value={formatINR(totalRevenue)}
           icon={<TrendingUpIcon fontSize="small" />}
-          color="#15803d"
-          bgColor="#edf7ed"
+          color="#34c759"
+          bgColor="rgba(52, 199, 89, 0.08)"
         />
         <StatCard
           title="Products"
           value={String(products.length)}
           icon={<InventoryIcon fontSize="small" />}
-          color="#b45309"
-          bgColor="#fdf6e2"
+          color="#ff9500"
+          bgColor="rgba(255, 149, 0, 0.08)"
         />
         <StatCard
           title="Active Coupons"
           value={String(activeCoupons)}
           icon={<LocalOfferIcon fontSize="small" />}
-          color="#1d4ed8"
-          bgColor="#edf2fe"
+          color="#0071e3"
+          bgColor="rgba(0, 113, 227, 0.08)"
         />
       </Box>
 

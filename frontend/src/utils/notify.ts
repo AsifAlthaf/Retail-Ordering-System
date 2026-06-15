@@ -7,30 +7,30 @@
  */
 import toast from "react-hot-toast";
 
-const DARK_BASE = {
-  background: "rgba(255, 255, 255, 0.88)",
+const BASE_STYLE = {
   backdropFilter: "blur(20px) saturate(190%)",
+  WebkitBackdropFilter: "blur(20px) saturate(190%)",
   color: "#191919",
-  border: "1px solid rgba(230, 228, 221, 0.7)",
-  borderRadius: "12px",
+  borderRadius: "99px",
   fontSize: "13.5px",
   fontWeight: "600",
-  fontFamily: '"CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif',
-  padding: "12px 18px",
-  boxShadow: "0 8px 32px -4px rgba(25, 25, 25, 0.06), 0 2px 12px -2px rgba(25, 25, 25, 0.02)",
-  maxWidth: "380px",
+  fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
+  padding: "10px 22px",
+  boxShadow: "0 10px 30px -5px rgba(25, 25, 25, 0.08), 0 2px 8px -2px rgba(25, 25, 25, 0.02)",
+  maxWidth: "420px",
 };
 
-const withBorder = (color: string) => ({
-  ...DARK_BASE,
-  borderLeft: `4px solid ${color}`,
+const styleFor = (border: string, bg: string) => ({
+  ...BASE_STYLE,
+  border: `1px solid ${border}`,
+  background: bg,
 });
 
 const notify = {
   success(msg: string) {
     return toast.success(msg, {
       duration: 3000,
-      style: withBorder("#15803D"),
+      style: styleFor("rgba(21, 128, 61, 0.25)", "rgba(240, 253, 244, 0.92)"),
       iconTheme: { primary: "#15803D", secondary: "#ffffff" },
     });
   },
@@ -38,7 +38,7 @@ const notify = {
   error(msg: string) {
     return toast.error(msg, {
       duration: 4500,
-      style: withBorder("#B91C1C"),
+      style: styleFor("rgba(185, 28, 28, 0.25)", "rgba(254, 242, 242, 0.92)"),
       iconTheme: { primary: "#B91C1C", secondary: "#ffffff" },
     });
   },
@@ -47,7 +47,7 @@ const notify = {
     return toast(msg, {
       duration: 3500,
       icon: "⚠️",
-      style: withBorder("#B45309"),
+      style: styleFor("rgba(180, 83, 9, 0.25)", "rgba(255, 251, 235, 0.92)"),
     });
   },
 
@@ -55,13 +55,13 @@ const notify = {
     return toast(msg, {
       duration: 3000,
       icon: "ℹ️",
-      style: withBorder("#1D4ED8"),
+      style: styleFor("rgba(29, 78, 216, 0.25)", "rgba(239, 246, 255, 0.92)"),
     });
   },
 
   loading(msg: string) {
     return toast.loading(msg, {
-      style: withBorder("#6d28d9"),
+      style: styleFor("rgba(109, 40, 217, 0.25)", "rgba(245, 243, 255, 0.92)"),
     });
   },
 
@@ -75,14 +75,14 @@ const notify = {
     msgs: { loading: string; success: string; error: string },
   ) {
     return toast.promise(prom, msgs, {
-      style: DARK_BASE,
-      loading: { style: withBorder("#6d28d9") },
+      style: styleFor("rgba(230, 228, 221, 0.8)", "rgba(255, 255, 255, 0.9)"),
+      loading: { style: styleFor("rgba(109, 40, 217, 0.25)", "rgba(245, 243, 255, 0.92)") },
       success: {
-        style: withBorder("#15803D"),
+        style: styleFor("rgba(21, 128, 61, 0.25)", "rgba(240, 253, 244, 0.92)"),
         iconTheme: { primary: "#15803D", secondary: "#ffffff" },
       },
       error: {
-        style: withBorder("#B91C1C"),
+        style: styleFor("rgba(185, 28, 28, 0.25)", "rgba(254, 242, 242, 0.92)"),
         iconTheme: { primary: "#B91C1C", secondary: "#ffffff" },
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -123,10 +123,24 @@ const notify = {
       color: "#6d28d9",
       msg: `Order #${orderId} updated`,
     };
+    
+    // Map solid color to soft border/bg tints
+    const getColors = (col: string) => {
+      switch (col) {
+        case "#15803D": return { border: "rgba(21, 128, 61, 0.25)", bg: "rgba(240, 253, 244, 0.92)" };
+        case "#B91C1C": return { border: "rgba(185, 28, 28, 0.25)", bg: "rgba(254, 242, 242, 0.92)" };
+        case "#B45309": return { border: "rgba(180, 83, 9, 0.25)", bg: "rgba(255, 251, 235, 0.92)" };
+        case "#1D4ED8": return { border: "rgba(29, 78, 216, 0.25)", bg: "rgba(239, 246, 255, 0.92)" };
+        case "#6d28d9":
+        default: return { border: "rgba(109, 40, 217, 0.25)", bg: "rgba(245, 243, 255, 0.92)" };
+      }
+    };
+    
+    const colors = getColors(c.color);
     return toast(c.msg, {
       icon: c.icon,
       duration: 3500,
-      style: withBorder(c.color),
+      style: styleFor(colors.border, colors.bg),
     });
   },
 
@@ -135,7 +149,7 @@ const notify = {
     return toast(`Coupon ${code} applied — saving ${saving}`, {
       icon: "🎉",
       duration: 4000,
-      style: withBorder("#1D4ED8"),
+      style: styleFor("rgba(29, 78, 216, 0.25)", "rgba(239, 246, 255, 0.92)"),
     });
   },
 
@@ -148,7 +162,7 @@ const notify = {
       {
         icon: action === "added" ? "🛒" : "🗑️",
         duration: 2000,
-        style: withBorder("#6d28d9"),
+        style: styleFor("rgba(109, 40, 217, 0.25)", "rgba(245, 243, 255, 0.92)"),
       },
     );
   },
