@@ -28,14 +28,14 @@ const theme = createTheme({
     divider: "#e6e4dd",
   },
   typography: {
-    fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
-    h1: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 600, letterSpacing: "-0.01em" },
-    h2: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 600, letterSpacing: "-0.01em" },
-    h3: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
-    h4: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
-    h5: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
-    h6: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
-    button: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 600, textTransform: "none", letterSpacing: "-0.01em" },
+    fontFamily: '"Anthropic", "Cohere", "Apple"',
+    h1: { fontFamily: '"Anthropic", "Cohere", "Apple"', fontWeight: 600, letterSpacing: "-0.01em" },
+    h2: { fontFamily: '"Anthropic", "Cohere", "Apple"', fontWeight: 600, letterSpacing: "-0.01em" },
+    h3: { fontFamily: '"Anthropic", "Cohere", "Apple"', fontWeight: 500, letterSpacing: "-0.01em" },
+    h4: { fontFamily: '"Anthropic", "Cohere", "Apple"', fontWeight: 500, letterSpacing: "-0.01em" },
+    h5: { fontFamily: '"Anthropic", "Cohere", "Apple"', fontWeight: 500, letterSpacing: "-0.01em" },
+    h6: { fontFamily: '"Anthropic", "Cohere", "Apple"', fontWeight: 500, letterSpacing: "-0.01em" },
+    button: { fontFamily: '"Anthropic", "Cohere", "Apple"', fontWeight: 600, textTransform: "none", letterSpacing: "-0.01em" },
     body1: { letterSpacing: "-0.01em" },
     body2: { letterSpacing: "-0.01em" },
   },
@@ -137,10 +137,9 @@ const theme = createTheme({
           backgroundImage: "none",
           backgroundColor: "rgba(255, 255, 255, 0.8)",
           backdropFilter: "blur(12px) saturate(180%)",
-          boxShadow:
-            "0 8px 32px -4px rgba(25, 25, 25, 0.04), 0 2px 12px -2px rgba(25, 25, 25, 0.02)",
-          border: "1px solid rgba(230, 228, 221, 0.6)",
-          borderRadius: "12px",
+          boxShadow: "0 8px 30px rgba(0, 0, 0, 0.03)",
+          border: "1px solid rgba(25, 25, 25, 0.08)",
+          borderRadius: "16px",
         },
       },
     },
@@ -159,10 +158,9 @@ const theme = createTheme({
         root: {
           backgroundColor: "rgba(255, 255, 255, 0.8)",
           backdropFilter: "blur(12px) saturate(180%)",
-          boxShadow:
-            "0 8px 32px -4px rgba(25, 25, 25, 0.04), 0 2px 12px -2px rgba(25, 25, 25, 0.02)",
-          border: "1px solid rgba(230, 228, 221, 0.6)",
-          borderRadius: "12px",
+          boxShadow: "0 8px 30px rgba(0, 0, 0, 0.03)",
+          border: "1px solid rgba(25, 25, 25, 0.08)",
+          borderRadius: "16px",
         },
       },
     },
@@ -175,11 +173,11 @@ const theme = createTheme({
           "& fieldset": { borderColor: "#e6e4dd" },
           "&:hover fieldset": { borderColor: "#cbd5e1" },
           "&.Mui-focused fieldset": { 
-            borderColor: "#191919",
+            borderColor: "#1d1d1f",
             borderWidth: "1.5px"
           },
           "&.Mui-focused": {
-            boxShadow: "0 0 0 3px rgba(25, 25, 25, 0.04)"
+            boxShadow: "0 0 0 3px rgba(29, 78, 216, 0.04)"
           }
         },
       },
@@ -190,7 +188,7 @@ const theme = createTheme({
           borderBottom: "1px solid #e6e4dd",
           padding: "14px 20px",
           fontSize: "14px",
-          color: "#191919"
+          color: "#1d1d1f"
         },
         head: {
           backgroundColor: "#f3f1eb",

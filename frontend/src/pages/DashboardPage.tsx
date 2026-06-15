@@ -42,7 +42,20 @@ function StatCard({
   bgColor: string;
 }) {
   return (
-    <Paper sx={{ p: 3, borderRadius: "12px" }}>
+    <Paper
+      elevation={0}
+      sx={{
+        p: 3,
+        borderRadius: "16px",
+        border: "1px solid rgba(25, 25, 25, 0.08)",
+        transition: "all var(--t-fast)",
+        "&:hover": {
+          transform: "translateY(-2.5px) scale(1.01)",
+          borderColor: "#c8c6be",
+          boxShadow: "0 12px 28px -6px rgba(25, 25, 25, 0.05)",
+        }
+      }}
+    >
       <Box
         sx={{
           display: "flex",
@@ -54,15 +67,15 @@ function StatCard({
           <Typography
             sx={{
               fontSize: 11,
-              fontWeight: 600,
+              fontWeight: 700,
               color: "text.secondary",
               textTransform: "uppercase",
-              letterSpacing: "0.05em",
+              letterSpacing: "0.06em",
             }}
           >
             {title}
           </Typography>
-          <Typography sx={{ fontSize: 26, fontWeight: 700, mt: 0.75, color: "#191919", letterSpacing: "-0.02em" }}>
+          <Typography sx={{ fontSize: 28, fontWeight: 700, mt: 0.75, color: "#1d1d1f", letterSpacing: "-0.02em" }}>
             {value}
           </Typography>
         </Box>
@@ -70,13 +83,13 @@ function StatCard({
           sx={{
             width: 42,
             height: 42,
-            borderRadius: "10px",
+            borderRadius: "12px",
             bgcolor: bgColor,
             color: color,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            border: "1px solid rgba(0,0,0,0.01)"
+            border: "1px solid rgba(25, 25, 25, 0.04)"
           }}
         >
           {icon}
@@ -160,25 +173,44 @@ export default function DashboardPage() {
 
   return (
     <Box sx={{ maxWidth: 1200 }}>
-      <Box
+      <Paper
+        elevation={0}
         sx={{
+          p: { xs: 3, md: 4 },
+          borderRadius: "16px",
+          color: "#1d1d1f",
+          background: "#F5F3EB", // Claude sand warm beige
+          border: "1px solid rgba(25, 25, 25, 0.08)",
+          mb: 4,
           display: "flex",
-          alignItems: "center",
           justifyContent: "space-between",
-          mb: 3,
+          alignItems: "flex-start",
         }}
       >
-        <Typography variant="h5">Operations Dashboard</Typography>
-        <Tooltip title="Refresh">
+        <Box>
+          <Typography variant="overline" sx={{ letterSpacing: 2, color: "text.secondary", fontSize: 11, fontWeight: 700 }}>
+            ADMIN CONSOLE
+          </Typography>
+          <Typography variant="h4" sx={{ fontWeight: 600, mt: 1, color: "#1d1d1f", letterSpacing: "-0.03em" }}>
+            Operations Dashboard
+          </Typography>
+          <Typography sx={{ mt: 1.5, color: "text.secondary", fontSize: 14, maxWidth: 520, lineHeight: 1.5 }}>
+            Overview of real-time store performance, system revenue tracking, coupon activations, and order fulfillment controls.
+          </Typography>
+        </Box>
+        <Tooltip title="Refresh console data">
           <IconButton
-            size="small"
             onClick={() => load()}
-            sx={{ color: "text.secondary" }}
+            sx={{
+              color: "text.secondary",
+              bgcolor: "rgba(25, 25, 25, 0.04)",
+              "&:hover": { bgcolor: "rgba(25, 25, 25, 0.08)" }
+            }}
           >
             <RefreshIcon />
           </IconButton>
         </Tooltip>
-      </Box>
+      </Paper>
 
       <Box
         sx={{
@@ -225,7 +257,7 @@ export default function DashboardPage() {
           gap: 3,
         }}
       >
-        <Paper sx={{ borderRadius: "12px" }}>
+        <Paper sx={{ borderRadius: "16px" }}>
           <Box
             sx={{
               px: 3,
@@ -236,7 +268,7 @@ export default function DashboardPage() {
               alignItems: "center",
             }}
           >
-            <Typography sx={{ fontWeight: 600, color: "#191919" }}>Recent Orders</Typography>
+            <Typography sx={{ fontWeight: 600, color: "#1d1d1f" }}>Recent Orders</Typography>
             <Button
               component={Link}
               to="/orders"
@@ -271,7 +303,7 @@ export default function DashboardPage() {
                   }}
                 >
                   <Box sx={{ flex: 1 }}>
-                    <Typography sx={{ fontWeight: 600, fontSize: 14, color: "#191919" }}>
+                    <Typography sx={{ fontWeight: 600, fontSize: 14, color: "#1d1d1f" }}>
                       Order #{o.id}
                     </Typography>
                     <Typography sx={{ fontSize: 13, color: "text.secondary", mt: 0.5 }}>
@@ -279,7 +311,7 @@ export default function DashboardPage() {
                       {new Date(o.placedAt).toLocaleDateString("en-IN")}
                     </Typography>
                   </Box>
-                  <Typography sx={{ fontWeight: 600, mr: 3, color: "#191919" }}>
+                  <Typography sx={{ fontWeight: 600, mr: 3, color: "#1d1d1f" }}>
                     {formatINR(Number(o.totalAmount))}
                   </Typography>
                   <StatusBadge status={o.status} size="sm" />
@@ -290,8 +322,8 @@ export default function DashboardPage() {
         </Paper>
 
         <Stack spacing={3}>
-          <Paper sx={{ p: 3, borderRadius: "12px" }}>
-            <Typography sx={{ fontWeight: 600, mb: 2.5, color: "#191919" }}>
+          <Paper sx={{ p: 3, borderRadius: "16px" }}>
+            <Typography sx={{ fontWeight: 600, mb: 2.5, color: "#1d1d1f" }}>
               Status Overview
             </Typography>
             <Stack spacing={1.75}>
@@ -331,8 +363,8 @@ export default function DashboardPage() {
             </Stack>
           </Paper>
 
-          <Paper sx={{ p: 3, borderRadius: "12px" }}>
-            <Typography sx={{ fontWeight: 600, mb: 2.5, color: "#191919" }}>
+          <Paper sx={{ p: 3, borderRadius: "16px" }}>
+            <Typography sx={{ fontWeight: 600, mb: 2.5, color: "#1d1d1f" }}>
               Quick Actions
             </Typography>
             <Stack spacing={1.25}>

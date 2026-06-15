@@ -1,4 +1,4 @@
-# 🛒 RetailOS — Premium Retail Ordering Orchestrator
+# 🛒 RetailOS — A Full-Stack Retail Orchestrator (Apple & Samsung Vibe)
 
 [![Java Version](https://img.shields.io/badge/Java-23-orange.svg?style=flat-square&logo=openjdk)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.0-brightgreen.svg?style=flat-square&logo=springboot)](https://spring.io/projects/spring-boot)
@@ -7,140 +7,142 @@
 [![Material UI](https://img.shields.io/badge/Material%20UI-5.x-blue.svg?style=flat-square&logo=mui)](https://mui.com/)
 [![License](https://img.shields.io/badge/License-MIT-black.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
-RetailOS is a modern, enterprise-grade full-stack retail ordering orchestrator. Engineered with a secure **Spring Boot** REST backend, a stateless **JWT authentication** system, and a **React 19 + Vite** single-page application (SPA), the system is styled with a premium design system inspired by **Apple, Samsung (One UI), and Anthropic/Cohere**.
+RetailOS is a full-stack retail ordering dashboard. It combines a secure **Spring Boot** REST api, **JWT-based stateless sessions**, and a **React 19 + Vite** client app. The UI is built around custom design guidelines inspired by **Apple, Samsung (One UI), and Anthropic/Cohere** editors.
 
 ---
 
-## 🏗️ Architecture & System Design
+## 🏗️ How it works under the hood
+
+Here is a high-level look at how requests move through the system:
 
 ```text
   ┌──────────────────────────────────────────────────────────┐
-  │                   CLIENT LAYER (React SPA)                │
-  │  Vite Bundler · React Router · Material UI · Axios Client│
+  │                   React Client App (Vite)                │
+  │  Vite Dev Client · React Router · Material UI · Axios    │
   └────────────────────────────┬─────────────────────────────┘
                                │ JWT Authorization Header
                                ▼
   ┌──────────────────────────────────────────────────────────┐
-  │                 SECURITY & ROUTING FILTER                 │
-  │     CORS Verification · Spring Security · JWT Validation  │
+  │                 Security Filters & Guard                 │
+  │     CORS Filter · Spring Security Config · JWT Filter     │
   └────────────────────────────┬─────────────────────────────┘
-                               │ Handshake Authorized
+                               │ Request Authorized
                                ▼
   ┌──────────────────────────────────────────────────────────┐
-  │                  API ENDPOINTS CONTROLLER                │
+  │                  API Endpoints (Controllers)             │
   │  /api/auth · /api/products · /api/orders · /api/coupons  │
   └────────────────────────────┬─────────────────────────────┘
-                               │ Service Invocation
+                               │ Service Logic Invocation
                                ▼
   ┌──────────────────────────────────────────────────────────┐
-  │                    BUSINESS LOGIC LAYER                  │
-  │ Transaction Management · Seed Data · Mail Dispatcher     │
+  │                   Business Service Layer                 │
+  │ Transaction Manager · Seed Data Loader · Mail Dispatcher │
   └────────────────────────────┬─────────────────────────────┘
-                               │ JPA / Hibernate ORM
+                               │ Hibernate / JPA ORM
                                ▼
   ┌───────────────────────┐         ┌────────────────────────┐
-  │   PERSISTENCE LAYER   │         │  NOTIFICATION SERVICE  │
-  │ MySQL / HikariCP Pool │         │   JavaMailSender SMTP  │
+  │      Database         │         │     Email Service      │
+  │     MySQL Local       │         │   JavaMailSender SMTP  │
   └───────────────────────┘         └────────────────────────┘
 ```
 
 ---
 
-## ✨ System Features
+## ⚡ Core Features
 
-### 👤 Authentication & Session Guard
-*   **Enterprise Security**: Powered by Spring Security + stateless JWT validation filters.
-*   **Role-Based Access Control**: Strict segregation of `USER` and `ADMIN` routing layers.
-*   **Haptic Login & Signup**: Elegant, error-collapsed client inputs featuring immediate UI helper feedback.
+### 🔐 User & Admin Auth
+*   **JWT Security**: The client stores the JWT token and attaches it to outgoing requests.
+*   **Protected Access Roles**: The backend validates roles (`USER` vs. `ADMIN`) for each endpoint.
+*   **Clean Login/Signup Forms**: Error inputs collapse automatically, showing inline feedback and clean visual alerts.
 
-### 🛒 Dynamic Customer Shopping Flow
-*   **High-Fidelity Catalog**: Full product browser featuring real-time inventory counts and search filters.
-*   **Reactive Cart Management**: Add, subtract, and remove products dynamically.
-*   **Promo Application**: Interactive coupon codes checked instantly against backend status matrices.
-*   **Reorder Flow**: Reopen and clone historical items via a one-click "Order Again" handler.
+### 🛍️ Customer Flow
+*   **Product Catalog**: Real-time product lists showing stock levels, search inputs, and visual states.
+*   **Shopping Cart**: Add, remove, or modify items directly with immediate subtotal recalculations.
+*   **Promo Application**: Enter active coupons before checkout. The backend checks expiration dates and usage counts on the fly.
+*   **One-Click Reorder**: Users can clone previous order setups instantly using "Order Again."
 
-### 📊 Administrative Controls
-*   **Operations Console**: Full review panel of all orders placed across the system.
-*   **Order Auditing**: Accept (`CONFIRM`) or reject (`CANCEL`) status states with atomic SQL commits.
-*   **Product Catalog Builder**: Dynamic CRUD panel for adding and modifying items.
-*   **Promo Manager**: Interactive CRUD interface for activating or deactivating promo codes.
+### 📊 Admin Control Center
+*   **Operations Console**: View and track all customer orders placed on the system.
+*   **Order Confirmation/Cancellation**: Admins can approve (`CONFIRM`) or reject (`CANCEL`) orders. This triggers automated notification emails to the customer.
+*   **Product Manager**: Complete CRUD operations for building out the store catalog.
+*   **Coupon Manager**: Adjust parameters, toggle active state, or add promo code rules.
 
-### ✉️ Notification Engine
-*   **Asynchronous SMTP Notifications**: Automatically sends transactional email receipts (including delivery and order details) upon status confirmations.
-*   **Broadcast Engine**: Auto-blasts coupon announcements to all registered user accounts on creation.
-
----
-
-## 🎨 Design System & Visual Aesthetics
-
-RetailOS features a handcrafted design system built from scratch (no bloated tailwind dependencies) to represent clean, editorial layouts:
-
-*   **Custom CDN Typography**: Discards bulky local `.ttf` assets. Uses `@font-face` rules binding directly to Google Font server endpoints to serve **CohereText** (Plus Jakarta Sans) and **Anthropic Sans** (Instrument Sans) dynamically.
-*   **Apple/Samsung Buttons**: All button classes feature capsule/pill geometries (`borderRadius: 99px`), transition Beziers (`background-color 250ms`, `transform 180ms`), subtle hover shifts (`translateY(-1.5px)`), and active tap compression (`scale(0.96)`).
-*   **iOS Toggle Switches**: Custom theme overrides for MUI `Switch` elements rendering a green active state (`#34c759`), soft micro-shadow sliders, and clean slide actions.
-*   **One UI Capsule Toasts**: Custom `react-hot-toast` notification banners styled as floating glassmorphic pills with double shadow layers, thin outlines, and soft status tints.
-*   **Lighting Blobs Background**: A fixed, dopamine-gradient background mesh with warm-cream containers (`#F6F5EF` and glassmorphic translucent panels).
+### ✉️ Automated Notifications
+*   **Receipt Emails**: Sends HTML order details, delivery location logs, and status updates directly to users.
+*   **Promo Blasts**: Automatically emails all registered users when a new coupon is announced.
 
 ---
 
-## 🛠️ Local Environment Setup
+## 🎨 The Aesthetic (Apple & Samsung Vibe)
 
-### Prerequisites
-*   **Java SDK 23** or higher
-*   **Node.js v18** or higher
+We did away with standard grid frameworks and built a premium, editorial design system focused on micro-interactions:
+
+*   **CDN Typography (No Local Font Files)**: Zero local `.ttf` clutter. All headings and body components use direct `@font-face` links to Google Font servers to load **CohereText** (Plus Jakarta Sans) and **Anthropic Sans** (Instrument Sans) dynamically.
+*   **Springy Capsule Buttons**: Standardized button slots use a pill shape (`borderRadius: 99px`), cubic Bezier curves for transition timings, subtle lifts (`translateY(-1.5px)`) on hover, and tactile scaling down (`scale(0.96)`) on click.
+*   **iOS-Style Toggles**: Custom styled switches matching iOS specifications with a smooth thumb transition, clean shadow depth, and green checked tracks (`#34c759`).
+*   **One UI Glassmorphic Toasts**: Capsule toast banners (`borderRadius: 99px`) utilizing light background tints and borders matching warning, success, error, or info statuses.
+*   **Warm Mesh Backdrop**: An editorial glass background with warm cream panel sheets (`#F6F5EF` and translucent overlays).
+
+---
+
+## 🛠️ Quick Start (Up in 2 Minutes)
+
+### Requirements
+*   **Java SDK 23** or newer
+*   **Node.js v18** or newer
 *   **MySQL Server** (running locally on port 3306)
 
 ---
 
 ### 1. Database Setup
-Log in to your local MySQL client and execute:
+Log in to your local MySQL client and run:
 ```sql
 CREATE DATABASE IF NOT EXISTS retail_db;
 ```
 
 ---
 
-### 2. Spring Boot Backend Setup
-1.  Navigate to the backend directory:
+### 2. Run the Spring Boot Backend
+1.  Navigate into the backend project folder:
     ```bash
     cd retail
     ```
-2.  Configure database credentials in `src/main/resources/application.properties` if your MySQL root credentials differ.
-3.  Start the service using the Maven wrapper:
+2.  If you need to change your database user/password, open `src/main/resources/application.properties` and update the connection values.
+3.  Launch the app:
     ```bash
     ./mvnw spring-boot:run
     ```
-4.  *Note:* The backend automatically seeds initial test products and a default admin credential (`admin@retailos.com` / `admin123`) on startup.
+4.  *Note:* The system automatically seeds demo products and a default admin login (`admin@retailos.com` / `admin123`) on startup.
 
 ---
 
-### 3. React Frontend Setup
-1.  Navigate to the frontend directory:
+### 3. Run the React Frontend
+1.  Go into the frontend folder:
     ```bash
     cd ../frontend
     ```
-2.  Install development dependencies:
+2.  Install dependencies:
     ```bash
     npm install
     ```
-3.  Launch the Vite developer client:
+3.  Boot the Vite dev server:
     ```bash
     npm run dev
     ```
-4.  Open your browser and navigate to `http://localhost:5173`.
+4.  Open `http://localhost:5173` in your browser.
 
 ---
 
-## 📖 API & Developer Documentation
+## 📖 API Documentation
 
-When the backend service is running locally, the full OpenAPI/Swagger specification UI is available at:
+With the backend running, the full Swagger API console is available here:
 ```text
 http://localhost:8080/swagger-ui/index.html
 ```
 
-### Key REST Endpoints
+### Key API Mappings
 
-| Resource | Verb | Path | Auth Required | Scope |
+| Resource | Method | Path | Authentication Required? | Role Scope |
 | :--- | :--- | :--- | :--- | :--- |
 | **Auth** | `POST` | `/api/auth/register` | No | Anonymous |
 | **Auth** | `POST` | `/api/auth/login` | No | Anonymous |
@@ -154,7 +156,7 @@ http://localhost:8080/swagger-ui/index.html
 
 ---
 
-## 🔒 Production Hardening & Configuration
-*   **JWT Config**: Adjust expiration thresholds (`jwt.token.expiration`) in the properties file.
-*   **CORS Policies**: Restricted globally inside `WebConfig.java` to whitelist only authorized client hosts.
-*   **Error Layering**: Handled dynamically using a global `@ControllerAdvice` Exception handler intercepting domain failures (such as `InsufficientStockException`) and converting them to uniform JSON payloads.
+## 🔒 Configuration & Development Notes
+*   **Client Session Storage**: The React client uses `sessionStorage` to hold cart configurations and user JWT sessions.
+*   **Fast Checkout**: The checkout screen automatically pulls details from the user's signup profile for a seamless checkout experience.
+*   **Global Exception Handling**: Custom errors (such as `InsufficientStockException`) are intercepted by a backend `@ControllerAdvice` to format matching error responses.

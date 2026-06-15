@@ -14,7 +14,7 @@ const BASE_STYLE = {
   borderRadius: "99px",
   fontSize: "13.5px",
   fontWeight: "600",
-  fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
+  fontFamily: '"Anthropic", "Cohere", "Apple"',
   padding: "10px 22px",
   boxShadow: "0 10px 30px -5px rgba(25, 25, 25, 0.08), 0 2px 8px -2px rgba(25, 25, 25, 0.02)",
   maxWidth: "420px",

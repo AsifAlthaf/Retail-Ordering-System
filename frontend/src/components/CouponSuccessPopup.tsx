@@ -93,16 +93,16 @@ export default function CouponSuccessPopup({
                 border: "1px dashed #c8c6be",
                 cursor: "pointer",
                 transition: "all var(--t-fast)",
-                "&:hover": { bgcolor: "#f3f1eb", borderColor: "#191919" },
+                "&:hover": { bgcolor: "#f3f1eb", borderColor: "#1d1d1f" },
                 "&:active": { transform: "scale(0.98)" }
               }}
             >
               <Typography
                 sx={{
-                  fontFamily: '"CohereText", monospace',
+                  fontFamily: '"Anthropic", "Cohere", "Apple"',
                   fontSize: 18,
                   fontWeight: 700,
-                  color: "#191919",
+                  color: "#1d1d1f",
                   letterSpacing: "0.1em",
                 }}
               >

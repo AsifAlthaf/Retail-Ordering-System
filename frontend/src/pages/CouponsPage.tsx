@@ -264,12 +264,12 @@ export default function CouponsPage() {
                         >
                           <Typography
                             sx={{
-                              fontFamily: '"CohereText", monospace',
+                              fontFamily: '"Anthropic", "Cohere", "Apple"',
                               fontWeight: 600,
                               fontSize: 13,
                               color:
                                 c.active && !expired
-                                  ? "#191919"
+                                  ? "#1d1d1f"
                                   : "text.secondary",
                               px: 1,
                               py: 0.5,
