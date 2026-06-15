@@ -15,7 +15,7 @@ const DARK_BASE = {
   borderRadius: "12px",
   fontSize: "13.5px",
   fontWeight: "600",
-  fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif',
+  fontFamily: '"CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif',
   padding: "12px 18px",
   boxShadow: "0 8px 32px -4px rgba(25, 25, 25, 0.06), 0 2px 12px -2px rgba(25, 25, 25, 0.02)",
   maxWidth: "380px",

@@ -268,13 +268,10 @@ export default function ShopPage() {
           onClick={() => navigate("/cart")}
           startIcon={<ShoppingCartIcon />}
           sx={{
-            bgcolor: "#191919",
-            borderRadius: "8px",
             textTransform: "none",
             fontWeight: 600,
             px: 3,
             py: 1.2,
-            "&:hover": { bgcolor: "#2e2e2e" },
           }}
         >
           View Cart
@@ -503,18 +500,9 @@ export default function ShopPage() {
                           onClick={() => addToCart(product.id)}
                           sx={{
                             py: 1,
-                            borderRadius: "8px",
                             textTransform: "none",
                             fontWeight: 600,
                             fontSize: 13,
-                            bgcolor: isOut ? "transparent" : "#191919",
-                            border: isOut ? "1px solid #cbd5e1" : "none",
-                            color: isOut ? "#8e8e8e" : "#fff",
-                            "&:hover": {
-                              bgcolor: isOut ? "transparent" : "#2e2e2e",
-                              transform: isOut ? "none" : "translateY(-1px)",
-                            },
-                            transition: "all 150ms ease",
                           }}
                         >
                           {isOut ? "Unavailable" : "Add to Cart"}
