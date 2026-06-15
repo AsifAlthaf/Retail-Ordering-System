@@ -69,22 +69,20 @@ export default function UserDashboardPage() {
         elevation={0}
         sx={{
           p: { xs: 3, md: 4 },
-          borderRadius: 4,
-          color: "white",
-          background: "#191919",
-          backgroundImage: 
-            "radial-gradient(circle at 80% 20%, rgba(206,172,114,0.18) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(21,128,61,0.06) 0%, transparent 50%)",
-          border: "1px solid rgba(255,255,255,0.05)",
+          borderRadius: "16px",
+          color: "#1d1d1f",
+          background: "#F5F3EB", // Claude sand warm beige
+          border: "1px solid rgba(25, 25, 25, 0.08)",
           mb: 4,
         }}
       >
-        <Typography variant="overline" sx={{ letterSpacing: 2, opacity: 0.6, fontSize: 11, fontWeight: 700 }}>
+        <Typography variant="overline" sx={{ letterSpacing: 2, color: "text.secondary", fontSize: 11, fontWeight: 700 }}>
           CUSTOMER OVERVIEW
         </Typography>
-        <Typography variant="h4" sx={{ fontWeight: 600, mt: 1, letterSpacing: "-0.03em" }}>
+        <Typography variant="h4" sx={{ fontWeight: 600, mt: 1, color: "#1d1d1f", letterSpacing: "-0.03em" }}>
           Welcome, {user?.name ?? "User"}
         </Typography>
-        <Typography sx={{ mt: 1.5, opacity: 0.8, fontSize: 14, maxWidth: 520, lineHeight: 1.5 }}>
+        <Typography sx={{ mt: 1.5, color: "text.secondary", fontSize: 14, maxWidth: 520, lineHeight: 1.5 }}>
           Track your active operator requests, apply promo entries, and audit previous purchases in the console.
         </Typography>
       </Paper>

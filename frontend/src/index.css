@@ -399,3 +399,8 @@ input[type="checkbox"].ios-toggle:checked::before {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(25, 25, 25, 0.16);
 }
+
+/* ─── Global Typography Override A-Z ───────────────────────────────────────── */
+*, *::before, *::after, h1, h2, h3, h4, h5, h6, p, span, a, li, ul, ol, div, input, select, textarea, button, th, td {
+  font-family: "CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
