@@ -190,7 +190,7 @@
 }
 
 body {
-  font-family: "CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+  font-family: "CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: #F6F5EF;
   /* Satisfying mesh gradient background (dopamine lighting blobs) */
   background-image: 
@@ -206,7 +206,7 @@ body {
 }
 
 button, input, select, textarea {
-  font-family: "CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif !important;
+  font-family: "CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
 a {
@@ -241,7 +241,7 @@ button:not(.MuiButton-root):not(.MuiIconButton-root) {
   background-color: #ffffff;
   color: #191919;
   cursor: pointer;
-  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1), transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -250,24 +250,38 @@ button:not(.MuiButton-root):not(.MuiIconButton-root) {
 }
 
 button:not(.MuiButton-root):not(.MuiIconButton-root):hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(25, 25, 25, 0.05);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 16px rgba(25, 25, 25, 0.06);
   border-color: #191919;
   background-color: #fbfbfa;
 }
 
 button:not(.MuiButton-root):not(.MuiIconButton-root):active {
   transform: scale(0.96) translateY(0);
+  box-shadow: 0 2px 4px rgba(25, 25, 25, 0.02);
 }
 
 button:not(.MuiButton-root):not(.MuiIconButton-root).primary {
-  background-color: #191919;
+  background-color: #1d1d1f; /* Apple Dark Charcoal */
   color: #ffffff;
   border-color: transparent;
 }
 
 button:not(.MuiButton-root):not(.MuiIconButton-root).primary:hover {
-  background-color: #2e2e2e;
+  background-color: #000000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+button:not(.MuiButton-root):not(.MuiIconButton-root).secondary {
+  background-color: #f5f5f7; /* Apple Light Gray */
+  color: #1d1d1f;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+button:not(.MuiButton-root):not(.MuiIconButton-root).secondary:hover {
+  background-color: #e8e8ed;
+  color: #000000;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03);
 }
 
 /* ─── Apple/Samsung Inspired Toggle Switches (Native Checkbox representation) ───────────────────── */
@@ -344,7 +358,7 @@ input[type="checkbox"].ios-toggle:checked::before {
   color: var(--text-primary) !important;
   border: 1px solid var(--border) !important;
   border-radius: 12px !important;
-  font-family: "CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif !important;
+  font-family: "CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif !important;
   font-size: 14px !important;
   font-weight: 500 !important;
   box-shadow: var(--shadow-md) !important;

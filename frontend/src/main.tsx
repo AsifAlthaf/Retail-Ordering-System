@@ -8,34 +8,34 @@ const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#191919",
+      main: "#1d1d1f", // Apple Dark Charcoal
       light: "#2e2e2e",
-      dark: "#0a0a0a",
+      dark: "#000000",
       contrastText: "#ffffff",
     },
     secondary: {
-      main: "#5e5e5e",
-      light: "#7e7e7e",
-      dark: "#3a3a3a",
-      contrastText: "#ffffff",
+      main: "#f5f5f7", // Apple Light Gray
+      light: "#fafafa",
+      dark: "#e8e8ed",
+      contrastText: "#1d1d1f",
     },
-    success: { main: "#15803d", contrastText: "#fff" },
-    warning: { main: "#b45309", contrastText: "#fff" },
-    error: { main: "#b91c1c", contrastText: "#fff" },
-    info: { main: "#1d4ed8", contrastText: "#fff" },
+    success: { main: "#34c759", contrastText: "#fff" }, // Apple Green
+    warning: { main: "#ff9500", contrastText: "#fff" }, // Apple Orange
+    error: { main: "#ff3b30", contrastText: "#fff" }, // Apple Red
+    info: { main: "#0071e3", contrastText: "#fff" }, // Apple Blue / Samsung CTA
     background: { default: "#faf9f6", paper: "#ffffff" },
-    text: { primary: "#191919", secondary: "#5e5e5e", disabled: "#8e8e8e" },
+    text: { primary: "#1d1d1f", secondary: "#5e5e5e", disabled: "#8e8e8e" },
     divider: "#e6e4dd",
   },
   typography: {
-    fontFamily: '"CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif',
-    h1: { fontFamily: '"CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 600, letterSpacing: "-0.01em" },
-    h2: { fontFamily: '"CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 600, letterSpacing: "-0.01em" },
-    h3: { fontFamily: '"CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
-    h4: { fontFamily: '"CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
-    h5: { fontFamily: '"CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
-    h6: { fontFamily: '"CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
-    button: { fontFamily: '"CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 600, textTransform: "none", letterSpacing: "-0.01em" },
+    fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
+    h1: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 600, letterSpacing: "-0.01em" },
+    h2: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 600, letterSpacing: "-0.01em" },
+    h3: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
+    h4: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
+    h5: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
+    h6: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
+    button: { fontFamily: '"CohereText", "Anthropic Sans", "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif', fontWeight: 600, textTransform: "none", letterSpacing: "-0.01em" },
     body1: { letterSpacing: "-0.01em" },
     body2: { letterSpacing: "-0.01em" },
   },
@@ -65,32 +65,68 @@ const theme = createTheme({
           borderRadius: "99px",
           padding: "10px 24px",
           fontWeight: 600,
-          letterSpacing: "-0.01em",
-          transition: "all 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+          letterSpacing: "-0.015em",
+          transition: "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1), transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1)",
           textTransform: "none",
           border: "1px solid transparent",
           "&:hover": {
-            transform: "translateY(-1px)",
-            boxShadow: "0 4px 12px rgba(25, 25, 25, 0.05)",
+            transform: "translateY(-1.5px)",
+            boxShadow: "0 6px 16px rgba(25, 25, 25, 0.06)",
           },
           "&:active": {
             transform: "scale(0.96) translateY(0)",
+            boxShadow: "0 2px 4px rgba(25, 25, 25, 0.02)",
           },
         },
         outlined: {
           borderColor: "#e6e4dd",
           color: "#5e5e5e",
           "&:hover": {
-            borderColor: "#191919",
-            backgroundColor: "rgba(25, 25, 25, 0.02)",
-            color: "#191919",
+            borderColor: "#1d1d1f",
+            backgroundColor: "rgba(25, 25, 25, 0.03)",
+            color: "#1d1d1f",
           }
         },
         contained: {
-          backgroundColor: "#191919",
+          backgroundColor: "#1d1d1f",
           color: "#ffffff",
           "&:hover": {
-            backgroundColor: "#2e2e2e",
+            backgroundColor: "#000000",
+            boxShadow: "0 8px 20px rgba(0, 0, 0, 0.12)",
+          },
+          "&.MuiButton-containedSecondary": {
+            backgroundColor: "#f5f5f7",
+            color: "#1d1d1f",
+            border: "1px solid rgba(0, 0, 0, 0.04)",
+            "&:hover": {
+              backgroundColor: "#e8e8ed",
+              color: "#000000",
+              boxShadow: "0 6px 16px rgba(0, 0, 0, 0.03)",
+            }
+          },
+          "&.MuiButton-containedInfo": {
+            backgroundColor: "#0071e3",
+            color: "#ffffff",
+            "&:hover": {
+              backgroundColor: "#005bbf",
+              boxShadow: "0 8px 20px rgba(0, 113, 227, 0.24)",
+            }
+          },
+          "&.MuiButton-containedSuccess": {
+            backgroundColor: "#34c759",
+            color: "#ffffff",
+            "&:hover": {
+              backgroundColor: "#28a745",
+              boxShadow: "0 8px 20px rgba(52, 199, 89, 0.24)",
+            }
+          },
+          "&.MuiButton-containedError": {
+            backgroundColor: "#ff3b30",
+            color: "#ffffff",
+            "&:hover": {
+              backgroundColor: "#d6251b",
+              boxShadow: "0 8px 20px rgba(255, 59, 48, 0.24)",
+            }
           }
         }
       },
