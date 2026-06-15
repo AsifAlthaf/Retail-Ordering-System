@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+/* Font faces loaded via @font-face below — Anthropic, Cohere, Apple */
 
 /* Cohere (Plus Jakarta Sans aliases via direct Google CDN paths) */
 @font-face {
@@ -160,7 +160,7 @@
 }
 
 body {
-  font-family: "Anthropic", "Cohere", "Apple", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Anthropic", "Cohere", "Apple";
   background-color: #F6F5EF;
   /* Satisfying mesh gradient background (dopamine lighting blobs) */
   background-image: 
@@ -176,7 +176,7 @@ body {
 }
 
 button, input, select, textarea {
-  font-family: "Anthropic", "Cohere", "Apple", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-family: "Anthropic", "Cohere", "Apple" !important;
 }
 
 a {
@@ -328,7 +328,7 @@ input[type="checkbox"].ios-toggle:checked::before {
   color: var(--text-primary) !important;
   border: 1px solid var(--border) !important;
   border-radius: 12px !important;
-  font-family: "Anthropic", "Cohere", "Apple", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-family: "Anthropic", "Cohere", "Apple" !important;
   font-size: 14px !important;
   font-weight: 500 !important;
   box-shadow: var(--shadow-md) !important;
@@ -372,5 +372,5 @@ input[type="checkbox"].ios-toggle:checked::before {
 
 /* ─── Global Typography Override A-Z ───────────────────────────────────────── */
 *, *::before, *::after, h1, h2, h3, h4, h5, h6, p, span, a, li, ul, ol, div, input, select, textarea, button, th, td {
-  font-family: "Anthropic", "Cohere", "Apple", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-family: "Anthropic", "Cohere", "Apple" !important;
 }
