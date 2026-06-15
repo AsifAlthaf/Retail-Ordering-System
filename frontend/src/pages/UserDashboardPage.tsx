@@ -122,14 +122,14 @@ export default function UserDashboardPage() {
                 <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 600, textTransform: "uppercase", fontSize: 11, letterSpacing: "0.05em" }}>
                   Orders placed
                 </Typography>
-                <Typography variant="h4" sx={{ fontWeight: 700, color: "#191919", mt: 0.75, letterSpacing: "-0.02em" }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, color: "#1d1d1f", mt: 0.75, letterSpacing: "-0.02em" }}>
                   {orders.length}
                 </Typography>
                 <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mt: 0.5 }}>
                   {pendingOrders} pending confirmation
                 </Typography>
               </Box>
-              <Box sx={{ width: 40, height: 40, borderRadius: "8px", bgcolor: "#f0ede6", color: "#191919", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Box sx={{ width: 40, height: 40, borderRadius: "8px", bgcolor: "#f5f5f7", color: "#1d1d1f", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <ShoppingCartIcon fontSize="small" />
               </Box>
             </Stack>
@@ -156,14 +156,14 @@ export default function UserDashboardPage() {
                 <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 600, textTransform: "uppercase", fontSize: 11, letterSpacing: "0.05em" }}>
                   Total Spent
                 </Typography>
-                <Typography variant="h4" sx={{ fontWeight: 700, color: "#15803d", mt: 0.75, letterSpacing: "-0.02em" }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, color: "#34c759", mt: 0.75, letterSpacing: "-0.02em" }}>
                   {currency(deliveredTotal)}
                 </Typography>
                 <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mt: 0.5 }}>
                   From delivered orders
                 </Typography>
               </Box>
-              <Box sx={{ width: 40, height: 40, borderRadius: "8px", bgcolor: "#edf7ed", color: "#15803d", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Box sx={{ width: 40, height: 40, borderRadius: "8px", bgcolor: "rgba(52, 199, 89, 0.08)", color: "#34c759", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <AccountCircleIcon fontSize="small" />
               </Box>
             </Stack>
@@ -190,14 +190,14 @@ export default function UserDashboardPage() {
                 <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 600, textTransform: "uppercase", fontSize: 11, letterSpacing: "0.05em" }}>
                   Active Coupons
                 </Typography>
-                <Typography variant="h4" sx={{ fontWeight: 700, color: "#1d4ed8", mt: 0.75, letterSpacing: "-0.02em" }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, color: "#0071e3", mt: 0.75, letterSpacing: "-0.02em" }}>
                   {activeCoupons}
                 </Typography>
                 <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mt: 0.5 }}>
                   Apply code at checkout
                 </Typography>
               </Box>
-              <Box sx={{ width: 40, height: 40, borderRadius: "8px", bgcolor: "#edf2fe", color: "#1d4ed8", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Box sx={{ width: 40, height: 40, borderRadius: "8px", bgcolor: "rgba(0, 113, 227, 0.08)", color: "#0071e3", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <LocalOfferIcon fontSize="small" />
               </Box>
             </Stack>

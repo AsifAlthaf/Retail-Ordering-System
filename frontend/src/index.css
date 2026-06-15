@@ -147,29 +147,29 @@
   --bg-hover: rgba(243, 241, 235, 0.85);
 
   /* Brand (Apple-grade deep charcoal and soft cream accents) */
-  --primary: #191919;
-  --primary-hover: #2E2E2E;
+  --primary: #1d1d1f;
+  --primary-hover: #000000;
   --primary-subtle: rgba(240, 237, 230, 0.8);
 
   /* Semantic (Calm, highly legible forest greens/crimsons) */
-  --success: #15803D;
-  --success-subtle: rgba(21, 128, 61, 0.06);
-  --warning: #B45309;
-  --warning-subtle: rgba(180, 83, 9, 0.06);
-  --error: #B91C1C;
-  --error-subtle: rgba(185, 28, 28, 0.06);
-  --info: #1D4ED8;
-  --info-subtle: rgba(29, 78, 216, 0.06);
+  --success: #34c759;
+  --success-subtle: rgba(52, 199, 89, 0.06);
+  --warning: #ff9500;
+  --warning-subtle: rgba(255, 149, 0, 0.06);
+  --error: #ff3b30;
+  --error-subtle: rgba(255, 59, 48, 0.06);
+  --info: #0071e3;
+  --info-subtle: rgba(0, 113, 227, 0.06);
 
   /* Text layers */
-  --text-primary: #191919;
-  --text-secondary: #5E5E5E;
-  --text-muted: #8E8E8E;
+  --text-primary: #1d1d1f;
+  --text-secondary: #5e5e5e;
+  --text-muted: #8e8e8e;
   --text-inverse: #FFFFFF;
 
   /* Borders & Rules */
   --border: rgba(230, 228, 221, 0.6);
-  --border-focus: #191919;
+  --border-focus: #1d1d1f;
 
   /* Shadows (Super soft low-contrast elevations) */
   --shadow-sm: 0 1px 2px 0 rgba(25, 25, 25, 0.01);

@@ -11,17 +11,17 @@ export default function StatusBadge({
 }) {
   const cfg: Record<string, { label: string; color: string; bgcolor: string }> =
     {
-      PENDING: { label: "Pending", color: "#b45309", bgcolor: "#fdf6e2" },
-      CONFIRMED: { label: "Confirmed", color: "#1d4ed8", bgcolor: "#edf2fe" },
-      SHIPPED: { label: "Shipped", color: "#6d28d9", bgcolor: "#f5f0ff" },
-      DELIVERED: { label: "Delivered", color: "#15803d", bgcolor: "#edf7ed" },
-      CANCELLED: { label: "Cancelled", color: "#b91c1c", bgcolor: "#fdf2f2" },
+      PENDING: { label: "Pending", color: "#ff9500", bgcolor: "rgba(255, 149, 0, 0.08)" },
+      CONFIRMED: { label: "Confirmed", color: "#0071e3", bgcolor: "rgba(0, 113, 227, 0.08)" },
+      SHIPPED: { label: "Shipped", color: "#af52de", bgcolor: "rgba(175, 82, 222, 0.08)" },
+      DELIVERED: { label: "Delivered", color: "#34c759", bgcolor: "rgba(52, 199, 89, 0.08)" },
+      CANCELLED: { label: "Cancelled", color: "#ff3b30", bgcolor: "rgba(255, 59, 48, 0.08)" },
     };
 
   const current = cfg[status] || {
     label: status,
     color: "#5e5e5e",
-    bgcolor: "#f3f1eb",
+    bgcolor: "rgba(25, 25, 25, 0.04)",
   };
 
   const isSm = size === "sm";
