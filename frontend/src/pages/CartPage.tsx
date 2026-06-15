@@ -355,7 +355,7 @@ export default function CartPage() {
                         height: 80,
                         borderRadius: "8px",
                         objectFit: "cover",
-                        bgcolor: "#faf9f6",
+                        bgcolor: "rgba(25, 25, 25, 0.02)",
                       }}
                     />
                     <Box
@@ -386,7 +386,7 @@ export default function CartPage() {
                         spacing={1}
                         sx={{
                           alignItems: "center",
-                          bgcolor: "#faf9f6",
+                          bgcolor: "rgba(25, 25, 25, 0.02)",
                           p: 0.5,
                           borderRadius: "8px",
                           border: "1px solid #e6e4dd",
@@ -542,8 +542,8 @@ export default function CartPage() {
                       justifyContent: "space-between",
                       p: 1.5,
                       borderRadius: "8px",
-                      bgcolor: "#f3f1eb",
-                      border: "1px solid #e6e4dd",
+                      bgcolor: "rgba(21, 128, 61, 0.06)",
+                      border: "1px solid rgba(21, 128, 61, 0.15)",
                     }}
                   >
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

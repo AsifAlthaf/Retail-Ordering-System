@@ -67,7 +67,7 @@ export default function OrderNotificationPage() {
         <Box
           sx={{
             p: 4,
-            bgcolor: isCancelled ? "#fdf2f2" : "#edf7ed",
+            bgcolor: isCancelled ? "rgba(185, 28, 28, 0.05)" : "rgba(21, 128, 61, 0.05)",
             display: "flex",
             alignItems: "center",
             gap: 2,
@@ -103,13 +103,13 @@ export default function OrderNotificationPage() {
                 <Chip 
                   label={`Order #${order.id}`} 
                   size="small" 
-                  sx={{ bgcolor: "#faf9f6", color: "#191919", border: "1px solid #e6e4dd", fontWeight: 600 }} 
+                  sx={{ bgcolor: "rgba(25, 25, 25, 0.03)", color: "#191919", border: "1px solid #e6e4dd", fontWeight: 600 }} 
                 />
                 <Chip
                   label={outcome}
                   size="small"
                   sx={{
-                    bgcolor: isCancelled ? "#fdf2f2" : "#edf7ed",
+                    bgcolor: isCancelled ? "rgba(185, 28, 28, 0.05)" : "rgba(21, 128, 61, 0.05)",
                     color: isCancelled ? "#b91c1c" : "#15803d",
                     border: "1px solid rgba(0,0,0,0.02)",
                     fontWeight: 600
@@ -160,7 +160,7 @@ export default function OrderNotificationPage() {
                       justifyContent: "space-between",
                       px: 2,
                       py: 1.5,
-                      bgcolor: "#faf9f6",
+                      bgcolor: "rgba(25, 25, 25, 0.02)",
                       borderRadius: "8px",
                       border: "1px solid #e6e4dd",
                     }}

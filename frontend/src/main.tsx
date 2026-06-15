@@ -28,7 +28,7 @@ const theme = createTheme({
     divider: "#e6e4dd",
   },
   typography: {
-    fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Plus Jakarta Sans", "Instrument Sans", system-ui, sans-serif',
+    fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif',
     h1: { fontWeight: 700, letterSpacing: "-0.03em" },
     h2: { fontWeight: 700, letterSpacing: "-0.03em" },
     h3: { fontWeight: 600, letterSpacing: "-0.02em" },

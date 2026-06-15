@@ -482,8 +482,8 @@ export default function OrdersPage() {
                     sx={{
                       display: "flex",
                       justifyContent: "space-between",
-                      p: 1,
-                      bgcolor: "#f8fafc",
+                      p: 1.25,
+                      bgcolor: "rgba(25, 25, 25, 0.02)",
                       borderRadius: 1,
                     }}
                   >
