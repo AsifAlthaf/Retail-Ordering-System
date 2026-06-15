@@ -731,35 +731,59 @@ export default function ProductsPage() {
 
             {/* ── Brand + Category ── */}
             <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
-              <FormControl fullWidth>
+              <FormControl fullWidth disabled={dialogLoading}>
                 <InputLabel>Brand</InputLabel>
                 <Select
-                  value={form.brandId}
+                  value={dialogLoading ? "" : (form.brandId || "")}
                   label="Brand"
                   onChange={(e) => setForm((f) => ({ ...f, brandId: Number(e.target.value) }))}
                   sx={{ borderRadius: "12px" }}
+                  displayEmpty
                 >
-                  {brands.map((b) => (
-                    <MenuItem key={b.id} value={b.id}>
-                      {b.name}
+                  {dialogLoading ? (
+                    <MenuItem value="" disabled>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <CircularProgress size={14} />
+                        <span>Loading…</span>
+                      </Box>
                     </MenuItem>
-                  ))}
+                  ) : brands.length === 0 ? (
+                    <MenuItem value="" disabled>No brands found</MenuItem>
+                  ) : (
+                    brands.map((b) => (
+                      <MenuItem key={b.id} value={b.id}>
+                        {b.name}
+                      </MenuItem>
+                    ))
+                  )}
                 </Select>
               </FormControl>
 
-              <FormControl fullWidth>
+              <FormControl fullWidth disabled={dialogLoading}>
                 <InputLabel>Category</InputLabel>
                 <Select
-                  value={form.categoryId}
+                  value={dialogLoading ? "" : (form.categoryId || "")}
                   label="Category"
                   onChange={(e) => setForm((f) => ({ ...f, categoryId: Number(e.target.value) }))}
                   sx={{ borderRadius: "12px" }}
+                  displayEmpty
                 >
-                  {categories.map((c) => (
-                    <MenuItem key={c.id} value={c.id}>
-                      {c.name}
+                  {dialogLoading ? (
+                    <MenuItem value="" disabled>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <CircularProgress size={14} />
+                        <span>Loading…</span>
+                      </Box>
                     </MenuItem>
-                  ))}
+                  ) : categories.length === 0 ? (
+                    <MenuItem value="" disabled>No categories found</MenuItem>
+                  ) : (
+                    categories.map((c) => (
+                      <MenuItem key={c.id} value={c.id}>
+                        {c.name}
+                      </MenuItem>
+                    ))
+                  )}
                 </Select>
               </FormControl>
             </Box>
