@@ -78,8 +78,8 @@ export default function ProductsPage() {
   const [form, setForm] = useState<ProductRequest>({
     name: "",
     price: 0,
-    categoryId: 1,
-    brandId: 1,
+    categoryId: 0,
+    brandId: 0,
     packaging: "Box",
     imageUrl: "",
   });
@@ -110,6 +110,12 @@ export default function ProductsPage() {
       setProducts(data);
       setBrands(bData);
       setCategories(cData);
+      // Set sensible defaults once we know the real IDs
+      setForm((f) => ({
+        ...f,
+        brandId: f.brandId === 0 ? (bData[0]?.id ?? 0) : f.brandId,
+        categoryId: f.categoryId === 0 ? (cData[0]?.id ?? 0) : f.categoryId,
+      }));
 
       const invMap: Record<number, Inventory> = {};
       await Promise.all(
@@ -146,8 +152,8 @@ export default function ProductsPage() {
     setForm({
       name: "",
       price: 0,
-      categoryId: categories[0]?.id ?? 1,
-      brandId: brands[0]?.id ?? 1,
+      categoryId: categories[0]?.id ?? 0,
+      brandId: brands[0]?.id ?? 0,
       packaging: "Box",
       imageUrl: "",
     });
@@ -161,8 +167,8 @@ export default function ProductsPage() {
     setForm({
       name: p.name,
       price: p.price,
-      categoryId: p.category?.id ?? 1,
-      brandId: p.brand?.id ?? 1,
+      categoryId: p.category?.id ?? categories[0]?.id ?? 0,
+      brandId: p.brand?.id ?? brands[0]?.id ?? 0,
       packaging: p.packaging ?? "Box",
       imageUrl: p.imageUrl ?? "",
     });
@@ -199,6 +205,14 @@ export default function ProductsPage() {
   const handleSave = async () => {
     if (!form.name.trim() || form.price <= 0) {
       notify.warning("Enter valid name and price");
+      return;
+    }
+    if (!form.brandId || form.brandId === 0) {
+      notify.warning("Please select a brand");
+      return;
+    }
+    if (!form.categoryId || form.categoryId === 0) {
+      notify.warning("Please select a category");
       return;
     }
     try {
