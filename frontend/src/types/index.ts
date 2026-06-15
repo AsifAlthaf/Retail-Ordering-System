@@ -42,6 +42,7 @@ export interface Product {
   category?: Category;
   brand?: Brand;
   packaging?: string;
+  imageUrl?: string;
 }
 
 export interface ProductRequest {
@@ -50,6 +51,11 @@ export interface ProductRequest {
   categoryId: number;
   brandId: number;
   packaging: string;
+  imageUrl?: string;
+}
+
+export interface UploadResponse {
+  url: string;
 }
 
 // ─── Inventory ────────────────────────────────────────────────────────────────

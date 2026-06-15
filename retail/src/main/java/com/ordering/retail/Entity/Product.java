@@ -28,6 +28,9 @@ public class Product {
     @Column(name = "packaging")
     private String packaging;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     public Product() {
     }
 
@@ -82,5 +85,13 @@ public class Product {
 
     public void setPackaging(String packaging) {
         this.packaging = packaging;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

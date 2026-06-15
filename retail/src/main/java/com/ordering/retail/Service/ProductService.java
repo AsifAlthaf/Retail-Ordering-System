@@ -56,6 +56,9 @@ public class ProductService {
         product.setName(request.getName());
         product.setPrice(request.getPrice());
         product.setPackaging(request.getPackaging());
+        if (request.getImageUrl() != null) {
+            product.setImageUrl(request.getImageUrl());
+        }
         
         if (request.getBrandId() != null) {
             com.ordering.retail.Entity.Brand brand = brandRepository.findById(request.getBrandId())
