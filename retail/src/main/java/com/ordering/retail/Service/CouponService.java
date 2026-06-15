@@ -24,20 +24,26 @@ public class CouponService {
         this.couponNotificationService = couponNotificationService;
     }
 
-    @Transactional(readOnly = true)
+    private Coupon checkAndExpireCoupon(Coupon coupon) {
+        if (Boolean.TRUE.equals(coupon.getActive()) && coupon.getExpiryDate() != null && coupon.getExpiryDate().isBefore(LocalDate.now())) {
+            coupon.setActive(false);
+            return couponRepository.save(coupon);
+        }
+        return coupon;
+    }
+
     public List<CouponResponseDTO> findAll() {
-        return couponRepository.findAll().stream().map(this::toResponse).toList();
+        return couponRepository.findAll().stream().map(this::checkAndExpireCoupon).map(this::toResponse).toList();
     }
 
-    @Transactional(readOnly = true)
     public CouponResponseDTO findById(Long id) {
-        return toResponse(getCouponEntity(id));
+        return toResponse(checkAndExpireCoupon(getCouponEntity(id)));
     }
 
-    @Transactional(readOnly = true)
     public CouponResponseDTO findByCode(String code) {
-        return toResponse(couponRepository.findByCode(code)
-                .orElseThrow(() -> new ResourceNotFoundException("Coupon not found for code: " + code)));
+        Coupon coupon = couponRepository.findByCode(code)
+                .orElseThrow(() -> new ResourceNotFoundException("Coupon not found for code: " + code));
+        return toResponse(checkAndExpireCoupon(coupon));
     }
 
     public CouponResponseDTO create(CouponRequestDTO request) {
@@ -62,10 +68,11 @@ public class CouponService {
         couponRepository.delete(getCouponEntity(id));
     }
 
-    @Transactional(readOnly = true)
     public Coupon resolveValidCoupon(String code) {
         Coupon coupon = couponRepository.findByCode(code)
                 .orElseThrow(() -> new ResourceNotFoundException("Coupon not found for code: " + code));
+
+        coupon = checkAndExpireCoupon(coupon);
 
         if (!Boolean.TRUE.equals(coupon.getActive())) {
             throw new IllegalArgumentException("Coupon is inactive: " + code);

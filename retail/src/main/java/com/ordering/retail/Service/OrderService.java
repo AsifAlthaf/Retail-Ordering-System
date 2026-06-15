@@ -216,11 +216,15 @@ public class OrderService {
     }
 
     private void validateCoupon(Coupon coupon) {
+        if (coupon.getExpiryDate() != null && coupon.getExpiryDate().isBefore(java.time.LocalDate.now())) {
+            if (Boolean.TRUE.equals(coupon.getActive())) {
+                coupon.setActive(false);
+                couponRepository.save(coupon);
+            }
+            throw new IllegalArgumentException("Coupon is expired: " + coupon.getCode());
+        }
         if (!Boolean.TRUE.equals(coupon.getActive())) {
             throw new IllegalArgumentException("Coupon is inactive: " + coupon.getCode());
-        }
-        if (coupon.getExpiryDate() != null && coupon.getExpiryDate().isBefore(java.time.LocalDate.now())) {
-            throw new IllegalArgumentException("Coupon is expired: " + coupon.getCode());
         }
         if (coupon.getUsageLimit() != null && coupon.getUsedCount() != null
                 && coupon.getUsedCount() >= coupon.getUsageLimit()) {

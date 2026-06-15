@@ -206,11 +206,11 @@ export default function UserDashboardPage() {
       <Paper
         elevation={0}
         sx={{
-          borderRadius: "12px",
+          borderRadius: "16px",
         }}
       >
         <Box sx={{ px: 3, py: 2.5, borderBottom: "1px solid #e6e4dd" }}>
-          <Typography sx={{ fontWeight: 600, color: "#191919" }}>
+          <Typography sx={{ fontWeight: 600, color: "#1d1d1f" }}>
             Recent Orders
           </Typography>
         </Box>
@@ -243,7 +243,7 @@ export default function UserDashboardPage() {
                     sx={{ justifyContent: "space-between", alignItems: "center" }}
                   >
                     <Box>
-                      <Typography variant="body2" sx={{ fontWeight: 600, color: "#191919" }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: "#1d1d1f" }}>
                         Order #{order.id}
                       </Typography>
                       <Typography sx={{ fontSize: 12, color: "text.secondary", mt: 0.5 }}>
@@ -251,7 +251,7 @@ export default function UserDashboardPage() {
                       </Typography>
                     </Box>
                     <Stack direction="row" spacing={3} sx={{ alignItems: "center" }}>
-                      <Typography sx={{ fontWeight: 700, color: "#191919", fontSize: 15 }}>
+                      <Typography sx={{ fontWeight: 700, color: "#1d1d1f", fontSize: 15 }}>
                         {currency(Number(order.totalAmount ?? 0))}
                       </Typography>
                       <StatusBadge status={order.status} size="sm" />
