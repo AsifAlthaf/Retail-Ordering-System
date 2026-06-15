@@ -29,13 +29,13 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif',
-    h1: { fontWeight: 700, letterSpacing: "-0.03em" },
-    h2: { fontWeight: 700, letterSpacing: "-0.03em" },
-    h3: { fontWeight: 600, letterSpacing: "-0.02em" },
-    h4: { fontWeight: 600, letterSpacing: "-0.02em" },
-    h5: { fontWeight: 600, letterSpacing: "-0.01em" },
-    h6: { fontWeight: 600, letterSpacing: "-0.01em" },
-    button: { fontWeight: 500, textTransform: "none", letterSpacing: "0.01em" },
+    h1: { fontFamily: '"Anthropic Sans", "CohereText", serif', fontWeight: 600, letterSpacing: "-0.01em" },
+    h2: { fontFamily: '"Anthropic Sans", "CohereText", serif', fontWeight: 600, letterSpacing: "-0.01em" },
+    h3: { fontFamily: '"Anthropic Sans", "CohereText", serif', fontWeight: 500, letterSpacing: "-0.01em" },
+    h4: { fontFamily: '"Anthropic Sans", "CohereText", serif', fontWeight: 500, letterSpacing: "-0.01em" },
+    h5: { fontFamily: '"Anthropic Sans", "CohereText", serif', fontWeight: 500, letterSpacing: "-0.01em" },
+    h6: { fontFamily: '"Anthropic Sans", "CohereText", serif', fontWeight: 500, letterSpacing: "-0.01em" },
+    button: { fontFamily: '"CohereText", sans-serif', fontWeight: 600, textTransform: "none", letterSpacing: "-0.01em" },
     body1: { letterSpacing: "-0.01em" },
     body2: { letterSpacing: "-0.01em" },
   },
@@ -45,13 +45,37 @@ const theme = createTheme({
       defaultProps: { disableElevation: true },
       styleOverrides: {
         root: {
-          borderRadius: "8px",
-          padding: "10px 20px",
-          transition: "all 150ms cubic-bezier(0.16, 1, 0.3, 1)",
+          borderRadius: "99px",
+          padding: "10px 24px",
+          fontWeight: 600,
+          letterSpacing: "-0.01em",
+          transition: "all 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+          textTransform: "none",
+          border: "1px solid transparent",
+          "&:hover": {
+            transform: "translateY(-1px)",
+            boxShadow: "0 4px 12px rgba(25, 25, 25, 0.05)",
+          },
           "&:active": {
-            transform: "scale(0.97)",
+            transform: "scale(0.96) translateY(0)",
           },
         },
+        outlined: {
+          borderColor: "#e6e4dd",
+          color: "#5e5e5e",
+          "&:hover": {
+            borderColor: "#191919",
+            backgroundColor: "rgba(25, 25, 25, 0.02)",
+            color: "#191919",
+          }
+        },
+        contained: {
+          backgroundColor: "#191919",
+          color: "#ffffff",
+          "&:hover": {
+            backgroundColor: "#2e2e2e",
+          }
+        }
       },
     },
     MuiPaper: {
@@ -64,6 +88,16 @@ const theme = createTheme({
             "0 8px 32px -4px rgba(25, 25, 25, 0.04), 0 2px 12px -2px rgba(25, 25, 25, 0.02)",
           border: "1px solid rgba(230, 228, 221, 0.6)",
           borderRadius: "12px",
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        root: {
+          "& .MuiBackdrop-root": {
+            backgroundColor: "rgba(25, 25, 25, 0.35)",
+            backdropFilter: "blur(8px)",
+          },
         },
       },
     },
