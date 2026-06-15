@@ -87,12 +87,9 @@ export default function UserOrdersPage() {
             variant="contained"
             onClick={() => navigate("/shop")}
             sx={{
-              bgcolor: "#191919",
               textTransform: "none",
-              borderRadius: "8px",
               px: 4,
               py: 1.2,
-              "&:hover": { bgcolor: "#2e2e2e" },
             }}
           >
             Start Shopping
@@ -195,7 +192,7 @@ export default function UserOrdersPage() {
 
                 <Box
                   sx={{
-                    bgcolor: "#faf9f6",
+                    bgcolor: "rgba(25, 25, 25, 0.02)",
                     p: 2,
                     borderRadius: "10px",
                     border: "1px solid #e6e4dd",
@@ -282,11 +279,9 @@ export default function UserOrdersPage() {
                   }}
                   sx={{
                     textTransform: "none",
-                    borderRadius: "8px",
                     fontWeight: 500,
                     borderColor: "#e6e4dd",
                     color: "#5e5e5e",
-                    "&:hover": { bgcolor: "#f3f1eb", borderColor: "#c8c6be", color: "#191919" },
                   }}
                 >
                   Order Again

@@ -194,7 +194,7 @@
 }
 
 body {
-  font-family: "CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+  font-family: "CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
   background-color: #F6F5EF;
   /* Satisfying mesh gradient background (dopamine lighting blobs) */
   background-image: 
@@ -207,6 +207,10 @@ body {
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+}
+
+button, input, select, textarea {
+  font-family: "CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif !important;
 }
 
 a {
@@ -270,7 +274,7 @@ button:active,
   color: var(--text-primary) !important;
   border: 1px solid var(--border) !important;
   border-radius: 12px !important;
-  font-family: "CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif !important;
+  font-family: "CohereText", "Anthropic Sans", "Plus Jakarta Sans", "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif !important;
   font-size: 14px !important;
   font-weight: 500 !important;
   box-shadow: var(--shadow-md) !important;

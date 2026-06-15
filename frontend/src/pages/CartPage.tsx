@@ -307,12 +307,9 @@ export default function CartPage() {
             variant="contained"
             onClick={() => navigate("/shop")}
             sx={{
-              bgcolor: "#191919",
               textTransform: "none",
-              borderRadius: "8px",
               px: 4,
               py: 1.2,
-              "&:hover": { bgcolor: "#2e2e2e" },
             }}
           >
             Continue Shopping
@@ -575,7 +572,7 @@ export default function CartPage() {
                       variant="outlined"
                       onClick={applyCoupon}
                       disabled={couponLoading || !couponInput.trim()}
-                      sx={{ borderRadius: "8px", border: "1px solid #e6e4dd", fontWeight: 500 }}
+                      sx={{ border: "1px solid #e6e4dd", fontWeight: 500 }}
                     >
                       Apply
                     </Button>
@@ -641,10 +638,7 @@ export default function CartPage() {
                   py: 1.25,
                   fontSize: 15,
                   fontWeight: 600,
-                  borderRadius: "8px",
                   textTransform: "none",
-                  bgcolor: "#191919",
-                  "&:hover": { bgcolor: "#2e2e2e" },
                 }}
               >
                 Complete Checkout
