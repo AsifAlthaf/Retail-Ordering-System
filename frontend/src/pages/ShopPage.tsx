@@ -346,7 +346,8 @@ export default function ShopPage() {
                       position: "relative",
                       border: "1px solid #e6e4dd",
                       borderRadius: "12px",
-                      background: "#ffffff",
+                      bgcolor: "rgba(255, 255, 255, 0.75)",
+                      backdropFilter: "blur(12px) saturate(180%)",
                       transition: "all var(--t-base)",
                       overflow: "hidden",
                       "&:hover": {
