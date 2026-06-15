@@ -29,18 +29,35 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif',
-    h1: { fontFamily: '"Anthropic Sans", "CohereText", serif', fontWeight: 600, letterSpacing: "-0.01em" },
-    h2: { fontFamily: '"Anthropic Sans", "CohereText", serif', fontWeight: 600, letterSpacing: "-0.01em" },
-    h3: { fontFamily: '"Anthropic Sans", "CohereText", serif', fontWeight: 500, letterSpacing: "-0.01em" },
-    h4: { fontFamily: '"Anthropic Sans", "CohereText", serif', fontWeight: 500, letterSpacing: "-0.01em" },
-    h5: { fontFamily: '"Anthropic Sans", "CohereText", serif', fontWeight: 500, letterSpacing: "-0.01em" },
-    h6: { fontFamily: '"Anthropic Sans", "CohereText", serif', fontWeight: 500, letterSpacing: "-0.01em" },
-    button: { fontFamily: '"CohereText", sans-serif', fontWeight: 600, textTransform: "none", letterSpacing: "-0.01em" },
+    h1: { fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 600, letterSpacing: "-0.01em" },
+    h2: { fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 600, letterSpacing: "-0.01em" },
+    h3: { fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
+    h4: { fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
+    h5: { fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
+    h6: { fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 500, letterSpacing: "-0.01em" },
+    button: { fontFamily: '"CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif', fontWeight: 600, textTransform: "none", letterSpacing: "-0.01em" },
     body1: { letterSpacing: "-0.01em" },
     body2: { letterSpacing: "-0.01em" },
   },
   shape: { borderRadius: 10 },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: "#F6F5EF",
+          backgroundImage: `
+            radial-gradient(at 0% 0%, rgba(206, 172, 114, 0.16) 0px, transparent 40%),
+            radial-gradient(at 100% 0%, rgba(212, 190, 153, 0.16) 0px, transparent 40%),
+            radial-gradient(at 50% 100%, rgba(220, 215, 201, 0.22) 0px, transparent 50%),
+            radial-gradient(at 20% 70%, rgba(240, 237, 230, 0.2) 0px, transparent 40%),
+            radial-gradient(at 80% 40%, rgba(21, 128, 61, 0.02) 0px, transparent 30%)
+          `,
+          backgroundAttachment: "fixed",
+          backgroundRepeat: "no-repeat",
+          minHeight: "100vh",
+        }
+      }
+    },
     MuiButton: {
       defaultProps: { disableElevation: true },
       styleOverrides: {

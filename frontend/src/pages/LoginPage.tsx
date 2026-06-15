@@ -56,7 +56,7 @@ export default function LoginPage() {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex", bgcolor: "#faf9f6" }}>
+    <Box sx={{ minHeight: "100vh", display: "flex", bgcolor: "transparent" }}>
       {/* Left Pane - Editorial Brand Highlight */}
       <Box
         sx={{
@@ -220,7 +220,7 @@ export default function LoginPage() {
                 size="large"
                 disabled={loading}
                 fullWidth
-                sx={{ py: 1.4, mt: 1, fontWeight: 600, borderRadius: "8px" }}
+                sx={{ py: 1.4, mt: 1, fontWeight: 600 }}
               >
                 {loading ? (
                   <CircularProgress size={20} color="inherit" />

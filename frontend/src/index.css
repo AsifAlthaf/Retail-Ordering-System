@@ -1,44 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
 @font-face {
   font-family: 'CohereText';
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_907NSg.ttf) format('truetype');
+  src: local('Plus Jakarta Sans Light'), local('PlusJakartaSans-Light'), local('Plus Jakarta Sans'), url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_907NSg.ttf) format('truetype');
 }
 @font-face {
   font-family: 'CohereText';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_qU7NSg.ttf) format('truetype');
+  src: local('Plus Jakarta Sans Regular'), local('PlusJakartaSans-Regular'), local('Plus Jakarta Sans'), url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_qU7NSg.ttf) format('truetype');
 }
 @font-face {
   font-family: 'CohereText';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_m07NSg.ttf) format('truetype');
+  src: local('Plus Jakarta Sans Medium'), local('PlusJakartaSans-Medium'), local('Plus Jakarta Sans'), url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_m07NSg.ttf) format('truetype');
 }
 @font-face {
   font-family: 'CohereText';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_d0nNSg.ttf) format('truetype');
+  src: local('Plus Jakarta Sans SemiBold'), local('PlusJakartaSans-SemiBold'), local('Plus Jakarta Sans'), url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_d0nNSg.ttf) format('truetype');
 }
 @font-face {
   font-family: 'CohereText';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_TknNSg.ttf) format('truetype');
+  src: local('Plus Jakarta Sans Bold'), local('PlusJakartaSans-Bold'), local('Plus Jakarta Sans'), url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_TknNSg.ttf) format('truetype');
 }
 @font-face {
   font-family: 'CohereText';
   font-style: normal;
   font-weight: 800;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KUnNSg.ttf) format('truetype');
+  src: local('Plus Jakarta Sans ExtraBold'), local('PlusJakartaSans-ExtraBold'), local('Plus Jakarta Sans'), url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KUnNSg.ttf) format('truetype');
 }
 
 @font-face {
@@ -47,7 +49,7 @@
   font-weight: 400;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSTF-Qf1.ttf) format('truetype');
+  src: local('Instrument Sans Regular'), local('InstrumentSans-Regular'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSTF-Qf1.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Anthropic Sans';
@@ -55,7 +57,7 @@
   font-weight: 500;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npST3-Qf1.ttf) format('truetype');
+  src: local('Instrument Sans Medium'), local('InstrumentSans-Medium'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npST3-Qf1.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Anthropic Sans';
@@ -63,7 +65,7 @@
   font-weight: 600;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQb_gf1.ttf) format('truetype');
+  src: local('Instrument Sans SemiBold'), local('InstrumentSans-SemiBold'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQb_gf1.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Anthropic Sans';
@@ -71,7 +73,7 @@
   font-weight: 700;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQi_gf1.ttf) format('truetype');
+  src: local('Instrument Sans Bold'), local('InstrumentSans-Bold'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQi_gf1.ttf) format('truetype');
 }
 
 @font-face {
@@ -80,7 +82,7 @@
   font-weight: 400;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSTF-Qf1.ttf) format('truetype');
+  src: local('SF Pro Display'), local('SFProDisplay'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSTF-Qf1.ttf) format('truetype');
 }
 @font-face {
   font-family: 'SF Pro Display';
@@ -88,7 +90,7 @@
   font-weight: 500;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npST3-Qf1.ttf) format('truetype');
+  src: local('SF Pro Display Medium'), local('SFProDisplay-Medium'), local('SF Pro Display'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npST3-Qf1.ttf) format('truetype');
 }
 @font-face {
   font-family: 'SF Pro Display';
@@ -96,7 +98,7 @@
   font-weight: 600;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQb_gf1.ttf) format('truetype');
+  src: local('SF Pro Display SemiBold'), local('SFProDisplay-SemiBold'), local('SF Pro Display'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQb_gf1.ttf) format('truetype');
 }
 @font-face {
   font-family: 'SF Pro Display';
@@ -104,7 +106,7 @@
   font-weight: 700;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQi_gf1.ttf) format('truetype');
+  src: local('SF Pro Display Bold'), local('SFProDisplay-Bold'), local('SF Pro Display'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQi_gf1.ttf) format('truetype');
 }
 
 @font-face {
@@ -113,7 +115,7 @@
   font-weight: 400;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSTF-Qf1.ttf) format('truetype');
+  src: local('SF Pro Text'), local('SFProText'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSTF-Qf1.ttf) format('truetype');
 }
 @font-face {
   font-family: 'SF Pro Text';
@@ -121,7 +123,7 @@
   font-weight: 500;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npST3-Qf1.ttf) format('truetype');
+  src: local('SF Pro Text Medium'), local('SFProText-Medium'), local('SF Pro Text'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npST3-Qf1.ttf) format('truetype');
 }
 @font-face {
   font-family: 'SF Pro Text';
@@ -129,7 +131,7 @@
   font-weight: 600;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQb_gf1.ttf) format('truetype');
+  src: local('SF Pro Text SemiBold'), local('SFProText-SemiBold'), local('SF Pro Text'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQb_gf1.ttf) format('truetype');
 }
 @font-face {
   font-family: 'SF Pro Text';
@@ -137,7 +139,7 @@
   font-weight: 700;
   font-stretch: normal;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQi_gf1.ttf) format('truetype');
+  src: local('SF Pro Text Bold'), local('SFProText-Bold'), local('SF Pro Text'), local('-apple-system'), local('BlinkMacSystemFont'), local('Instrument Sans'), url(https://fonts.gstatic.com/s/instrumentsans/v4/pximypc9vsFDm051Uf6KVwgkfoSxQ0GsQv8ToedPibnr-yp2JGEJOH9npSQi_gf1.ttf) format('truetype');
 }
 
 /* ─── Premium AI-Native Editorial Design Tokens ───────────────────────────── */
@@ -268,7 +270,7 @@ button:active,
   color: var(--text-primary) !important;
   border: 1px solid var(--border) !important;
   border-radius: 12px !important;
-  font-family: "Plus Jakarta Sans", sans-serif !important;
+  font-family: "CohereText", "Anthropic Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif !important;
   font-size: 14px !important;
   font-weight: 500 !important;
   box-shadow: var(--shadow-md) !important;
